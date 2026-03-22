@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TUCSON 360° Experience — Digital Giant</title>
+  <meta name="description" content="A working prototype of the TUCSON 360° Experience visualizer, built by Digital Giant.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dg-black:   #0a0a0a;
+      --dg-white:   #f4f4f0;
+      --dg-accent:  #e8ff00;
+      --hme-blue:   #002c5f;
+      --hme-teal:   #00aad2;
+      --t-fast:     0.2s ease;
+      --t-med:      0.45s ease;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dg-black);
+      color: var(--dg-white);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 60px;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-logo {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--dg-white);
+      text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--dg-accent); }
+    .nav-tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+    }
+    .nav-cta {
+      background: var(--dg-accent);
+      color: var(--dg-black);
+      border: none;
+      border-radius: 3px;
+      padding: 7px 18px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity var(--t-fast);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 140px 40px 80px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--hme-teal);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--hme-teal);
+    }
+    .hero-headline {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(42px, 7vw, 80px);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -1px;
+      margin-bottom: 28px;
+    }
+    .hero-headline em {
+      font-style: normal;
+      color: var(--dg-accent);
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: rgba(255,255,255,0.55);
+      max-width: 580px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+    .hero-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+    }
+    .pill {
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+    }
+    .pill.active {
+      border-color: var(--hme-teal);
+      color: var(--hme-teal);
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-left: 2px;
+    }
+
+    /* ── LIVE DEMO SECTION ── */
+    .demo-section {
+      margin: 0 0 0;
+      padding: 0 0 80px;
+    }
+    .demo-label {
+      text-align: center;
+      padding: 0 40px 28px;
+    }
+    .demo-label h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 8px;
+    }
+    .demo-label p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.5px;
+    }
+    .demo-note {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.2);
+      padding-top: 16px;
+      text-transform: uppercase;
+    }
+
+    /* ── VISUALIZER WRAPPER ── */
+    .viz-wrapper {
+      width: 100%;
+      background: #000;
+      position: relative;
+    }
+
+    /* ── WHAT WE BUILD ── */
+    .what-section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 100px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    @media (max-width: 700px) {
+      .what-section { grid-template-columns: 1fr; gap: 50px; }
+    }
+    .what-left h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 600;
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+    .what-left h2 span { color: var(--dg-accent); }
+    .what-left p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.75;
+    }
+    .what-right { display: flex; flex-direction: column; gap: 0; }
+    .what-item {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 22px 0;
+    }
+    .what-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .what-item-num {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--hme-teal);
+      margin-bottom: 6px;
+    }
+    .what-item-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--dg-white);
+      margin-bottom: 5px;
+    }
+    .what-item-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.6;
+    }
+
+    /* ── STACK SECTION ── */
+    .stack-section {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+      padding: 70px 40px;
+    }
+    .stack-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .stack-inner h3 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+      color: rgba(255,255,255,0.7);
+    }
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .stack-item {
+      background: var(--dg-black);
+      padding: 22px 24px;
+    }
+    .stack-item-role {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .stack-item-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--dg-white);
+      letter-spacing: 0.5px;
+    }
+    .stack-item-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline-section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 100px 40px;
+    }
+    .timeline-section h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 600;
+      margin-bottom: 48px;
+    }
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 24px;
+      padding: 24px 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .tl-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .tl-date {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--hme-teal);
+      letter-spacing: 1px;
+      padding-top: 2px;
+    }
+    .tl-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dg-white);
+      margin-bottom: 4px;
+    }
+    .tl-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      line-height: 1.6;
+    }
+    .tl-badge {
+      display: inline-block;
+      background: rgba(232,255,0,0.1);
+      border: 1px solid rgba(232,255,0,0.3);
+      color: var(--dg-accent);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      padding: 2px 8px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    /* ── CTA FOOTER ── */
+    .footer-cta {
+      background: var(--hme-blue);
+      padding: 80px 40px;
+      text-align: center;
+    }
+    .footer-cta h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .footer-cta p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 36px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .footer-cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--dg-accent);
+      color: var(--dg-black);
+      border: none;
+      border-radius: 4px;
+      padding: 13px 28px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity var(--t-fast);
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 4px;
+      padding: 13px 28px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color var(--t-fast), color var(--t-fast);
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+    /* ── FOOTER ── */
+    .footer {
+      padding: 28px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-logo {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.3);
+    }
+    .footer-copy {
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* ── VISUALIZER STYLES (embedded) ── */
+    /* These are the Hyundai skin variables */
+    .viz-root {
+      font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      color: #111;
+      width: 100%;
+    }
+    .stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      min-height: 380px;
+      max-height: 75vh;
+      overflow: hidden;
+      background: #1a1a1a;
+      cursor: grab;
+    }
+    .stage:active { cursor: grabbing; }
+    .stage-bg, .stage-car {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .stage-bg { z-index: 1; }
+    .stage-atmo {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      transition: background 0.7s ease;
+    }
+    .stage-car {
+      z-index: 3;
+      object-position: center bottom;
+      transition: opacity 0.4s ease;
+    }
+    .stage-title {
+      position: absolute;
+      top: 22px; left: 26px;
+      z-index: 10;
+    }
+    .stage-title h2 {
+      font-size: clamp(12px, 1.4vw, 15px);
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: 0.2px;
+    }
+    .stage-title-rule {
+      width: 28px; height: 2px;
+      background: #00aad2;
+      margin-top: 5px;
+    }
+    .int-thumb {
+      position: absolute;
+      top: 16px; right: 18px;
+      z-index: 10;
+      width: 86px; height: 60px;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.22);
+      transition: border-color 0.2s;
+      background: #111;
+    }
+    .int-thumb:hover, .int-thumb.active { border-color: #00aad2; }
+    .int-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .int-thumb-icon {
+      position: absolute;
+      bottom: 5px; left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .trim-selector {
+      position: absolute;
+      bottom: 22px; left: 22px;
+      z-index: 10;
+    }
+    .trim-btn {
+      background: #fff;
+      color: #111;
+      border: none;
+      border-radius: 4px;
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .trim-caret { font-size: 9px; color: #777; }
+    .msrp-block {
+      position: absolute;
+      bottom: 22px; right: 22px;
+      z-index: 10;
+      text-align: right;
+    }
+    .msrp-val {
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .msrp-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 2px;
+    }
+    .strip {
+      background: #f2f2f0;
+      padding: 13px 22px 15px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .strip-disclaimer {
+      font-size: 10.5px;
+      color: #999;
+      margin-bottom: 10px;
+    }
+    .strip-controls {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .strip-group { display: flex; flex-direction: column; gap: 6px; }
+    .strip-label { font-size: 11.5px; color: #444; }
+    .strip-label strong { font-weight: 500; }
+    .swatches-ext, .swatches-int { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .swatch-ext, .swatch-int {
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s, border-color 0.15s;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .swatch-ext { width: 36px; height: 36px; }
+    .swatch-int { width: 32px; height: 32px; }
+    .swatch-ext svg, .swatch-int svg { display: block; }
+    .swatch-ext.active { border-color: #111; transform: scale(1.14); }
+    .swatch-int.active { border-color: #111; transform: scale(1.1); }
+    .cta-btn {
+      background: #00aad2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 22px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .cta-btn:hover { background: #0090b5; }
+    @media (max-width: 500px) {
+      .strip-controls { gap: 10px; }
+      .cta-btn { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">Digital<span>·</span>Giant</div>
+    <div class="nav-tag">Prototype · TUCSON 360°</div>
+    <a href="mailto:dallas@digital-giant.com" class="nav-cta">Get in touch</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Hyundai Motor Europe · IONIQ 3 brief response</div>
+    <h1 class="hero-headline">
+      We built it<br>
+      <em>before</em> the<br>
+      brief closed.
+    </h1>
+    <p class="hero-sub">
+      Below is a fully working 360° vehicle visualizer — live, interactive, pulling real Hyundai assets. This is what we'd deliver for the IONIQ 3 PIP, built on a modular platform that works for any model or market.
+    </p>
+    <div class="hero-pills">
+      <div class="pill active">Live prototype</div>
+      <div class="pill active">Real Hyundai assets</div>
+      <div class="pill active">AEM-embeddable</div>
+      <div class="pill">360° ready</div>
+      <div class="pill">Themeable per brand</div>
+      <div class="pill">Jun 1 delivery</div>
+    </div>
+  </section>
+
+  <!-- LIVE DEMO -->
+  <section class="demo-section">
+    <div class="demo-label">
+      <div class="section-label">Live interactive prototype</div>
+      <h2>The TUCSON 360° Experience — working now</h2>
+      <p>Select colours below. Click the interior thumbnail. This is production-grade code, not a mockup.</p>
+    </div>
+
+    <div class="viz-wrapper">
+      <div id="viz-mount"></div>
+    </div>
+
+    <div class="demo-note">Prototype uses live Hyundai USA assets · IONIQ 3 assets slot in directly</div>
+  </section>
+
+  <!-- WHAT WE BUILD -->
+  <section class="what-section">
+    <div class="what-left">
+      <div class="section-label">Scope of delivery</div>
+      <h2>Everything in the brief. <span>Plus the platform behind it.</span></h2>
+      <p>The visualizer you just used isn't a one-off. It's the first instance of a modular platform — add a new model, a new market, or a new campaign without rebuilding anything.</p>
+    </div>
+    <div class="what-right">
+      <div class="what-item">
+        <div class="what-item-num">01</div>
+        <div class="what-item-title">360° exterior in all 15 colours</div>
+        <div class="what-item-desc">~36 frames per colour. Drag-to-spin on desktop, swipe on mobile. Preloaded for instant response.</div>
+      </div>
+      <div class="what-item">
+        <div class="what-item-num">02</div>
+        <div class="what-item-title">Interior panorama</div>
+        <div class="what-item-desc">1 interior colour, full panoramic view. Transitions cleanly from exterior with a single tap.</div>
+      </div>
+      <div class="what-item">
+        <div class="what-item-num">03</div>
+        <div class="what-item-title">Colour-reactive environment</div>
+        <div class="what-item-desc">Background atmosphere shifts per exterior colour — the Renault R5 effect, built in from day one.</div>
+      </div>
+      <div class="what-item">
+        <div class="what-item-num">04</div>
+        <div class="what-item-title">AEM HTML snippet — drop-in</div>
+        <div class="what-item-desc">One script tag, one data attribute. Slot into any AEM component or PIP highlight section.</div>
+      </div>
+      <div class="what-item">
+        <div class="what-item-num">05</div>
+        <div class="what-item-title">Fully themeable CSS</div>
+        <div class="what-item-desc">Every colour, font, and size is a CSS variable. HME's agency reskins it without touching logic.</div>
+      </div>
+      <div class="what-item">
+        <div class="what-item-num">06</div>
+        <div class="what-item-title">Modular data layer</div>
+        <div class="what-item-desc">New model = new database rows. No code changes. IONIQ 5, Nexo, Santa Fe — all reuse the same platform.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="stack-section">
+    <div class="stack-inner">
+      <div class="section-label">Technology</div>
+      <h3>Built on a stack that scales</h3>
+      <div class="stack-grid">
+        <div class="stack-item">
+          <div class="stack-item-role">Frontend</div>
+          <div class="stack-item-name">Vanilla JS</div>
+          <div class="stack-item-desc">Zero framework dependency. Embeds anywhere.</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-item-role">Database</div>
+          <div class="stack-item-name">Supabase</div>
+          <div class="stack-item-desc">Postgres. Content team edits data directly in browser.</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-item-role">Hosting</div>
+          <div class="stack-item-name">Netlify</div>
+          <div class="stack-item-desc">Auto-deploy on push. CDN-distributed globally.</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-item-role">Version control</div>
+          <div class="stack-item-name">GitHub</div>
+          <div class="stack-item-desc">Staging branch for UAT. Main = live.</div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-item-role">Asset CDN</div>
+          <div class="stack-item-name">Scene7 / S3</div>
+          <div class="stack-item-desc">Works with Hyundai's existing CDN or any S3-compatible store.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="timeline-section">
+    <div class="section-label">Delivery plan</div>
+    <h2>Go-live Jun 1, 2026</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">31 Mar</div>
+        <div>
+          <div class="tl-badge">Done</div>
+          <div class="tl-title">Prototype & proposal</div>
+          <div class="tl-desc">Working visualizer, architecture, costing — delivered ahead of deadline.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Wk Apr 1</div>
+        <div>
+          <div class="tl-title">Kickoff & scope lock</div>
+          <div class="tl-desc">Confirm colour list, asset specs, AEM integration requirements, UAT contacts.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">14 Apr</div>
+        <div>
+          <div class="tl-title">UX/UI design approved</div>
+          <div class="tl-desc">IONIQ 3 skin, intro animation, colour-reactive background — signed off.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">30 Apr</div>
+        <div>
+          <div class="tl-title">All 360° assets delivered</div>
+          <div class="tl-desc">15 colour sequences + interior panorama + studio environment — complete.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">14 May</div>
+        <div>
+          <div class="tl-title">Experience build complete</div>
+          <div class="tl-desc">All features integrated, responsive, AEM embed snippet packaged.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">28 May</div>
+        <div>
+          <div class="tl-title">QA, staging & UAT</div>
+          <div class="tl-desc">Cross-browser, cross-device. UAT with HME team. Issues resolved.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">1 Jun</div>
+        <div>
+          <div class="tl-badge">Go-live</div>
+          <div class="tl-title">Production delivery</div>
+          <div class="tl-desc">Live on IONIQ 3 PIP. Monitoring active. Hypercare window open.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <section class="footer-cta">
+    <h2>Let's make this happen.</h2>
+    <p>We're ready to kick off. The platform is built — we just need the green light and your asset specs.</p>
+    <div class="footer-cta-btns">
+      <button class="btn-primary">Request full proposal</button>
+      <button class="btn-ghost">Talk to Dallas Carroll</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">DIGITAL GIANT</div>
+    <div class="footer-copy">849 S Broadway, Los Angeles CA · dallas@digital-giant.com</div>
+  </footer>
+
+  <!-- EMBEDDED VISUALIZER SCRIPT -->
+  <script>
+  (function() {
+    var BASE = 'https://s7d1.scene7.com/is/image/hyundai/';
+
+    var COLORS = [
+      { name:'Ultimate Red',       slug:'ultimate-red',       imgId:'2026-tucson-0291-vlp:4-3', c1:'#7a1418', c2:'#4a0a0c', shine:'rgba(200,70,70,0.38)', atmo:'rgba(70,5,5,0.2)' },
+      { name:'Phantom Black',      slug:'phantom-black',      imgId:'2026-tucson-0281-vlp:4-3', c1:'#1c1c22', c2:'#0a0a10', shine:'rgba(80,80,110,0.3)',  atmo:'rgba(0,0,0,0.25)' },
+      { name:'Amazon Gray',        slug:'amazon-gray',        imgId:'2026-tucson-0296-vlp:4-3', c1:'#4a5248', c2:'#2e3530', shine:'rgba(110,130,110,0.35)', atmo:'rgba(35,48,35,0.16)' },
+      { name:'Shimmering Silver',  slug:'shimmering-silver',  imgId:'2026-tucson-0292-vlp:4-3', c1:'#a8a8b0', c2:'#808088', shine:'rgba(220,220,235,0.55)', atmo:'rgba(140,140,160,0.1)' },
+      { name:'Deep Sea',           slug:'deep-sea',           imgId:'2025-tucson-nx4-0278-vlp:4-3', c1:'#1a2e4a', c2:'#0e1c30', shine:'rgba(50,100,180,0.4)', atmo:'rgba(8,24,65,0.22)' },
+      { name:'Creamy White Pearl', slug:'creamy-white-pearl', imgId:'2025-tucson-nx4-0294-vlp:4-3', c1:'#e8e5de', c2:'#c8c5be', shine:'rgba(255,255,255,0.72)', atmo:'rgba(200,195,175,0.08)' },
+      { name:'Cashmere Bronze',    slug:'cashmere-bronze',    imgId:'2025-tucson-nx4-0273-vlp:7-5', c1:'#7a7060', c2:'#504840', shine:'rgba(160,140,100,0.35)', atmo:'rgba(80,65,25,0.16)' },
+      { name:'Nocturne Gray',      slug:'nocturne-gray',      imgId:'2026-tucson-0281-vlp:4-3', c1:'#3e3e44', c2:'#252528', shine:'rgba(100,100,120,0.3)', atmo:'rgba(28,28,38,0.22)' },
+    ];
+
+    var INTERIORS = [
+      { name:'Black', c1:'#111', c2:'#000' },
+      { name:'Gray',  c1:'#686868', c2:'#444' },
+    ];
+
+    var state = { extIdx:1, intIdx:1, view:'exterior', dragging:false, dragX:0 };
+
+    var SCENE_BG = BASE + '2026-tucson-0266-vlp:16-9?wid=1440&hei=810&qlt=85,0&fmt=webp';
+    var INT_HERO = BASE + '2026-tucson-0292-vlp:4-3?wid=1400&hei=900&qlt=90,0&fmt=webp';
+
+    function heroUrl(c) {
+      return BASE + c.imgId + '?wid=1400&hei=900&qlt=90,0&fmt=webp';
+    }
+
+    function swatchSVG(c, id) {
+      return '<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">'
+        +'<defs><radialGradient id="g'+id+'" cx="38%" cy="30%" r="62%">'
+        +'<stop offset="0%" stop-color="'+c.shine+'"/>'
+        +'<stop offset="100%" stop-color="rgba(0,0,0,0)"/>'
+        +'</radialGradient>'
+        +'<clipPath id="cp'+id+'"><circle cx="18" cy="18" r="16"/></clipPath></defs>'
+        +'<circle cx="18" cy="18" r="16" fill="'+c.c2+'"/>'
+        +'<path d="M2 18Q9 3 34 3L34 33Q9 33 2 18Z" fill="'+c.c1+'" clip-path="url(#cp'+id+')"/>'
+        +'<path d="M2 18Q9 33 34 33" stroke="rgba(0,0,0,0.22)" stroke-width="0.7" fill="none" clip-path="url(#cp'+id+')"/>'
+        +'<circle cx="18" cy="18" r="16" fill="url(#g'+id+')"/>'
+        +'</svg>';
+    }
+
+    function intSwatchSVG(c, id) {
+      return '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
+        +'<defs><radialGradient id="ig'+id+'" cx="35%" cy="30%" r="60%">'
+        +'<stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>'
+        +'<stop offset="100%" stop-color="rgba(0,0,0,0)"/>'
+        +'</radialGradient></defs>'
+        +'<circle cx="16" cy="16" r="14" fill="'+c.c2+'"/>'
+        +'<path d="M2 16Q8 3 30 3L30 29Q8 29 2 16Z" fill="'+c.c1+'"/>'
+        +'<circle cx="16" cy="16" r="14" fill="url(#ig'+id+')"/>'
+        +'</svg>';
+    }
+
+    function icon360() {
+      return '<svg viewBox="0 0 36 14" width="26" height="10" fill="none">'
+        +'<path d="M2 7Q2 2 18 2Q30 2 34 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>'
+        +'<polyline points="28,3 34,6 30,10" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>'
+        +'</svg>';
+    }
+
+    function render() {
+      var mount = document.getElementById('viz-mount');
+      if (!mount) return;
+
+      var extSwatches = COLORS.map(function(c,i) {
+        return '<div class="swatch-ext'+(i===state.extIdx?' active':'')+'" data-ext="'+i+'" title="'+c.name+'">'+swatchSVG(c,'e'+i)+'</div>';
+      }).join('');
+
+      var intSwatches = INTERIORS.map(function(c,i) {
+        return '<div class="swatch-int'+(i===state.intIdx?' active':'')+'" data-int="'+i+'" title="'+c.name+'">'+intSwatchSVG(c,'i'+i)+'</div>';
+      }).join('');
+
+      var c = COLORS[state.extIdx];
+      var currentHero = state.view === 'interior' ? INT_HERO : heroUrl(c);
+
+      mount.innerHTML =
+        '<div class="viz-root">'
+          +'<div class="stage" id="vz-stage">'
+            +'<img class="stage-bg" src="'+SCENE_BG+'" id="vz-scene" alt="">'
+            +'<div class="stage-atmo" id="vz-atmo" style="background:'+c.atmo+'"></div>'
+            +'<img class="stage-car" src="'+currentHero+'" id="vz-hero" alt="Tucson" draggable="false">'
+            +'<div class="stage-title"><h2>TUCSON 360° Experience</h2><div class="stage-title-rule"></div></div>'
+            +'<div class="int-thumb'+(state.view==='interior'?' active':'')+'" id="vz-int-thumb">'
+              +'<img src="'+INT_HERO+'" alt="Interior">'
+              +'<div class="int-thumb-icon">'+icon360()+'</div>'
+            +'</div>'
+            +'<div class="trim-selector"><div class="trim-btn">SEL Premium <span class="trim-caret">▾</span></div></div>'
+            +'<div class="msrp-block">'
+              +'<div class="msrp-val" id="vz-msrp">$33,800</div>'
+              +'<div class="msrp-label">Starting MSRP</div>'
+            +'</div>'
+          +'</div>'
+          +'<div class="strip">'
+            +'<div class="strip-disclaimer">Vehicle shown for illustrative purposes only. Actual model may vary.</div>'
+            +'<div class="strip-controls">'
+              +'<div class="strip-group">'
+                +'<div class="swatches-ext" id="vz-ext-swatches">'+extSwatches+'</div>'
+                +'<div class="strip-label">Exterior: <strong id="vz-ext-name">'+COLORS[state.extIdx].name+'</strong></div>'
+              +'</div>'
+              +'<div class="strip-group">'
+                +'<div class="swatches-int" id="vz-int-swatches">'+intSwatches+'</div>'
+                +'<div class="strip-label">Interior: <strong id="vz-int-name">'+INTERIORS[state.intIdx].name+'</strong></div>'
+              +'</div>'
+              +'<button class="cta-btn">Build &amp; Price</button>'
+            +'</div>'
+          +'</div>'
+        +'</div>';
+
+      attachEvents();
+    }
+
+    function attachEvents() {
+      document.getElementById('vz-ext-swatches')
+        ?.querySelectorAll('.swatch-ext')
+        .forEach(function(el) {
+          el.addEventListener('click', function() { setExt(parseInt(el.dataset.ext)); });
+        });
+
+      document.getElementById('vz-int-swatches')
+        ?.querySelectorAll('.swatch-int')
+        .forEach(function(el) {
+          el.addEventListener('click', function() { setInt(parseInt(el.dataset.int)); });
+        });
+
+      var thumb = document.getElementById('vz-int-thumb');
+      if (thumb) thumb.addEventListener('click', toggleInterior);
+
+      var stage = document.getElementById('vz-stage');
+      if (stage) {
+        stage.addEventListener('mousedown', function(e) { state.dragging=true; state.dragX=e.clientX; });
+        stage.addEventListener('touchstart', function(e) { state.dragging=true; state.dragX=e.touches[0].clientX; }, {passive:true});
+      }
+      window.addEventListener('mousemove', onDrag);
+      window.addEventListener('touchmove', onDrag, {passive:true});
+      window.addEventListener('mouseup', function() { state.dragging=false; });
+      window.addEventListener('touchend', function() { state.dragging=false; });
+    }
+
+    function setExt(idx) {
+      state.extIdx = idx;
+      state.view = 'exterior';
+      var c = COLORS[idx];
+      document.querySelectorAll('.swatch-ext').forEach(function(s,i) { s.classList.toggle('active',i===idx); });
+      var el = document.getElementById('vz-ext-name');
+      if (el) el.textContent = c.name;
+      var atmo = document.getElementById('vz-atmo');
+      if (atmo) atmo.style.background = c.atmo;
+      var scene = document.getElementById('vz-scene');
+      if (scene) scene.style.opacity = '1';
+      var thumb = document.getElementById('vz-int-thumb');
+      if (thumb) thumb.classList.remove('active');
+      swapHero(heroUrl(c));
+    }
+
+    function setInt(idx) {
+      state.intIdx = idx;
+      document.querySelectorAll('.swatch-int').forEach(function(s,i) { s.classList.toggle('active',i===idx); });
+      var el = document.getElementById('vz-int-name');
+      if (el) el.textContent = INTERIORS[idx].name;
+    }
+
+    function toggleInterior() {
+      state.view = state.view === 'interior' ? 'exterior' : 'interior';
+      var thumb = document.getElementById('vz-int-thumb');
+      if (thumb) thumb.classList.toggle('active', state.view === 'interior');
+      var scene = document.getElementById('vz-scene');
+      if (state.view === 'interior') {
+        if (scene) scene.style.opacity = '0.2';
+        swapHero(INT_HERO);
+      } else {
+        if (scene) scene.style.opacity = '1';
+        swapHero(heroUrl(COLORS[state.extIdx]));
+      }
+    }
+
+    function swapHero(url) {
+      var hero = document.getElementById('vz-hero');
+      if (!hero) return;
+      hero.style.opacity = '0';
+      var img = new Image();
+      img.onload = function() { hero.src = url; hero.style.opacity = '1'; };
+      img.onerror = function() { hero.style.opacity = '1'; };
+      img.src = url;
+    }
+
+    function onDrag(e) {
+      if (!state.dragging || state.view !== 'exterior') return;
+      var x = e.touches ? e.touches[0].clientX : e.clientX;
+      var delta = x - state.dragX;
+      if (Math.abs(delta) < 40) return;
+      // Cycle to adjacent colour on drag (placeholder for true 360 frames)
+      var dir = delta > 0 ? -1 : 1;
+      var next = (state.extIdx + dir + COLORS.length) % COLORS.length;
+      state.dragX = x;
+      setExt(next);
+    }
+
+    render();
+  })();
+  </script>
+
+</body>
+</html>
