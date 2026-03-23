@@ -354,7 +354,7 @@
           <path d="M2 6Q2 2 16 2Q28 2 30 5" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.5"/>
           <polyline points="25,2 30,5 27,9" stroke="white" stroke-width="1.2" stroke-linejoin="round" fill="none" opacity="0.5"/>
         </svg>
-        Zum Drehen ziehen
+        Drag to rotate
       </div>
       <div class="viz-title"><h3>TUCSON 360° Erlebnis</h3><div class="viz-title-rule"></div></div>
       <div class="int-thumb" id="int-thumb" onclick="onIntThumbClick()">
@@ -369,371 +369,409 @@
       <button class="trim-pill">Limited FWD <span class="trim-caret">▾</span></button>
       <div class="msrp-block">
         <div class="msrp-val">ab 39.750 €</div>
-        <div class="msrp-label">Unverbindliche Preisempfehlung</div>
+        <div class="msrp-label">Starting MSRP</div>
       </div>
     </div>
 
     <div class="viz-strip">
-      <div class="viz-disclaimer">Fahrzeugabbildung zeigt ggf. aufpreispflichtige Zusatzausstattung. Tatsächliches Modell kann abweichen.</div>
+      <div class="viz-disclaimer">Vehicle shown for illustrative purposes only. Actual model may vary.</div>
       <div class="viz-controls">
         <div class="viz-group">
           <div class="swatches-ext" id="swatches-ext"></div>
-          <div class="viz-label">Außenfarbe: <strong id="ext-name">Phantom Black</strong></div>
+          <div class="viz-label">Exterior: <strong id="ext-name">Phantom Black</strong></div>
         </div>
         <div class="viz-group">
           <div class="swatches-int" id="swatches-int"></div>
-          <div class="viz-label">Innenraum: <strong id="int-name">Schwarz</strong></div>
+          <div class="viz-label">Interior: <strong id="int-name">Schwarz</strong></div>
         </div>
-        <button class="viz-cta">Konfigurieren</button>
+        <button class="viz-cta">Configure</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// ════════════════════════════════════════════════
+// ================================================
 //  ASSET CONFIG
-// ════════════════════════════════════════════════
+// ================================================
 const BASE   = './assets';
 const FRAMES = 36;
-
-
+const S7BASE = 'https://s7d1.scene7.com/is/image/hyundai/2026-tucson-limited-';
 
 function spinFrames(fn) {
-  return Array.from({length:FRAMES},(_,i)=>{
-    const n = String(i+1).padStart(4,'0');
-    return `${BASE}/exterior/2026_Tucson_LTD_FWD_${fn}_Black_360_Landscape_LowerGrand_${n}.webp`;
+  return Array.from({length: FRAMES}, function(_, i) {
+    var n = String(i + 1).padStart(4, '0');
+    return BASE + '/exterior/2026_Tucson_LTD_FWD_' + fn + '_Black_360_Landscape_LowerGrand_' + n + '.webp';
   });
 }
-function panoUrl(extFn,intFn){
-  return `${BASE}/interior/2026_Tucson_LTD_FWD_${extFn}_${intFn}_Pano_LowerGrand.webp`;
+function panoUrl(extFn, intFn) {
+  return BASE + '/interior/2026_Tucson_LTD_FWD_' + extFn + '_' + intFn + '_Pano_LowerGrand.webp';
+}
+function extSwatchUrl(s7slug) {
+  return BASE + '/swatches/' + s7slug + '.webp';
+}
+function intSwatchUrl(slug) {
+  var map = {
+    'black':            'interior-black.webp',
+    'gray':             'interior-gray.webp',
+    'green-gray-3tone': 'interior-green-gray-3tone.webp'
+  };
+  return BASE + '/swatches/' + (map[slug] || ('interior-' + slug + '.webp'));
 }
 
-// Interior swatch image path
-function intImgSrc(slug){
-  var map={'black':'interior-black.webp','gray':'interior-gray.webp','green-gray-3tone':'interior-green-gray-3tone.webp'};
-  return './assets/swatches/'+(map[slug]||'interior-'+slug+'.webp');
+var INT = [
+  { slug:'black',            name:'Black',          fn:'Black',          availFor:'all' },
+  { slug:'gray',             name:'Gray',              fn:'Gray',           availFor:'all' },
+  { slug:'green-gray-3tone', name:'Green/Gray 3-Tone', fn:'GreenGray3Tone', availFor:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] }
+];
+
+var EXT = [
+  { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',        s7:'atlantis-blue' },
+  { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte',  s7:'ecotronic-gray-matte' },
+  { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl',  s7:'ecotronic-gray' },
+  { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic', s7:'hampton-gray' },
+  { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',        s7:'phantom-black' },
+  { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl',  s7:'rockwood-green' },
+  { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl',  s7:'serenity-white' },
+  { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',    s7:'shimmering-silver' },
+  { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',    s7:'ultimate-red' }
+];
+EXT.forEach(function(c) { c.frames = spinFrames(c.fn); });
+
+function availInt(extSlug) {
+  return INT.filter(function(i) {
+    return i.availFor === 'all' || i.availFor.indexOf(extSlug) !== -1;
+  });
 }
 
-const INT = [
-  { slug:'black',            name:'Schwarz',          fn:'Black',         hex:'#111',    hexB:null,     for:'all' },
-  { slug:'gray',             name:'Grau',              fn:'Gray',          hex:'#686868', hexB:null,     for:'all' },
-  { slug:'green-gray-3tone', name:'Grün-Grau 3-Tone',  fn:'GreenGray3Tone',hex:'#4a5c4a', hexB:'#8a9e7a',
-    for:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] },
-];
-
-const EXT = [
-  { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',       s7:'atlantis-blue' },
-  { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte', s7:'ecotronic-gray-matte' },
-  { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl', s7:'ecotronic-gray' },
-  { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic',s7:'hampton-gray' },
-  { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',       s7:'phantom-black' },
-  { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl', s7:'rockwood-green' },
-  { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl', s7:'serenity-white' },
-  { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',   s7:'shimmering-silver' },
-  { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',   s7:'ultimate-red' },
-];
-EXT.forEach(c => { c.frames = spinFrames(c.fn); });
-
-function availInt(extSlug){ return INT.filter(i=>i.for==='all'||i.for.includes(extSlug)); }
-
-// ════════════════════════════════════════════════
+// ================================================
 //  PRELOAD CACHE
-// ════════════════════════════════════════════════
-const imageCache = {};
+// ================================================
+var imageCache = {};
 
-function preloadAll(){
-  let total = EXT.length * FRAMES, loaded = 0;
-  const bar = document.getElementById('global-bar');
-  EXT.forEach((c,ei)=>{
-    imageCache[ei]={};
-    c.frames.forEach((url,fi)=>{
-      const img=new Image();
-      img.onload=img.onerror=()=>{
+function preloadAll() {
+  var total = EXT.length * FRAMES;
+  var loaded = 0;
+  var bar = document.getElementById('global-bar');
+
+  EXT.forEach(function(c, ei) {
+    imageCache[ei] = {};
+    c.frames.forEach(function(url, fi) {
+      var img = new Image();
+      img.onload = img.onerror = function() {
         loaded++;
-        bar.style.width=(loaded/total*100)+'%';
-        if(loaded===total) bar.style.opacity='0';
+        if (bar) bar.style.width = (loaded / total * 100) + '%';
+        if (loaded === total && bar) bar.style.opacity = '0';
       };
-      img.src=url;
-      imageCache[ei][fi]=img;
+      img.src = url;
+      imageCache[ei][fi] = img;
     });
   });
-  // Preload panos (browser caches them)
-  EXT.forEach(ext=>{
-    INT.forEach(int=>{
-      const ok=int.for==='all'||int.for.includes(ext.slug);
-      if(ok){ const img=new Image(); img.src=panoUrl(ext.fn,int.fn); }
+
+  // Preload panos — just fetch into browser cache
+  EXT.forEach(function(ext) {
+    INT.forEach(function(int) {
+      var ok = int.availFor === 'all' || int.availFor.indexOf(ext.slug) !== -1;
+      if (ok) { var img = new Image(); img.src = panoUrl(ext.fn, int.fn); }
     });
   });
 }
 
-// ════════════════════════════════════════════════
+function isFrameReady(ei, fi) {
+  var img = imageCache[ei] && imageCache[ei][fi];
+  return img && img.complete && img.naturalWidth > 0;
+}
+
+// ================================================
 //  STATE
-// ════════════════════════════════════════════════
-const S = {
-  extIdx:4, intIdx:0, view:'spin',
-  frame:0, framePct:0,
-  dragging:false, dragX:0, dragAccum:0, sens:5,
-  pv:null, pYaw:0, pPitch:0, pHfov:110,
-  inited:false,
+// ================================================
+var S = {
+  extIdx: 4, intIdx: 0, view: 'spin',
+  frame: 0, framePct: 0,
+  dragging: false, dragX: 0, dragAccum: 0, sens: 5,
+  pv: null, pYaw: 0, pPitch: -20, pHfov: 110,
+  inited: false,
+  canvas: null, ctx: null
 };
 
-// ════════════════════════════════════════════════
-//  CANVAS
-// ════════════════════════════════════════════════
-const canvas = document.getElementById('spin-canvas');
-const ctx    = canvas.getContext('2d');
-
-function drawFrame(ei,fi){
-  const img=imageCache[ei]?.[fi];
-  if(!img||!img.complete||!img.naturalWidth) return;
-  if(canvas.width!==img.naturalWidth){ canvas.width=img.naturalWidth; canvas.height=img.naturalHeight; }
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(img,0,0);
+// ================================================
+//  SPIN
+// ================================================
+function drawFrame(ei, fi) {
+  if (!S.canvas || !S.ctx) return;
+  var img = imageCache[ei] && imageCache[ei][fi];
+  if (!img || !img.complete || !img.naturalWidth) return;
+  if (S.canvas.width !== img.naturalWidth) {
+    S.canvas.width  = img.naturalWidth;
+    S.canvas.height = img.naturalHeight;
+  }
+  S.ctx.clearRect(0, 0, S.canvas.width, S.canvas.height);
+  S.ctx.drawImage(img, 0, 0);
 }
 
-function isFrameReady(ei,fi){
-  const img=imageCache[ei]?.[fi];
-  return img&&img.complete&&img.naturalWidth>0;
+function startDrag(x) {
+  if (S.view !== 'spin') return;
+  S.dragging = true; S.dragX = x; S.dragAccum = 0;
+  hideHint();
 }
-
-// ════════════════════════════════════════════════
-//  DRAG
-// ════════════════════════════════════════════════
-let hintGone=false;
-const spinWrap=document.getElementById('spin-wrap');
-spinWrap.addEventListener('mousedown', e=>startDrag(e.clientX));
-spinWrap.addEventListener('touchstart',e=>startDrag(e.touches[0].clientX),{passive:true});
-window.addEventListener('mousemove',   e=>{ if(S.view==='spin')moveDrag(e.clientX); });
-window.addEventListener('touchmove',   e=>{ if(S.view==='spin')moveDrag(e.touches[0].clientX); },{passive:true});
-window.addEventListener('mouseup',     ()=>{ S.dragging=false; });
-window.addEventListener('touchend',    ()=>{ S.dragging=false; });
-
-function hideHint(){ if(!hintGone){hintGone=true;const h=document.getElementById('drag-hint');h.style.opacity='0';setTimeout(()=>h.remove(),600);} }
-function startDrag(x){ if(S.view!=='spin')return; S.dragging=true;S.dragX=x;S.dragAccum=0;hideHint(); }
-function moveDrag(x){
-  if(!S.dragging||S.view!=='spin')return;
-  const d=x-S.dragX; S.dragX=x; S.dragAccum+=d;
-  const steps=Math.trunc(S.dragAccum/S.sens);
-  if(steps!==0){
-    S.dragAccum-=steps*S.sens;
-    S.frame=((S.frame-steps)+FRAMES)%FRAMES;
-    S.framePct=S.frame/(FRAMES-1);
-    drawFrame(S.extIdx,S.frame);
+function moveDrag(x) {
+  if (!S.dragging || S.view !== 'spin') return;
+  var delta = x - S.dragX; S.dragX = x; S.dragAccum += delta;
+  var steps = Math.trunc(S.dragAccum / S.sens);
+  if (steps !== 0) {
+    S.dragAccum -= steps * S.sens;
+    S.frame = ((S.frame - steps) + FRAMES) % FRAMES;
+    S.framePct = S.frame / (FRAMES - 1);
+    drawFrame(S.extIdx, S.frame);
   }
 }
 
-// ════════════════════════════════════════════════
-//  PANO — with crossfade to hide grid flicker
-// ════════════════════════════════════════════════
-function savePano(){ if(S.pv){S.pYaw=S.pv.getYaw();S.pPitch=S.pv.getPitch();S.pHfov=S.pv.getHfov();} }
+var hintGone = false;
+function hideHint() {
+  if (!hintGone) {
+    hintGone = true;
+    var h = document.getElementById('drag-hint');
+    if (h) { h.style.opacity = '0'; setTimeout(function() { if(h.parentNode) h.parentNode.removeChild(h); }, 600); }
+  }
+}
 
-function loadPano(url, restore, onReady){
-  const el=document.getElementById('pano-inner');
-  if(S.pv){S.pv.destroy();S.pv=null;}
-  el.innerHTML='';
-  S.pv=pannellum.viewer(el,{
-    type:'equirectangular', panorama:url, autoLoad:true,
-    showControls:false, mouseZoom:true, draggable:true, friction:.15,
-    hfov:restore?S.pHfov:110, pitch:restore?S.pPitch:-12, yaw:restore?S.pYaw:0,
-    minHfov:50, maxHfov:130, compass:false,
+// ================================================
+//  PANO
+// ================================================
+function savePano() {
+  if (S.pv) { S.pYaw = S.pv.getYaw(); S.pPitch = S.pv.getPitch(); S.pHfov = S.pv.getHfov(); }
+}
+
+function loadPano(url, restore) {
+  var el = document.getElementById('pano-inner');
+  if (!el) return;
+  if (S.pv) { try { S.pv.destroy(); } catch(e){} S.pv = null; }
+  el.innerHTML = '';
+  S.pv = pannellum.viewer(el, {
+    type: 'equirectangular',
+    panorama: url,
+    autoLoad: true,
+    showControls: false,
+    mouseZoom: true,
+    draggable: true,
+    friction: 0.15,
+    hfov:  restore ? S.pHfov  : 110,
+    pitch: restore ? S.pPitch : -20,
+    yaw:   restore ? S.pYaw   : 0,
+    minHfov: 50, maxHfov: 130,
+    compass: false,
+    keyboardZoom: false
   });
-  // When pano is loaded, fade out the crossfade cover
-  S.pv.on('load',()=>{
-    const cf=document.getElementById('pano-crossfade');
-    cf.classList.remove('show');
-    if(onReady) onReady();
+  S.pv.on('load', function() {
+    var cf = document.getElementById('pano-crossfade');
+    if (cf) {
+      cf.style.transition = 'opacity 0.3s ease';
+      cf.classList.remove('show');
+    }
   });
 }
 
-function switchPano(url, restore){
-  const cf=document.getElementById('pano-crossfade');
-  cf.style.transition='none';
-  cf.classList.add('show'); // instantly black
-  // Small delay so the cover is painted before we destroy pannellum
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      cf.style.transition='opacity 0.25s ease';
-      loadPano(url, restore);
-    });
+function switchPano(url, restore) {
+  var cf = document.getElementById('pano-crossfade');
+  if (cf) { cf.style.transition = 'none'; cf.classList.add('show'); }
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { loadPano(url, restore); });
   });
 }
 
-// ════════════════════════════════════════════════
+// ================================================
 //  VIEW TOGGLE
-//  Clicking ext swatch → always go to spin
-//  Clicking int swatch → always go to pano
-//  Clicking int thumb → toggle
-// ════════════════════════════════════════════════
-function goToSpin(){
-  S.view='spin';
-  document.getElementById('spin-wrap').classList.remove('hidden');
-  document.getElementById('pano-wrap').classList.remove('active');
-  document.getElementById('int-thumb').classList.remove('active');
-  drawFrame(S.extIdx,S.frame);
+// ================================================
+function goToSpin() {
+  S.view = 'spin';
+  var sw = document.getElementById('spin-wrap');
+  var pw = document.getElementById('pano-wrap');
+  var it = document.getElementById('int-thumb');
+  if (sw) sw.classList.remove('hidden');
+  if (pw) pw.classList.remove('active');
+  if (it) it.classList.remove('active');
+  drawFrame(S.extIdx, S.frame);
 }
 
-function goToPano(){
-  // Show black cover instantly before pannellum grid appears
-  const cf=document.getElementById('pano-crossfade');
-  cf.style.transition='none';
-  cf.classList.add('show');
-  S.view='pano';
-  document.getElementById('spin-wrap').classList.add('hidden');
-  document.getElementById('pano-wrap').classList.add('active');
-  document.getElementById('int-thumb').classList.add('active');
-  const ext=EXT[S.extIdx];
-  const av=availInt(ext.slug);
-  const int=av[Math.min(S.intIdx,av.length-1)]||av[0];
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      cf.style.transition='opacity 0.3s ease';
-      if(int) loadPano(panoUrl(ext.fn,int.fn), false);
+function goToPano() {
+  // Cover immediately before pannellum loads
+  var cf = document.getElementById('pano-crossfade');
+  if (cf) { cf.style.transition = 'none'; cf.classList.add('show'); }
+  S.view = 'pano';
+  var sw = document.getElementById('spin-wrap');
+  var pw = document.getElementById('pano-wrap');
+  var it = document.getElementById('int-thumb');
+  if (sw) sw.classList.add('hidden');
+  if (pw) pw.classList.add('active');
+  if (it) it.classList.add('active');
+  var ext = EXT[S.extIdx];
+  var av  = availInt(ext.slug);
+  var int = av[Math.min(S.intIdx, av.length - 1)] || av[0];
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      if (int) loadPano(panoUrl(ext.fn, int.fn), false);
     });
   });
 }
 
-function onIntThumbClick(){
-  if(S.view==='spin') goToPano();
-  else goToSpin();
+function onIntThumbClick() {
+  if (S.view === 'spin') goToPano(); else goToSpin();
 }
 
-// ════════════════════════════════════════════════
-//  SET EXT — clicking goes to spin view
-// ════════════════════════════════════════════════
-function setExt(idx){
-  if(idx===S.extIdx && S.view==='spin') return;
-
-  const wasIdx=S.extIdx;
-  S.extIdx=idx;
-  document.querySelectorAll('.sw-ext').forEach((s,i)=>s.classList.toggle('active',i===idx));
-  document.getElementById('ext-name').textContent=EXT[idx].name;
-
-  // Always go to spin when changing exterior colour
-  S.view='spin';
-  document.getElementById('spin-wrap').classList.remove('hidden');
-  document.getElementById('pano-wrap').classList.remove('active');
-  document.getElementById('int-thumb').classList.remove('active');
-
-  // Preserve frame angle
-  S.frame=Math.round(S.framePct*(FRAMES-1));
-
-  // Draw immediately if ready, else wait
-  if(isFrameReady(idx,S.frame)){
-    drawFrame(idx,S.frame);
+// ================================================
+//  SET COLOURS
+// ================================================
+function setExt(idx) {
+  if (idx === S.extIdx && S.view === 'spin') return;
+  S.extIdx = idx;
+  document.querySelectorAll('.sw-ext').forEach(function(s, i) { s.classList.toggle('active', i === idx); });
+  var nameEl = document.getElementById('ext-name');
+  if (nameEl) nameEl.textContent = EXT[idx].name;
+  // Always go to spin when picking exterior
+  goToSpin();
+  // Preserve angle
+  S.frame = Math.round(S.framePct * (FRAMES - 1));
+  if (isFrameReady(idx, S.frame)) {
+    drawFrame(idx, S.frame);
   } else {
-    const poll=setInterval(()=>{
-      if(isFrameReady(idx,S.frame)){ clearInterval(poll); drawFrame(idx,S.frame); }
-    },40);
+    var poll = setInterval(function() {
+      if (isFrameReady(idx, S.frame)) { clearInterval(poll); drawFrame(idx, S.frame); }
+    }, 40);
   }
-
   buildIntSwatches(EXT[idx].slug);
   updateThumb();
 }
 
-// ════════════════════════════════════════════════
-//  SET INT — clicking goes to pano view
-// ════════════════════════════════════════════════
-function setInt(idx){
-  S.intIdx=idx;
-  document.querySelectorAll('.sw-int').forEach((s,i)=>s.classList.toggle('active',i===idx));
-  document.getElementById('int-name').textContent=INT[idx].name;
+function setInt(idx) {
+  S.intIdx = idx;
+  document.querySelectorAll('.sw-int').forEach(function(s, i) { s.classList.toggle('active', i === idx); });
+  var nameEl = document.getElementById('int-name');
+  if (nameEl) nameEl.textContent = INT[idx].name;
   updateThumb();
-
-  // Always go to pano when selecting interior
-  if(S.view==='pano'){
-    // Already in pano — crossfade to new colour, preserve orientation
+  // Always go to pano when picking interior
+  if (S.view === 'pano') {
     savePano();
-    switchPano(panoUrl(EXT[S.extIdx].fn,INT[idx].fn), true);
+    switchPano(panoUrl(EXT[S.extIdx].fn, INT[idx].fn), true);
   } else {
-    // Go to pano
     goToPano();
   }
 }
 
-// ════════════════════════════════════════════════
+// ================================================
 //  SWATCHES
-// ════════════════════════════════════════════════
-function buildExtSwatches(){
-  const row=document.getElementById('swatches-ext');
-  row.innerHTML='';
-  EXT.forEach((c,i)=>{
-    const d=document.createElement('div');
-    d.className='sw-ext'+(i===S.extIdx?' active':'');
-    d.title=c.name;
-
-    // Use real Hyundai Scene7 swatch image
-    const img=document.createElement('img');
-    img.src='./assets/swatches/'+c.slug+'.webp';
-    img.alt=c.name;
-    // Fallback: coloured background if image fails
-    img.onerror=()=>{ d.style.background=c.hex?.p||'#888'; img.style.display='none'; };
+// ================================================
+function buildExtSwatches() {
+  var row = document.getElementById('swatches-ext');
+  if (!row) return;
+  row.innerHTML = '';
+  EXT.forEach(function(c, i) {
+    var d = document.createElement('div');
+    d.className = 'sw-ext' + (i === S.extIdx ? ' active' : '');
+    d.title = c.name;
+    var img = document.createElement('img');
+    img.src = extSwatchUrl(c.s7);
+    img.alt = c.name;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    img.onerror = function() { d.style.background = '#888'; };
     d.appendChild(img);
-    d.onclick=()=>setExt(i);
+    d.onclick = (function(idx) { return function() { setExt(idx); }; })(i);
     row.appendChild(d);
   });
 }
 
-function buildIntSwatches(extSlug){
-  const row=document.getElementById('swatches-int');
-  row.innerHTML='';
-  INT.forEach((c,i)=>{
-    const ok=c.for==='all'||c.for.includes(extSlug);
-    const active=i===S.intIdx&&ok;
-    const d=document.createElement('div');
-    d.className='sw-int'+(active?' active':'')+(!ok?' na':'');
-    d.title=c.name;
-    const img=document.createElement('img');
-    img.src=intImgSrc(c.slug);
-    img.alt=c.name;
+function buildIntSwatches(extSlug) {
+  var row = document.getElementById('swatches-int');
+  if (!row) return;
+  row.innerHTML = '';
+  INT.forEach(function(c, i) {
+    var ok = c.availFor === 'all' || c.availFor.indexOf(extSlug) !== -1;
+    var d = document.createElement('div');
+    d.className = 'sw-int' + (i === S.intIdx && ok ? ' active' : '') + (!ok ? ' na' : '');
+    d.title = c.name;
+    var img = document.createElement('img');
+    img.src = intSwatchUrl(c.slug);
+    img.alt = c.name;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    img.onerror = function() { d.style.background = '#555'; };
     d.appendChild(img);
-    if(ok) d.onclick=()=>setInt(i);
+    if (ok) d.onclick = (function(idx) { return function() { setInt(idx); }; })(i);
     row.appendChild(d);
   });
 }
 
-function updateThumb(){
-  const ext=EXT[S.extIdx];
-  const av=availInt(ext.slug);
-  const int=av[Math.min(S.intIdx,av.length-1)]||av[0];
-  if(int) document.getElementById('int-thumb-img').src=panoUrl(ext.fn,int.fn);
-}
-
-// ════════════════════════════════════════════════
-//  OVERLAY
-// ════════════════════════════════════════════════
-function openViz(){
-  document.getElementById('viz-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  if(!S.inited){
-    S.inited=true;
-    buildExtSwatches();
-    buildIntSwatches(EXT[S.extIdx].slug);
-    updateThumb();
-    // Show first frame as soon as available
-    const tryDraw=setInterval(()=>{
-      if(isFrameReady(S.extIdx,0)){
-        clearInterval(tryDraw);
-        const img=imageCache[S.extIdx][0];
-        canvas.width=img.naturalWidth||1920;
-        canvas.height=img.naturalHeight||1080;
-        drawFrame(S.extIdx,S.frame);
-      }
-    },40);
+function updateThumb() {
+  var ext = EXT[S.extIdx];
+  var av  = availInt(ext.slug);
+  var int = av[Math.min(S.intIdx, av.length - 1)] || av[0];
+  if (int) {
+    var el = document.getElementById('int-thumb-img');
+    if (el) el.src = panoUrl(ext.fn, int.fn);
   }
 }
 
-function closeViz(){
-  document.getElementById('viz-overlay').classList.remove('open');
-  document.body.style.overflow='';
+// ================================================
+//  OVERLAY
+// ================================================
+function openViz() {
+  var overlay = document.getElementById('viz-overlay');
+  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  if (!S.inited) {
+    S.inited = true;
+    // Init canvas here — guaranteed DOM is ready
+    S.canvas = document.getElementById('spin-canvas');
+    S.ctx    = S.canvas ? S.canvas.getContext('2d') : null;
+    // Attach drag events to spin-wrap
+    var sw = document.getElementById('spin-wrap');
+    if (sw) {
+      sw.addEventListener('mousedown',  function(e) { startDrag(e.clientX); });
+      sw.addEventListener('touchstart', function(e) { startDrag(e.touches[0].clientX); }, {passive:true});
+    }
+    buildExtSwatches();
+    buildIntSwatches(EXT[S.extIdx].slug);
+    updateThumb();
+    // Draw first frame when ready
+    var poll = setInterval(function() {
+      if (isFrameReady(S.extIdx, 0)) {
+        clearInterval(poll);
+        var img = imageCache[S.extIdx][0];
+        if (S.canvas) { S.canvas.width = img.naturalWidth || 1920; S.canvas.height = img.naturalHeight || 1080; }
+        drawFrame(S.extIdx, S.frame);
+      }
+    }, 40);
+  }
 }
 
-document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeViz(); });
+function closeViz() {
+  var overlay = document.getElementById('viz-overlay');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
 
+// ================================================
+//  GLOBAL EVENT LISTENERS
+// ================================================
+window.addEventListener('mousemove',  function(e) { if (S.view === 'spin') moveDrag(e.clientX); });
+window.addEventListener('touchmove',  function(e) { if (S.view === 'spin' && S.dragging) moveDrag(e.touches[0].clientX); }, {passive:true});
+window.addEventListener('mouseup',    function() { S.dragging = false; });
+window.addEventListener('touchend',   function() { S.dragging = false; });
+document.addEventListener('keydown',  function(e) {
+  if (e.key === 'Escape') { closeViz(); return; }
+  // Block keyboard zoom/pan when overlay is open
+  if (document.getElementById('viz-overlay') && document.getElementById('viz-overlay').classList.contains('open')) {
+    var blocked = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','+','-','=','_','PageUp','PageDown'];
+    if (blocked.indexOf(e.key) !== -1) e.preventDefault();
+  }
+});
+
+// ================================================
+//  BOOT
+// ================================================
 preloadAll();
 
-const hv=document.getElementById('hero-video');
-if(hv) hv.play().catch(()=>{ document.addEventListener('pointerdown',()=>hv.play().catch(()=>{}),{once:true}); });
+var hv = document.getElementById('hero-video');
+if (hv) hv.play().catch(function() {
+  document.addEventListener('pointerdown', function() { hv.play().catch(function(){}); }, {once:true});
+});
 </script>
 </body>
 </html>
