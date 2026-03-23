@@ -112,7 +112,7 @@
 
   #global-bar { position:absolute; bottom:0; left:0; height:2px; background:var(--teal); width:0; z-index:20; transition:width .1s; opacity:.7; }
 
-  #drag-hint { position:absolute; bottom:80px; left:50%; transform:translateX(-50%); z-index:15; display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.45); pointer-events:none; transition:opacity .5s; white-space:nowrap; }
+  #drag-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:15; display:flex; flex-direction:column; align-items:center; gap:12px; font-size:15px; font-weight:300; letter-spacing:1.5px; color:rgba(255,255,255,0.95); pointer-events:none; transition:opacity .5s; white-space:nowrap; text-shadow:0 1px 6px rgba(0,0,0,0.6); }
 
   .viz-title { position:absolute; top:20px; left:22px; z-index:10; }
   .viz-title h3 { font-size:13px; font-weight:600; color:#fff; letter-spacing:.5px; }
@@ -226,7 +226,7 @@
     <li><a href="#">New Cars</a></li>
     <li><a href="#" style="color:#002C5F;font-weight:700;">TUCSON</a></li>
     <li><a href="#">Electric</a></li>
-    <li><a href="#">Angebote</a></li>
+    <li><a href="#">Offers</a></li>
     <li><a href="#">Business</a></li>
     <li><a href="#">Service</a></li>
   </ul>
@@ -237,11 +237,13 @@
 
 <section class="hero" style="padding:0">
   <div class="hero-img">
-    <video id="hero-video" autoplay muted loop playsinline preload="auto"><source src="hero.mp4" type="video/mp4"></video>
+    <img src="https://s7d1.scene7.com/is/image/hyundai/2026-tucson-0266-vlp:16-9?wid=1920&hei=820&qlt=90,0&fmt=webp" 
+         alt="2026 Hyundai TUCSON" 
+         style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <span class="hero-badge">Neu · 2026</span>
+    <span class="hero-badge">New · 2026</span>
     <h1 class="hero-title">Hyundai TUCSON.<br>Experience it now.</h1>
     <p class="hero-sub">Modern design, refined interior, and innovative technology — built for every adventure.</p>
     <div class="hero-actions">
@@ -350,19 +352,17 @@
       <div id="pano-crossfade"></div>
       <div id="global-bar"></div>
       <div id="drag-hint">
-        <svg width="32" height="12" viewBox="0 0 32 12" fill="none">
-          <path d="M2 6Q2 2 16 2Q28 2 30 5" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.5"/>
-          <polyline points="25,2 30,5 27,9" stroke="white" stroke-width="1.2" stroke-linejoin="round" fill="none" opacity="0.5"/>
+        <svg width="72" height="72" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white">
+          <path d="M11.2797426,14.9868494 L10.1464466,13.8535534 C9.95118446,13.6582912 9.95118446,13.3417088 10.1464466,13.1464466 C10.3417088,12.9511845 10.6582912,12.9511845 10.8535534,13.1464466 L12.8535534,15.1464466 C13.0488155,15.3417088 13.0488155,15.6582912 12.8535534,15.8535534 L10.8535534,17.8535534 C10.6582912,18.0488155 10.3417088,18.0488155 10.1464466,17.8535534 C9.95118446,17.6582912 9.95118446,17.3417088 10.1464466,17.1464466 L11.3044061,15.9884871 C6.13483244,15.8167229 2,13.7413901 2,11 C2,8.13669069 6.51079147,6 12,6 C17.4892085,6 22,8.13669069 22,11 C22,12.5021775 20.7611164,13.8263891 18.6925542,14.7433738 C18.4401046,14.8552836 18.1447329,14.7413536 18.0328231,14.4889039 C17.9209133,14.2364543 18.0348433,13.9410827 18.2872929,13.8291729 C20.0336708,13.0550111 21,12.0221261 21,11 C21,8.89274656 17.0042017,7 12,7 C6.99579829,7 3,8.89274656 3,11 C3,13.0051086 6.6178104,14.8160018 11.2797426,14.9868494 Z"/>
         </svg>
-        Drag to rotate
+        Drag to rotate vehicle
       </div>
       <div class="viz-title"><h3>TUCSON 360° Experience</h3><div class="viz-title-rule"></div></div>
       <div class="int-thumb" id="int-thumb" onclick="onIntThumbClick()">
-        <img id="int-thumb-img" src="" alt="Innenraum">
+        <img id="int-thumb-img" src="" alt="">
         <div class="int-thumb-icon">
-          <svg viewBox="0 0 36 14" width="26" height="10" fill="none">
-            <path d="M2 7Q2 2 18 2Q30 2 34 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            <polyline points="28,3 34,6 30,10" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white" opacity="0.85">
+            <path d="M11.2797426,14.9868494 L10.1464466,13.8535534 C9.95118446,13.6582912 9.95118446,13.3417088 10.1464466,13.1464466 C10.3417088,12.9511845 10.6582912,12.9511845 10.8535534,13.1464466 L12.8535534,15.1464466 C13.0488155,15.3417088 13.0488155,15.6582912 12.8535534,15.8535534 L10.8535534,17.8535534 C10.6582912,18.0488155 10.3417088,18.0488155 10.1464466,17.8535534 C9.95118446,17.6582912 9.95118446,17.3417088 10.1464466,17.1464466 L11.3044061,15.9884871 C6.13483244,15.8167229 2,13.7413901 2,11 C2,8.13669069 6.51079147,6 12,6 C17.4892085,6 22,8.13669069 22,11 C22,12.5021775 20.7611164,13.8263891 18.6925542,14.7433738 C18.4401046,14.8552836 18.1447329,14.7413536 18.0328231,14.4889039 C17.9209133,14.2364543 18.0348433,13.9410827 18.2872929,13.8291729 C20.0336708,13.0550111 21,12.0221261 21,11 C21,8.89274656 17.0042017,7 12,7 C6.99579829,7 3,8.89274656 3,11 C3,13.0051086 6.6178104,14.8160018 11.2797426,14.9868494 Z"/>
           </svg>
         </div>
       </div>
@@ -768,10 +768,7 @@ document.addEventListener('keydown',  function(e) {
 // ================================================
 preloadAll();
 
-var hv = document.getElementById('hero-video');
-if (hv) hv.play().catch(function() {
-  document.addEventListener('pointerdown', function() { hv.play().catch(function(){}); }, {once:true});
-});
+// Hero is a static image — no video autoplay needed
 </script>
 </body>
 </html>
