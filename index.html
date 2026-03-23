@@ -1,657 +1,626 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TUCSON 360° Experience — Digital Giant</title>
-  <meta name="description" content="A working prototype of the TUCSON 360° Experience, built by Digital Giant for Hyundai Motor Europe.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
-  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --dg-black:  #0a0a0a;
-      --dg-white:  #f4f4f0;
-      --dg-accent: #e8ff00;
-      --hme-blue:  #002c5f;
-      --hme-teal:  #00aad2;
-    }
-    html { scroll-behavior: smooth; }
-    body { background: var(--dg-black); color: var(--dg-white); font-family: 'Inter', sans-serif; font-size: 15px; overflow-x: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TUCSON | Neue Fahrzeuge | Hyundai Motor Deutschland</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+<style>
+  :root {
+    --blue:    #002C5F;
+    --blue-lt: #003F7F;
+    --white:   #FFFFFF;
+    --off:     #F6F6F6;
+    --text:    #222222;
+    --mid:     #666666;
+    --border:  #E0E0E0;
+    --teal:    #00AAD2;
+    --font:    'HyundaiSansTextPro','Helvetica Neue',Arial,sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:var(--font); color:var(--text); background:#fff; }
 
-    /* ── NAV ── */
-    .nav { position: fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 40px; height:60px; background:rgba(10,10,10,0.94); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.06); }
-    .nav-logo { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; letter-spacing:3px; color:var(--dg-white); }
-    .nav-logo span { color:var(--dg-accent); }
-    .nav-tag { font-size:11px; letter-spacing:2px; color:rgba(255,255,255,0.3); text-transform:uppercase; }
-    .nav-cta { background:var(--dg-accent); color:var(--dg-black); border:none; border-radius:3px; padding:7px 18px; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; text-decoration:none; display:inline-block; }
+  /* ── NAV ── */
+  nav {
+    position:sticky; top:0; z-index:1000;
+    background:var(--white); border-bottom:1px solid var(--border);
+    height:60px; display:flex; align-items:center;
+    padding:0 24px; justify-content:space-between;
+  }
+  .nav-logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+  .nav-logo svg { width:100px; height:24px; }
+  .nav-links { display:flex; gap:28px; list-style:none; }
+  .nav-links a { font-size:13px; font-weight:500; color:var(--text); text-decoration:none; letter-spacing:.02em; }
+  .nav-links a:hover { color:var(--blue); }
+  .nav-right { display:flex; align-items:center; gap:16px; }
+  .nav-cta { background:var(--blue); color:white; border:none; padding:9px 18px; font-size:13px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); }
+  .nav-cta:hover { background:var(--blue-lt); }
 
-    /* ── HERO ── */
-    .hero { padding:130px 40px 70px; max-width:960px; margin:0 auto; }
-    .hero-eyebrow { font-size:11px; letter-spacing:3px; color:var(--hme-teal); text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:12px; }
-    .hero-eyebrow::before { content:''; display:block; width:24px; height:1px; background:var(--hme-teal); }
-    .hero-headline { font-family:'Rajdhani',sans-serif; font-size:clamp(40px,7vw,78px); font-weight:700; line-height:0.95; letter-spacing:-1px; margin-bottom:26px; }
-    .hero-headline em { font-style:normal; color:var(--dg-accent); }
-    .hero-sub { font-size:17px; color:rgba(255,255,255,0.52); max-width:560px; line-height:1.7; margin-bottom:32px; }
-    .hero-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:50px; }
-    .pill { border:1px solid rgba(255,255,255,0.14); border-radius:100px; padding:5px 14px; font-size:11px; letter-spacing:1px; color:rgba(255,255,255,0.45); text-transform:uppercase; }
-    .pill.on { border-color:var(--hme-teal); color:var(--hme-teal); }
+  /* ── HERO ── */
+  .hero {
+    position:relative; height:88vh; min-height:500px;
+    background:linear-gradient(160deg,#0a0f1a 0%,#0d1e35 50%,#0a2040 100%);
+    display:flex; align-items:flex-end; overflow:hidden;
+  }
+  .hero-img { position:absolute; inset:0; overflow:hidden; }
+  .hero-img video { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+  .hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.1) 55%,transparent 100%); }
+  .hero-content { position:relative; z-index:2; padding:0 40px 52px; max-width:640px; }
+  .hero-badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:12px; }
+  .hero-title { font-size:clamp(36px,5vw,64px); font-weight:700; line-height:1.0; color:white; margin-bottom:16px; letter-spacing:-.02em; }
+  .hero-sub { font-size:16px; color:rgba(255,255,255,.72); line-height:1.5; margin-bottom:28px; font-weight:400; max-width:480px; }
+  .hero-actions { display:flex; gap:12px; flex-wrap:wrap; }
+  .btn-primary { background:var(--blue); color:white; border:none; padding:14px 28px; font-size:14px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); text-transform:uppercase; transition:background .15s; }
+  .btn-primary:hover { background:#003f7f; }
+  .btn-outline { background:transparent; color:white; border:1.5px solid rgba(255,255,255,.5); padding:14px 28px; font-size:14px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); text-transform:uppercase; transition:border-color .15s,background .15s; }
+  .btn-outline:hover { border-color:white; background:rgba(255,255,255,.08); }
 
-    /* ── DEMO HEADER ── */
-    .demo-header { text-align:center; padding:0 40px 28px; }
-    .section-label { font-size:10px; letter-spacing:3px; color:rgba(255,255,255,0.28); text-transform:uppercase; margin-bottom:12px; }
-    .demo-header h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(20px,3vw,30px); font-weight:500; letter-spacing:1px; color:rgba(255,255,255,0.88); margin-bottom:8px; }
-    .demo-header p { font-size:13px; color:rgba(255,255,255,0.32); }
+  /* ── SUB NAV ── */
+  .sub-nav { background:white; border-bottom:1px solid var(--border); padding:0 40px; display:flex; gap:0; overflow-x:auto; scrollbar-width:none; }
+  .sub-nav::-webkit-scrollbar { display:none; }
+  .sub-nav a { display:inline-block; padding:16px 20px; font-size:13px; font-weight:500; color:var(--mid); text-decoration:none; white-space:nowrap; border-bottom:2px solid transparent; transition:color .15s,border-color .15s; }
+  .sub-nav a:hover { color:var(--blue); }
+  .sub-nav a.active { color:var(--blue); border-bottom-color:var(--blue); }
 
-    /* ══════════════════════════════════════════
-       VISUALIZER
-    ══════════════════════════════════════════ */
-    .viz-root { width:100%; background:#000; }
+  /* ── SECTION ── */
+  section { padding:72px 40px; }
+  .section-label { font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--blue); margin-bottom:12px; }
+  .section-title { font-size:clamp(26px,3.5vw,44px); font-weight:700; line-height:1.1; letter-spacing:-.02em; color:var(--text); margin-bottom:16px; }
+  .section-body { font-size:16px; color:var(--mid); line-height:1.6; max-width:620px; }
 
-    /* ── STAGE ── */
-    .stage { position:relative; width:100%; aspect-ratio:16/9; min-height:400px; max-height:80vh; overflow:hidden; background:#111; }
+  /* ── SPECS BAR ── */
+  .specs-bar { background:var(--blue); padding:36px 40px; display:flex; gap:0; flex-wrap:wrap; }
+  .spec-item { flex:1; min-width:150px; padding:0 24px; border-right:1px solid rgba(255,255,255,.15); text-align:center; }
+  .spec-item:last-child { border-right:none; }
+  .spec-value { font-size:36px; font-weight:700; color:white; letter-spacing:-.02em; line-height:1; }
+  .spec-unit { font-size:18px; font-weight:400; }
+  .spec-label { font-size:12px; color:rgba(255,255,255,.55); margin-top:6px; letter-spacing:.06em; text-transform:uppercase; }
 
-    /* Spin viewer canvas — fills stage */
-    #spin-canvas-wrap { position:absolute; inset:0; z-index:3; cursor:grab; display:flex; align-items:center; justify-content:center; }
-    #spin-canvas-wrap:active { cursor:grabbing; }
-    #spin-canvas-wrap canvas { width:100%; height:100%; object-fit:cover; display:block; }
-    #spin-canvas-wrap.hidden { display:none; }
+  /* ── 360 CTA SECTION ── */
+  .config-section { background:var(--off); padding:80px 40px; display:flex; align-items:center; gap:60px; flex-wrap:wrap; }
+  .config-text { flex:1; min-width:280px; }
+  .config-visual { flex:1; min-width:280px; background:var(--blue); padding:32px; color:white; position:relative; overflow:hidden; }
+  .config-visual::before { content:''; position:absolute; top:-40px; right:-40px; width:180px; height:180px; border:40px solid rgba(255,255,255,.06); border-radius:50%; }
+  .config-visual-title { font-size:22px; font-weight:700; margin-bottom:8px; }
+  .config-visual-sub { font-size:14px; color:rgba(255,255,255,.65); margin-bottom:24px; line-height:1.5; }
+  .config-launch-btn { display:inline-flex; align-items:center; gap:10px; background:white; color:var(--blue); border:none; padding:14px 24px; font-size:14px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; font-family:var(--font); transition:transform .15s,box-shadow .15s; }
+  .config-launch-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(0,0,0,.2); }
+  .config-launch-btn svg { width:16px; height:16px; }
 
-    /* Pano viewer — fills stage */
-    #pano-wrap { position:absolute; inset:0; z-index:3; display:none; }
-    #pano-wrap.active { display:block; }
-    /* Override pannellum to fill */
-    #pano-inner { width:100%; height:100%; }
+  /* ── FULL-PAGE 360 OVERLAY ── */
+  #viz-overlay {
+    position:fixed; inset:0; z-index:9000;
+    background:#000;
+    display:none;
+    flex-direction:column;
+  }
+  #viz-overlay.open { display:flex; }
 
-    /* Spin load bar */
-    #spin-loadbar { position:absolute; bottom:0; left:0; height:2px; background:var(--hme-teal); width:0; z-index:20; transition:width 0.2s; }
+  .config-topbar { height:52px; flex-shrink:0; background:rgba(0,0,0,.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(255,255,255,.1); z-index:2; }
+  .config-topbar-left { display:flex; align-items:center; gap:12px; }
+  .config-topbar-logo svg { width:80px; opacity:.85; }
+  .config-topbar-divider { width:1px; height:18px; background:rgba(255,255,255,.2); }
+  .config-topbar-label { font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.6); }
+  .config-close-btn { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:.5px solid rgba(255,255,255,.2); color:white; padding:7px 14px; font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; font-family:var(--font); transition:background .15s; }
+  .config-close-btn:hover { background:rgba(255,255,255,.18); }
+  .config-close-btn svg { width:12px; height:12px; }
 
-    /* Drag hint */
-    #drag-hint { position:absolute; bottom:70px; left:50%; transform:translateX(-50%); z-index:15; display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.45); pointer-events:none; transition:opacity 0.5s; white-space:nowrap; }
+  /* ── VISUALIZER (inside overlay) ── */
+  .viz-body { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .viz-stage { position:relative; flex:1; min-height:0; background:#111; overflow:hidden; }
+  #spin-wrap { position:absolute; inset:0; z-index:3; cursor:grab; display:flex; align-items:center; justify-content:center; }
+  #spin-wrap:active { cursor:grabbing; }
+  #spin-wrap canvas { width:100%; height:100%; object-fit:cover; display:block; }
+  #spin-wrap.hidden { display:none; }
+  #pano-wrap { position:absolute; inset:0; z-index:3; display:none; }
+  #pano-wrap.active { display:block; }
+  #pano-inner { width:100%; height:100%; }
+  #loadbar { position:absolute; bottom:0; left:0; height:3px; background:var(--teal); width:0; z-index:20; transition:width .15s; }
+  #drag-hint { position:absolute; bottom:80px; left:50%; transform:translateX(-50%); z-index:15; display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.45); pointer-events:none; transition:opacity .5s; white-space:nowrap; }
+  .viz-title { position:absolute; top:20px; left:22px; z-index:10; }
+  .viz-title h3 { font-size:13px; font-weight:600; color:#fff; letter-spacing:.5px; }
+  .viz-title-rule { width:28px; height:2px; background:var(--teal); margin-top:5px; }
+  .int-thumb { position:absolute; top:14px; right:16px; z-index:10; width:88px; height:62px; border-radius:4px; overflow:hidden; cursor:pointer; border:2px solid rgba(255,255,255,.22); transition:border-color .2s; background:#111; }
+  .int-thumb:hover, .int-thumb.active { border-color:var(--teal); }
+  .int-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .int-thumb-icon { position:absolute; bottom:4px; left:50%; transform:translateX(-50%); pointer-events:none; }
+  .trim-pill { position:absolute; bottom:20px; left:20px; z-index:10; background:#fff; color:#111; border:none; padding:8px 14px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; display:flex; align-items:center; gap:6px; letter-spacing:.02em; }
+  .trim-caret { font-size:9px; color:#888; }
+  .msrp-block { position:absolute; bottom:20px; right:20px; z-index:10; text-align:right; }
+  .msrp-val { font-size:clamp(20px,2.8vw,30px); font-weight:700; color:#fff; line-height:1.1; }
+  .msrp-label { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
 
-    /* Title top-left */
-    .stage-title { position:absolute; top:22px; left:26px; z-index:10; }
-    .stage-title h2 { font-size:clamp(12px,1.4vw,15px); font-weight:500; color:#fff; letter-spacing:0.2px; }
-    .stage-title-rule { width:28px; height:2px; background:var(--hme-teal); margin-top:5px; }
+  /* Strip */
+  .viz-strip { background:#fff; padding:14px 22px 16px; border-top:1px solid #e0e0e0; flex-shrink:0; }
+  .viz-disclaimer { font-size:10.5px; color:#999; margin-bottom:10px; }
+  .viz-controls { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .viz-group { display:flex; flex-direction:column; gap:6px; }
+  .viz-label { font-size:11.5px; color:#555; }
+  .viz-label strong { font-weight:600; }
+  .swatches-ext, .swatches-int { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .sw-ext { width:36px; height:36px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform .15s,border-color .15s; overflow:hidden; flex-shrink:0; }
+  .sw-ext svg { display:block; }
+  .sw-ext.active { border-color:#111; transform:scale(1.14); }
+  .sw-int { width:32px; height:32px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform .15s,border-color .15s; overflow:hidden; flex-shrink:0; }
+  .sw-int svg { display:block; }
+  .sw-int.active { border-color:#111; transform:scale(1.1); }
+  .sw-int.na { opacity:.2; cursor:not-allowed; pointer-events:none; }
+  .viz-cta { background:var(--teal); color:#fff; border:none; padding:10px 22px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; white-space:nowrap; letter-spacing:.04em; text-transform:uppercase; transition:background .2s; }
+  .viz-cta:hover { background:#0090b5; }
 
-    /* Interior thumb — top right */
-    .int-thumb { position:absolute; top:16px; right:18px; z-index:10; width:88px; height:62px; border-radius:6px; overflow:hidden; cursor:pointer; border:2px solid rgba(255,255,255,0.22); transition:border-color 0.2s; background:#111; }
-    .int-thumb:hover, .int-thumb.active { border-color:var(--hme-teal); }
-    .int-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .int-thumb-icon { position:absolute; bottom:5px; left:50%; transform:translateX(-50%); pointer-events:none; }
+  /* ── GALLERY ── */
+  .gallery { padding:0 40px 72px; }
+  .gallery-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; height:400px; }
+  .gallery-item { background:#d0d4dc; overflow:hidden; position:relative; }
+  .gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .gallery-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#c8ccd4 0%,#b0b5c0 100%); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.5); font-size:12px; letter-spacing:.1em; }
 
-    /* Trim / MSRP */
-    .trim-btn { position:absolute; bottom:22px; left:22px; z-index:10; background:#fff; color:#111; border:none; border-radius:4px; padding:9px 14px; font-size:12px; font-weight:500; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:7px; }
-    .trim-caret { font-size:9px; color:#777; }
-    .msrp-block { position:absolute; bottom:22px; right:22px; z-index:10; text-align:right; }
-    .msrp-val { font-size:clamp(20px,2.8vw,30px); font-weight:600; color:#fff; line-height:1.1; }
-    .msrp-label { font-size:11px; color:rgba(255,255,255,0.55); margin-top:2px; }
+  /* ── FOOTER ── */
+  footer { background:var(--text); color:white; padding:48px 40px 28px; }
+  .footer-top { display:flex; justify-content:space-between; flex-wrap:wrap; gap:32px; margin-bottom:40px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,.1); }
+  .footer-col h4 { font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:14px; }
+  .footer-col ul { list-style:none; }
+  .footer-col li { margin-bottom:8px; }
+  .footer-col a { font-size:13px; color:rgba(255,255,255,.65); text-decoration:none; }
+  .footer-col a:hover { color:white; }
+  .footer-bottom { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-copy { font-size:12px; color:rgba(255,255,255,.35); }
 
-    /* ── CONTROL STRIP ── */
-    .strip { background:#f2f2f0; padding:13px 22px 15px; border-top:1px solid #e0e0e0; }
-    .strip-disclaimer { font-size:10.5px; color:#999; margin-bottom:10px; }
-    .strip-controls { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .strip-group { display:flex; flex-direction:column; gap:6px; }
-    .strip-label { font-size:11.5px; color:#444; }
-    .strip-label strong { font-weight:500; }
-    .swatches-ext, .swatches-int { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  /* ── BOTTOM BAR ── */
+  .bottom-bar { position:sticky; bottom:0; z-index:100; background:white; border-top:1px solid var(--border); padding:0; display:flex; }
+  .bottom-bar-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 8px; gap:4px; font-size:11px; font-weight:600; letter-spacing:.04em; color:var(--mid); text-decoration:none; border-right:1px solid var(--border); cursor:pointer; transition:background .1s,color .1s; }
+  .bottom-bar-item:last-child { border-right:none; }
+  .bottom-bar-item:hover { background:var(--off); color:var(--blue); }
+  .bottom-bar-item.highlight { background:var(--blue); color:white; }
+  .bottom-bar-item.highlight:hover { background:var(--blue-lt); }
+  .bottom-bar-item svg { width:22px; height:22px; }
 
-    /* Exterior swatches */
-    .swatch-ext { width:36px; height:36px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform 0.15s, border-color 0.15s; overflow:hidden; flex-shrink:0; }
-    .swatch-ext svg { display:block; }
-    .swatch-ext.active { border-color:#111; transform:scale(1.15); }
-
-    /* Interior swatches */
-    .swatch-int { width:32px; height:32px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform 0.15s, border-color 0.15s; overflow:hidden; flex-shrink:0; }
-    .swatch-int svg { display:block; }
-    .swatch-int.active { border-color:#111; transform:scale(1.1); }
-    .swatch-int.unavailable { opacity:0.22; cursor:not-allowed; pointer-events:none; }
-
-    .cta-btn { background:var(--hme-teal); color:#fff; border:none; border-radius:4px; padding:10px 22px; font-size:12px; font-weight:500; font-family:inherit; cursor:pointer; white-space:nowrap; transition:background 0.2s; }
-    .cta-btn:hover { background:#0090b5; }
-
-    .demo-note { text-align:center; font-size:10px; letter-spacing:1px; color:rgba(255,255,255,0.18); padding:12px 0 0; text-transform:uppercase; }
-
-    /* ── WHAT WE BUILD ── */
-    .what-section { max-width:960px; margin:0 auto; padding:100px 40px; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
-    @media(max-width:700px){ .what-section{ grid-template-columns:1fr; gap:50px; } }
-    .what-left h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(28px,4vw,46px); font-weight:600; line-height:1.05; margin-bottom:18px; }
-    .what-left h2 span { color:var(--dg-accent); }
-    .what-left p { font-size:15px; color:rgba(255,255,255,0.48); line-height:1.75; }
-    .what-item { border-top:1px solid rgba(255,255,255,0.08); padding:20px 0; }
-    .what-item:last-child { border-bottom:1px solid rgba(255,255,255,0.08); }
-    .what-item-num { font-family:'Rajdhani',sans-serif; font-size:11px; letter-spacing:2px; color:var(--hme-teal); margin-bottom:5px; }
-    .what-item-title { font-size:14px; font-weight:500; margin-bottom:4px; }
-    .what-item-desc { font-size:12px; color:rgba(255,255,255,0.38); line-height:1.6; }
-
-    /* ── STACK ── */
-    .stack-section { border-top:1px solid rgba(255,255,255,0.06); border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); padding:70px 40px; }
-    .stack-inner { max-width:960px; margin:0 auto; }
-    .stack-inner h3 { font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:500; letter-spacing:1px; margin-bottom:28px; color:rgba(255,255,255,0.65); }
-    .stack-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07); border-radius:8px; overflow:hidden; }
-    .stack-item { background:var(--dg-black); padding:20px 22px; }
-    .stack-item-role { font-size:9px; letter-spacing:2px; color:rgba(255,255,255,0.22); text-transform:uppercase; margin-bottom:5px; }
-    .stack-item-name { font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:600; letter-spacing:0.5px; }
-    .stack-item-desc { font-size:11px; color:rgba(255,255,255,0.28); margin-top:3px; line-height:1.5; }
-
-    /* ── TIMELINE ── */
-    .timeline-section { max-width:960px; margin:0 auto; padding:100px 40px; }
-    .timeline-section h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(26px,3.5vw,40px); font-weight:600; margin-bottom:44px; }
-    .tl-item { display:grid; grid-template-columns:120px 1fr; gap:22px; padding:22px 0; border-top:1px solid rgba(255,255,255,0.07); }
-    .tl-item:last-child { border-bottom:1px solid rgba(255,255,255,0.07); }
-    .tl-date { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:500; color:var(--hme-teal); letter-spacing:1px; padding-top:2px; }
-    .tl-title { font-size:13px; font-weight:500; margin-bottom:4px; }
-    .tl-desc { font-size:11px; color:rgba(255,255,255,0.33); line-height:1.6; }
-    .tl-badge { display:inline-block; background:rgba(232,255,0,0.1); border:1px solid rgba(232,255,0,0.3); color:var(--dg-accent); font-size:9px; letter-spacing:1.5px; padding:2px 8px; border-radius:100px; text-transform:uppercase; margin-bottom:5px; }
-
-    /* ── FOOTER CTA ── */
-    .footer-cta { background:var(--hme-blue); padding:80px 40px; text-align:center; }
-    .footer-cta h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(26px,4vw,46px); font-weight:600; line-height:1.1; margin-bottom:14px; }
-    .footer-cta p { font-size:15px; color:rgba(255,255,255,0.58); margin-bottom:32px; max-width:480px; margin-left:auto; margin-right:auto; }
-    .footer-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-    .btn-y { background:var(--dg-accent); color:var(--dg-black); border:none; border-radius:4px; padding:13px 28px; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
-    .btn-g { background:transparent; color:rgba(255,255,255,0.65); border:1px solid rgba(255,255,255,0.22); border-radius:4px; padding:13px 28px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
-
-    /* ── FOOTER ── */
-    .footer { padding:26px 40px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.06); }
-    .footer-logo { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; letter-spacing:3px; color:rgba(255,255,255,0.28); }
-    .footer-copy { font-size:11px; color:rgba(255,255,255,0.18); }
-
-    @media(max-width:600px){
-      .nav { padding:0 20px; } .nav-tag { display:none; }
-      .hero { padding:100px 20px 50px; }
-      .strip-controls { gap:10px; }
-      .cta-btn { width:100%; text-align:center; }
-      .what-section, .timeline-section, .stack-section { padding-left:20px; padding-right:20px; }
-      .footer { padding:20px; flex-direction:column; gap:8px; text-align:center; }
-    }
-  </style>
+  @media(max-width:680px){
+    nav { padding:0 16px; }
+    .nav-links { display:none; }
+    section { padding:48px 20px; }
+    .specs-bar { padding:28px 20px; }
+    .config-section { padding:48px 20px; flex-direction:column; }
+    .gallery { padding:0 20px 48px; }
+    .gallery-grid { grid-template-columns:1fr; height:auto; }
+    .gallery-item { height:200px; }
+    .gallery-item:not(:first-child) { display:none; }
+    footer { padding:36px 20px 20px; }
+    .hero-content { padding:0 20px 40px; }
+    .sub-nav { padding:0 16px; }
+  }
+</style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="nav">
-  <div class="nav-logo">Digital<span>·</span>Giant</div>
-  <div class="nav-tag">Prototype · TUCSON 360°</div>
-  <a href="mailto:dallas@digital-giant.com" class="nav-cta">Get in touch</a>
+<nav>
+  <a class="nav-logo" href="#">
+    <svg viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="4" y="36" font-family="'Helvetica Neue',Arial,sans-serif" font-size="32" font-weight="900" fill="#002C5F" letter-spacing="-1">HYUNDAI</text>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Neue Fahrzeuge</a></li>
+    <li><a href="#" style="color:#002C5F;font-weight:700;">TUCSON</a></li>
+    <li><a href="#">Elektro</a></li>
+    <li><a href="#">Angebote</a></li>
+    <li><a href="#">Business</a></li>
+    <li><a href="#">Service</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-cta" onclick="openViz()">360° Erlebnis</button>
+  </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-eyebrow">Hyundai Motor Europe · IONIQ 3 brief response</div>
-  <h1 class="hero-headline">We built it<br><em>before</em> the<br>brief closed.</h1>
-  <p class="hero-sub">A fully working 360° vehicle visualizer — live, interactive, with real Tucson assets. This is what we'd deliver for the IONIQ 3 PIP, on a modular platform that scales to any model or market.</p>
-  <div class="hero-pills">
-    <div class="pill on">Live prototype</div>
-    <div class="pill on">Real assets</div>
-    <div class="pill on">AEM-embeddable</div>
-    <div class="pill">360° spin viewer</div>
-    <div class="pill">Equirectangular pano</div>
-    <div class="pill">Jun 1 delivery</div>
+<section class="hero" style="padding:0">
+  <div class="hero-img">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto">
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Neu · 2026</div>
+    <h1 class="hero-title">Hyundai TUCSON.<br>Jetzt erleben.</h1>
+    <p class="hero-sub">Modernes Design, neu gestalteter Innenraum und innovative Technologien — der perfekte Begleiter für all deine Abenteuer.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openViz()">360° Erlebnis starten</button>
+      <button class="btn-outline">Angebot anfragen</button>
+    </div>
   </div>
 </section>
 
-<!-- DEMO HEADER -->
-<div class="demo-header">
-  <div class="section-label">Live interactive prototype</div>
-  <h2>TUCSON 360° Experience — working now</h2>
-  <p>Select a colour. Drag to spin. Tap the interior thumbnail. This is production-grade code.</p>
+<!-- SUB NAV -->
+<div class="sub-nav">
+  <a href="#" class="active">Highlights</a>
+  <a href="#">Design</a>
+  <a href="#">Ausstattung</a>
+  <a href="#">Antriebe</a>
+  <a href="#">N Line</a>
+  <a href="#">Varianten &amp; Preise</a>
+  <a href="#">Zubehör</a>
 </div>
 
-<!-- VISUALIZER -->
-<div class="viz-root">
-  <div class="stage" id="viz-stage">
-
-    <!-- 360 spin viewer -->
-    <div id="spin-canvas-wrap">
-      <canvas id="spin-canvas"></canvas>
-    </div>
-    <div id="spin-loadbar"></div>
-    <div id="drag-hint">
-      <svg width="32" height="12" viewBox="0 0 32 12" fill="none">
-        <path d="M2 6Q2 2 16 2Q28 2 30 5" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.5"/>
-        <polyline points="25,2 30,5 27,9" stroke="white" stroke-width="1.2" stroke-linejoin="round" fill="none" opacity="0.5"/>
-      </svg>
-      Drag to rotate
-    </div>
-
-    <!-- Pano viewer -->
-    <div id="pano-wrap">
-      <div id="pano-inner"></div>
-    </div>
-
-    <!-- Title -->
-    <div class="stage-title">
-      <h2>TUCSON 360° Experience</h2>
-      <div class="stage-title-rule"></div>
-    </div>
-
-    <!-- Interior thumbnail -->
-    <div class="int-thumb" id="int-thumb" onclick="toggleView()">
-      <img id="int-thumb-img" src="" alt="Interior">
-      <div class="int-thumb-icon">
-        <svg viewBox="0 0 36 14" width="26" height="10" fill="none">
-          <path d="M2 7Q2 2 18 2Q30 2 34 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <polyline points="28,3 34,6 30,10" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
-        </svg>
-      </div>
-    </div>
-
-    <!-- Trim / MSRP -->
-    <button class="trim-btn">Limited FWD <span class="trim-caret">▾</span></button>
-    <div class="msrp-block">
-      <div class="msrp-val" id="msrp-val">$39,750</div>
-      <div class="msrp-label">Starting MSRP</div>
-    </div>
+<!-- SPECS BAR -->
+<div class="specs-bar">
+  <div class="spec-item">
+    <div class="spec-value">190<span class="spec-unit">PS</span></div>
+    <div class="spec-label">Max. Leistung</div>
   </div>
+  <div class="spec-item">
+    <div class="spec-value">62<span class="spec-unit">km</span></div>
+    <div class="spec-label">Elektr. Reichweite (WLTP)</div>
+  </div>
+  <div class="spec-item">
+    <div class="spec-value">8.9<span class="spec-unit">s</span></div>
+    <div class="spec-label">0–100 km/h</div>
+  </div>
+  <div class="spec-item">
+    <div class="spec-value">1.660<span class="spec-unit">L</span></div>
+    <div class="spec-label">Max. Kofferraumvolumen</div>
+  </div>
+  <div class="spec-item">
+    <div class="spec-value">5<span class="spec-unit">J.</span></div>
+    <div class="spec-label">Fahrzeuggarantie</div>
+  </div>
+</div>
 
-  <!-- CONTROL STRIP -->
-  <div class="strip">
-    <div class="strip-disclaimer">Vehicle shown for illustrative purposes only. Actual model may vary.</div>
-    <div class="strip-controls">
-      <div class="strip-group">
-        <div class="swatches-ext" id="swatches-ext"></div>
-        <div class="strip-label">Exterior: <strong id="ext-name">Phantom Black</strong></div>
+<!-- INTRO -->
+<section>
+  <div class="section-label">Wie für dich gemacht</div>
+  <h2 class="section-title">Was auch immer das Leben<br>für dich bereithält.</h2>
+  <p class="section-body">Mit seinem modernen Design, dem neu gestalteten Innenraum und einer Vielzahl innovativer Technologien ist der Hyundai TUCSON der perfekte Begleiter für all deine Abenteuer.</p>
+</section>
+
+<!-- GALLERY -->
+<div class="gallery">
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2a40 0%,#0d1e35 100%)">
+        <span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">EXTERIOR</span>
       </div>
-      <div class="strip-group">
-        <div class="swatches-int" id="swatches-int"></div>
-        <div class="strip-label">Interior: <strong id="int-name">Black</strong></div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background:linear-gradient(135deg,#2a2520 0%,#1a1510 100%)">
+        <span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">INTERIOR</span>
       </div>
-      <button class="cta-btn">Build &amp; Price</button>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2030 0%,#0d1525 100%)">
+        <span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">DETAIL</span>
+      </div>
     </div>
   </div>
 </div>
-<div class="demo-note">Prototype uses real Digital Giant Tucson assets · IONIQ 3 assets slot in via same pipeline</div>
 
-<!-- WHAT WE BUILD -->
-<section class="what-section">
-  <div class="what-left">
-    <div class="section-label">Scope of delivery</div>
-    <h2>Everything in the brief. <span>Plus the platform.</span></h2>
-    <p>The visualizer above isn't a one-off. It's the first instance of a modular platform — add a new model, market, or campaign without rebuilding anything.</p>
+<!-- 360 CTA SECTION -->
+<div class="config-section" id="viz-cta-section">
+  <div class="config-text">
+    <div class="section-label">360° Erlebnis</div>
+    <h2 class="section-title">Entdecke den TUCSON<br>von allen Seiten.</h2>
+    <p class="section-body" style="margin-bottom:28px">Drehe den TUCSON um 360°, wechsle die Außenfarbe und entdecke jeden Innenraum — interaktiv und in voller Auflösung.</p>
+    <button class="btn-primary" onclick="openViz()">360° Erlebnis starten</button>
   </div>
-  <div>
-    <div class="what-item"><div class="what-item-num">01</div><div class="what-item-title">360° exterior in all colours</div><div class="what-item-desc">36 frames per colour, drag-to-spin. Preloaded for instant response.</div></div>
-    <div class="what-item"><div class="what-item-num">02</div><div class="what-item-title">Equirectangular interior panorama</div><div class="what-item-desc">Full WebGL pano per interior colour. One tap from exterior view.</div></div>
-    <div class="what-item"><div class="what-item-num">03</div><div class="what-item-title">Colour-reactive atmosphere</div><div class="what-item-desc">Stage tint shifts per exterior colour — the Renault R5 effect, built in.</div></div>
-    <div class="what-item"><div class="what-item-num">04</div><div class="what-item-title">AEM HTML snippet — drop-in</div><div class="what-item-desc">One script tag, one data attribute. Slots into any PIP highlight section.</div></div>
-    <div class="what-item"><div class="what-item-num">05</div><div class="what-item-title">Themeable CSS</div><div class="what-item-desc">Every colour, font, and size is a CSS variable. HME reskins without touching logic.</div></div>
-    <div class="what-item"><div class="what-item-num">06</div><div class="what-item-title">Modular data layer</div><div class="what-item-desc">New model = new config file. IONIQ 3, Nexo, Santa Fe — same platform.</div></div>
+  <div class="config-visual">
+    <div class="config-visual-title">TUCSON 360° Erlebnis</div>
+    <div class="config-visual-sub">9 Außenfarben. 3 Innenräume. Echte Assets — interaktiv und in voller Auflösung.</div>
+    <button class="config-launch-btn" onclick="openViz()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Erlebnis starten
+    </button>
   </div>
-</section>
+</div>
 
-<!-- STACK -->
-<section class="stack-section">
-  <div class="stack-inner">
-    <div class="section-label">Technology</div>
-    <h3>Built on a stack that scales</h3>
-    <div class="stack-grid">
-      <div class="stack-item"><div class="stack-item-role">Frontend</div><div class="stack-item-name">Vanilla JS</div><div class="stack-item-desc">Zero framework. Embeds anywhere.</div></div>
-      <div class="stack-item"><div class="stack-item-role">360° viewer</div><div class="stack-item-name">Canvas API</div><div class="stack-item-desc">36-frame preloaded spin, drag/swipe.</div></div>
-      <div class="stack-item"><div class="stack-item-role">Pano viewer</div><div class="stack-item-name">Pannellum</div><div class="stack-item-desc">WebGL equirectangular. Open source.</div></div>
-      <div class="stack-item"><div class="stack-item-role">Database</div><div class="stack-item-name">Supabase</div><div class="stack-item-desc">Postgres. Content team edits directly.</div></div>
-      <div class="stack-item"><div class="stack-item-role">Hosting</div><div class="stack-item-name">Netlify</div><div class="stack-item-desc">Auto-deploy on push. Global CDN.</div></div>
-      <div class="stack-item"><div class="stack-item-role">Version control</div><div class="stack-item-name">GitHub</div><div class="stack-item-desc">dev branch → staging → main → live.</div></div>
+<!-- FEATURES -->
+<section style="background:var(--off)">
+  <div class="section-label">Ausstattung</div>
+  <h2 class="section-title">Konnektivität und Komfort<br>auf höchstem Niveau.</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;margin-top:40px">
+    <div>
+      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Panorama-Display</h3>
+      <p style="font-size:14px;color:var(--mid);line-height:1.5">Elegant gewölbtes 12,3-Zoll-Doppeldisplay für Kombiinstrument und Infotainment.</p>
     </div>
-  </div>
-</section>
-
-<!-- TIMELINE -->
-<section class="timeline-section">
-  <div class="section-label">Delivery plan</div>
-  <h2>Go-live Jun 1, 2026</h2>
-  <div>
-    <div class="tl-item"><div class="tl-date">31 Mar</div><div><div class="tl-badge">Done</div><div class="tl-title">Prototype & proposal</div><div class="tl-desc">Working visualizer, architecture, costing — delivered ahead of deadline.</div></div></div>
-    <div class="tl-item"><div class="tl-date">Wk Apr 1</div><div><div class="tl-title">Kickoff & scope lock</div><div class="tl-desc">Confirm colour list, asset specs, AEM integration requirements.</div></div></div>
-    <div class="tl-item"><div class="tl-date">14 Apr</div><div><div class="tl-title">UX/UI approved</div><div class="tl-desc">IONIQ 3 skin, intro animation, colour-reactive background — signed off.</div></div></div>
-    <div class="tl-item"><div class="tl-date">30 Apr</div><div><div class="tl-title">All assets delivered</div><div class="tl-desc">15 colour sequences + interior panoramas + studio environment.</div></div></div>
-    <div class="tl-item"><div class="tl-date">14 May</div><div><div class="tl-title">Build complete</div><div class="tl-desc">All features integrated, responsive, AEM embed packaged.</div></div></div>
-    <div class="tl-item"><div class="tl-date">28 May</div><div><div class="tl-title">QA, staging & UAT</div><div class="tl-desc">Cross-browser, cross-device. UAT with HME team.</div></div></div>
-    <div class="tl-item"><div class="tl-date">1 Jun</div><div><div class="tl-badge">Go-live</div><div class="tl-title">Production delivery</div><div class="tl-desc">Live on IONIQ 3 PIP. Hypercare window open.</div></div></div>
-  </div>
-</section>
-
-<!-- FOOTER CTA -->
-<section class="footer-cta">
-  <h2>Let's make this happen.</h2>
-  <p>We're ready to kick off. The platform is built — we just need the green light and your asset specs.</p>
-  <div class="footer-btns">
-    <button class="btn-y">Request full proposal</button>
-    <button class="btn-g">Talk to Dallas Carroll</button>
+    <div>
+      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Digitaler Fahrzeugschlüssel</h3>
+      <p style="font-size:14px;color:var(--mid);line-height:1.5">Fahrzeug per Smartphone verriegeln, entriegeln und starten — ohne Telefon aus der Tasche.</p>
+    </div>
+    <div>
+      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Autobahnassistent 1.5</h3>
+      <p style="font-size:14px;color:var(--mid);line-height:1.5">Hält automatisch Geschwindigkeit, Spur und Sicherheitsabstand zum vorausfahrenden Fahrzeug.</p>
+    </div>
+    <div>
+      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">5 Jahre Garantie</h3>
+      <p style="font-size:14px;color:var(--mid);line-height:1.5">Umfangreiches Garantiepaket ohne Kilometerlimit für sorgenfreies Fahren.</p>
+    </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-logo">DIGITAL GIANT</div>
-  <div class="footer-copy">849 S Broadway, Los Angeles CA · dallas@digital-giant.com</div>
+<footer>
+  <div class="footer-top">
+    <div class="footer-col"><h4>Modelle</h4><ul><li><a href="#">TUCSON</a></li><li><a href="#">Santa Fe</a></li><li><a href="#">IONIQ 5</a></li><li><a href="#">IONIQ 6</a></li><li><a href="#">IONIQ 9</a></li></ul></div>
+    <div class="footer-col"><h4>Elektro</h4><ul><li><a href="#">Warum Elektro?</a></li><li><a href="#">Laden</a></li><li><a href="#">Reichweite</a></li><li><a href="#">Förderungen</a></li></ul></div>
+    <div class="footer-col"><h4>Service</h4><ul><li><a href="#">Händlersuche</a></li><li><a href="#">Probefahrt</a></li><li><a href="#">Konfigurator</a></li><li><a href="#">Pannenhilfe</a></li></ul></div>
+    <div class="footer-col"><h4>Unternehmen</h4><ul><li><a href="#">Über Hyundai</a></li><li><a href="#">Nachhaltigkeit</a></li><li><a href="#">Neuigkeiten</a></li><li><a href="#">Karriere</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 Hyundai Motor Deutschland GmbH. Alle Rechte vorbehalten.</span>
+    <span class="footer-copy">Datenschutz · Cookie-Einstellungen · Impressum</span>
+  </div>
 </footer>
 
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <a class="bottom-bar-item" href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Probefahrt
+  </a>
+  <a class="bottom-bar-item" href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Broschüre
+  </a>
+  <a class="bottom-bar-item highlight" href="#" onclick="event.preventDefault();openViz()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    360° Erlebnis
+  </a>
+  <a class="bottom-bar-item" href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    Händlersuche
+  </a>
+</div>
+
+<!-- FULL-PAGE 360 OVERLAY -->
+<div id="viz-overlay">
+  <div class="config-topbar">
+    <div class="config-topbar-left">
+      <div class="config-topbar-logo">
+        <svg viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="4" y="36" font-family="'Helvetica Neue',Arial,sans-serif" font-size="32" font-weight="900" fill="white" letter-spacing="-1">HYUNDAI</text>
+        </svg>
+      </div>
+      <div class="config-topbar-divider"></div>
+      <span class="config-topbar-label">TUCSON · 360° Erlebnis</span>
+    </div>
+    <button class="config-close-btn" onclick="closeViz()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Schließen
+    </button>
+  </div>
+
+  <div class="viz-body">
+    <div class="viz-stage">
+      <div id="spin-wrap"><canvas id="spin-canvas"></canvas></div>
+      <div id="pano-wrap"><div id="pano-inner"></div></div>
+      <div id="loadbar"></div>
+      <div id="drag-hint">
+        <svg width="32" height="12" viewBox="0 0 32 12" fill="none">
+          <path d="M2 6Q2 2 16 2Q28 2 30 5" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.5"/>
+          <polyline points="25,2 30,5 27,9" stroke="white" stroke-width="1.2" stroke-linejoin="round" fill="none" opacity="0.5"/>
+        </svg>
+        Zum Drehen ziehen
+      </div>
+      <div class="viz-title"><h3>TUCSON 360° Erlebnis</h3><div class="viz-title-rule"></div></div>
+      <div class="int-thumb" id="int-thumb" onclick="toggleView()">
+        <img id="int-thumb-img" src="" alt="Innenraum">
+        <div class="int-thumb-icon">
+          <svg viewBox="0 0 36 14" width="26" height="10" fill="none">
+            <path d="M2 7Q2 2 18 2Q30 2 34 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="28,3 34,6 30,10" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      <button class="trim-pill">Limited FWD <span class="trim-caret">▾</span></button>
+      <div class="msrp-block">
+        <div class="msrp-val" id="msrp-val">ab 39.750 €</div>
+        <div class="msrp-label">Unverbindliche Preisempfehlung</div>
+      </div>
+    </div>
+
+    <div class="viz-strip">
+      <div class="viz-disclaimer">Fahrzeugabbildung zeigt ggf. aufpreispflichtige Zusatzausstattung. Tatsächliches Modell kann abweichen.</div>
+      <div class="viz-controls">
+        <div class="viz-group">
+          <div class="swatches-ext" id="swatches-ext"></div>
+          <div class="viz-label">Außenfarbe: <strong id="ext-name">Phantom Black</strong></div>
+        </div>
+        <div class="viz-group">
+          <div class="swatches-int" id="swatches-int"></div>
+          <div class="viz-label">Innenraum: <strong id="int-name">Schwarz</strong></div>
+        </div>
+        <button class="viz-cta">Konfigurieren</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ════════════════════════════════════════════════════════════
-//  ASSET CONFIG — exact filenames from manifest
-// ════════════════════════════════════════════════════════════
-const ASSET_BASE = './assets';
-const FRAME_COUNT = 36;
+// ── ASSET CONFIG ──────────────────────────────────────────
+const BASE = './assets';
+const FRAMES = 36;
 
-function spinFrames(extName) {
-  return Array.from({ length: FRAME_COUNT }, (_, i) => {
-    const n = String(i + 1).padStart(4, '0');
-    return `${ASSET_BASE}/exterior/2026_Tucson_LTD_FWD_${extName}_Black_360_Landscape_LowerGrand_${n}.jpeg`;
+function spinFrames(fn) {
+  return Array.from({length:FRAMES},(_,i)=>{
+    const n=String(i+1).padStart(4,'0');
+    return `${BASE}/exterior/2026_Tucson_LTD_FWD_${fn}_Black_360_Landscape_LowerGrand_${n}.jpeg`;
   });
 }
-function panoUrl(extName, intFileName) {
-  return `${ASSET_BASE}/interior/2026_Tucson_LTD_FWD_${extName}_${intFileName}_Pano_LowerGrand.jpg`;
-}
+function panoUrl(extFn,intFn){ return `${BASE}/interior/2026_Tucson_LTD_FWD_${extFn}_${intFn}_Pano_LowerGrand.jpg`; }
 
-const INT_COLOURS = [
-  { slug:'black',            name:'Black',            fileName:'Black',         hex:'#111', hexB:null,     availableFor:'all' },
-  { slug:'gray',             name:'Gray',             fileName:'Gray',          hex:'#686868', hexB:null,  availableFor:'all' },
-  { slug:'green-gray-3tone', name:'Green Gray 3-Tone',fileName:'GreenGray3Tone',hex:'#4a5c4a', hexB:'#8a9e7a',
-    availableFor:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] },
+const INT = [
+  {slug:'black',           name:'Schwarz',         fn:'Black',         hex:'#111',    hexB:null,    for:'all'},
+  {slug:'gray',            name:'Grau',             fn:'Gray',          hex:'#686868', hexB:null,    for:'all'},
+  {slug:'green-gray-3tone',name:'Grün-Grau 3-Tone', fn:'GreenGray3Tone',hex:'#4a5c4a', hexB:'#8a9e7a',
+    for:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver']},
 ];
 
-const EXT_COLOURS = [
-  { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',        hex:{p:'#1c3a5c',s:'#0e2038'}, atmo:'rgba(15,35,70,0.22)' },
-  { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte',  hex:{p:'#5a5e62',s:'#383c40'}, atmo:'rgba(40,42,46,0.20)' },
-  { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl',  hex:{p:'#6e7276',s:'#4a4e52'}, atmo:'rgba(50,54,58,0.18)' },
-  { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic', hex:{p:'#7a7e82',s:'#565a5e'}, atmo:'rgba(55,58,62,0.18)' },
-  { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',        hex:{p:'#1c1c22',s:'#0a0a10'}, atmo:'rgba(0,0,0,0.28)' },
-  { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl',  hex:{p:'#2e4a36',s:'#1a2e20'}, atmo:'rgba(20,45,28,0.22)' },
-  { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl',  hex:{p:'#e8e6e0',s:'#c8c6c0'}, atmo:'rgba(200,198,192,0.08)' },
-  { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',    hex:{p:'#a8a8b0',s:'#888890'}, atmo:'rgba(140,140,160,0.12)' },
-  { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',    hex:{p:'#7a1418',s:'#4a0a0c'}, atmo:'rgba(70,5,5,0.22)' },
+const EXT = [
+  {slug:'atlantis-blue',        name:'Atlantis Blue',        fn:'AtlantisBlue',       hex:{p:'#1c3a5c',s:'#0e2038'}},
+  {slug:'ecotronic-gray-matte', name:'Ecotronic Gray Matte', fn:'EcotronicGrayMatte', hex:{p:'#5a5e62',s:'#383c40'}},
+  {slug:'ecotronic-gray-pearl', name:'Ecotronic Gray Pearl', fn:'EcotronicGrayPearl', hex:{p:'#6e7276',s:'#4a4e52'}},
+  {slug:'hampton-gray-metallic',name:'Hampton Gray Metallic',fn:'HamptonGrayMetallic',hex:{p:'#7a7e82',s:'#565a5e'}},
+  {slug:'phantom-black',        name:'Phantom Black',        fn:'PhantomBlack',       hex:{p:'#1c1c22',s:'#0a0a10'}},
+  {slug:'rockwood-green-pearl', name:'Rockwood Green Pearl', fn:'RockwoodGreenPearl', hex:{p:'#2e4a36',s:'#1a2e20'}},
+  {slug:'serenity-white-pearl', name:'Serenity White Pearl', fn:'SerenityWhitePearl', hex:{p:'#e8e6e0',s:'#c8c6c0'}},
+  {slug:'shimmering-silver',    name:'Shimmering Silver',    fn:'ShimmeringSilver',   hex:{p:'#a8a8b0',s:'#888890'}},
+  {slug:'ultimate-red-pearl',   name:'Ultimate Red Pearl',   fn:'UltimateRedPearl',   hex:{p:'#7a1418',s:'#4a0a0c'}},
 ];
+EXT.forEach(c=>{ c.frames=spinFrames(c.fn); });
 
-// Attach frames
-EXT_COLOURS.forEach(c => { c.frames = spinFrames(c.fn); });
+function availInt(extSlug){ return INT.filter(i=>i.for==='all'||i.for.includes(extSlug)); }
 
-function getAvailableInteriors(extSlug) {
-  return INT_COLOURS.filter(i => i.availableFor === 'all' || i.availableFor.includes(extSlug));
-}
+// ── STATE ─────────────────────────────────────────────────
+const S = {extIdx:4, intIdx:0, view:'spin', frame:0, cache:{}, dragging:false, dragX:0, dragAccum:0, sens:5, pv:null};
 
-// ════════════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════════════
-const state = {
-  extIdx:   4,   // Phantom Black default
-  intIdx:   0,   // Black default
-  view:    'spin',  // 'spin' | 'pano'
-  // spin
-  frame:    0,
-  imgCache: {},
-  dragging: false,
-  dragX:    0,
-  dragAccum:0,
-  sensitivity: 5,
-  // pano
-  pannellumViewer: null,
-};
+// ── SPIN ─────────────────────────────────────────────────
+const canvas = document.getElementById('spin-canvas');
+const ctx    = canvas.getContext('2d');
+const lbar   = document.getElementById('loadbar');
+const hint   = document.getElementById('drag-hint');
+let hintGone = false;
 
-// ════════════════════════════════════════════════════════════
-//  SPIN VIEWER
-// ════════════════════════════════════════════════════════════
-const canvas  = document.getElementById('spin-canvas');
-const ctx     = canvas.getContext('2d');
-const loadBar = document.getElementById('spin-loadbar');
-const hint    = document.getElementById('drag-hint');
-
-function preloadFrames(frames, onProgress, onDone) {
-  state.imgCache = {};
-  let loaded = 0;
-  const total = frames.length;
-  frames.forEach((url, i) => {
-    const img = new Image();
-    img.onload = () => {
-      state.imgCache[i] = img;
-      loaded++;
-      if (loaded === 1) {
-        canvas.width  = img.naturalWidth  || 1920;
-        canvas.height = img.naturalHeight || 1080;
-        drawFrame(0);
-      }
-      onProgress(loaded / total);
-      if (loaded === total) onDone();
-    };
-    img.onerror = () => { loaded++; onProgress(loaded/total); if(loaded===total) onDone(); };
-    img.src = url;
+function preload(frames, onProg, onDone){
+  S.cache={}; let done=0;
+  frames.forEach((url,i)=>{
+    const img=new Image();
+    img.onload=()=>{ S.cache[i]=img; done++; if(done===1){canvas.width=img.naturalWidth||1920;canvas.height=img.naturalHeight||1080;draw(0);} onProg(done/frames.length); if(done===frames.length)onDone(); };
+    img.onerror=()=>{ done++; onProg(done/frames.length); if(done===frames.length)onDone(); };
+    img.src=url;
   });
 }
+function draw(i){ const img=S.cache[i]; if(!img)return; ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0); }
+function loadExt(idx){ lbar.style.width='0%'; lbar.style.opacity='1'; S.frame=0; preload(EXT[idx].frames, p=>{ lbar.style.width=(p*100)+'%'; }, ()=>{ lbar.style.opacity='0'; }); }
 
-function drawFrame(idx) {
-  const img = state.imgCache[idx];
-  if (!img) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0);
+const sw = document.getElementById('spin-wrap');
+sw.addEventListener('mousedown',  e=>startDrag(e.clientX));
+sw.addEventListener('touchstart', e=>startDrag(e.touches[0].clientX),{passive:true});
+window.addEventListener('mousemove',  e=>{ if(S.view==='spin')moveDrag(e.clientX); });
+window.addEventListener('touchmove',  e=>{ if(S.view==='spin')moveDrag(e.touches[0].clientX); },{passive:true});
+window.addEventListener('mouseup',  ()=>{ S.dragging=false; });
+window.addEventListener('touchend', ()=>{ S.dragging=false; });
+
+function hideHint(){ if(!hintGone){hintGone=true;hint.style.opacity='0';setTimeout(()=>hint.remove(),600);} }
+function startDrag(x){ if(S.view!=='spin')return; S.dragging=true;S.dragX=x;S.dragAccum=0;hideHint(); }
+function moveDrag(x){
+  if(!S.dragging||S.view!=='spin')return;
+  const d=x-S.dragX; S.dragX=x; S.dragAccum+=d;
+  const steps=Math.trunc(S.dragAccum/S.sens);
+  if(steps!==0){ S.dragAccum-=steps*S.sens; const t=EXT[S.extIdx].frames.length; S.frame=((S.frame-steps)+t)%t; draw(S.frame); }
 }
 
-function loadExtColour(extIdx) {
-  const c = EXT_COLOURS[extIdx];
-  loadBar.style.width   = '0%';
-  loadBar.style.opacity = '1';
-  state.frame = 0;
-
-  preloadFrames(
-    c.frames,
-    (pct) => { loadBar.style.width = (pct * 100) + '%'; },
-    ()    => { loadBar.style.opacity = '0'; }
-  );
-
-  // Atmosphere
-  document.getElementById('viz-stage').style.background = '#111';
+// ── PANO ─────────────────────────────────────────────────
+function loadPano(url){
+  const el=document.getElementById('pano-inner');
+  if(S.pv){S.pv.destroy();S.pv=null;} el.innerHTML='';
+  S.pv=pannellum.viewer(el,{type:'equirectangular',panorama:url,autoLoad:true,showControls:false,mouseZoom:true,draggable:true,friction:.15,hfov:110,minHfov:50,maxHfov:130,compass:false});
 }
 
-// Drag handlers
-const spinWrap = document.getElementById('spin-canvas-wrap');
-spinWrap.addEventListener('mousedown',  e => startDrag(e.clientX));
-spinWrap.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), {passive:true});
-window.addEventListener('mousemove',  e => { if(state.view==='spin') moveDrag(e.clientX); });
-window.addEventListener('touchmove',  e => { if(state.view==='spin') moveDrag(e.touches[0].clientX); }, {passive:true});
-window.addEventListener('mouseup',  endDrag);
-window.addEventListener('touchend', endDrag);
-
-// Hide hint on first drag
-let hintHidden = false;
-function hideHint() { if(!hintHidden){ hintHidden=true; hint.style.opacity='0'; setTimeout(()=>hint.remove(),600); } }
-
-function startDrag(x) {
-  if(state.view!=='spin') return;
-  state.dragging=true; state.dragX=x; state.dragAccum=0;
-  hideHint();
-}
-function moveDrag(x) {
-  if(!state.dragging || state.view!=='spin') return;
-  const delta = x - state.dragX;
-  state.dragX = x;
-  state.dragAccum += delta;
-  const steps = Math.trunc(state.dragAccum / state.sensitivity);
-  if(steps !== 0) {
-    state.dragAccum -= steps * state.sensitivity;
-    const total = EXT_COLOURS[state.extIdx].frames.length;
-    state.frame = ((state.frame - steps) + total) % total;
-    drawFrame(state.frame);
-  }
-}
-function endDrag() { state.dragging = false; }
-
-// ════════════════════════════════════════════════════════════
-//  PANO VIEWER
-// ════════════════════════════════════════════════════════════
-function loadPano(url) {
-  const panoInner = document.getElementById('pano-inner');
-  if(state.pannellumViewer) { state.pannellumViewer.destroy(); state.pannellumViewer=null; }
-  panoInner.innerHTML = '';
-  state.pannellumViewer = pannellum.viewer(panoInner, {
-    type:         'equirectangular',
-    panorama:     url,
-    autoLoad:     true,
-    showControls: false,
-    mouseZoom:    true,
-    draggable:    true,
-    friction:     0.15,
-    hfov:         110,
-    minHfov:      50,
-    maxHfov:      130,
-    compass:      false,
-  });
-}
-
-// ════════════════════════════════════════════════════════════
-//  VIEW TOGGLE (spin ↔ pano)
-// ════════════════════════════════════════════════════════════
-function toggleView() {
-  if(state.view === 'spin') {
-    state.view = 'pano';
-    document.getElementById('spin-canvas-wrap').classList.add('hidden');
+function toggleView(){
+  if(S.view==='spin'){
+    S.view='pano';
+    document.getElementById('spin-wrap').classList.add('hidden');
     document.getElementById('pano-wrap').classList.add('active');
     document.getElementById('int-thumb').classList.add('active');
-    const ext = EXT_COLOURS[state.extIdx];
-    const int = getAvailableInteriors(ext.slug)[state.intIdx] || INT_COLOURS[0];
-    loadPano(panoUrl(ext.fn, int.fileName));
+    const ext=EXT[S.extIdx]; const av=availInt(ext.slug); const int=av[Math.min(S.intIdx,av.length-1)]||av[0];
+    if(int) loadPano(panoUrl(ext.fn,int.fn));
   } else {
-    state.view = 'spin';
-    document.getElementById('spin-canvas-wrap').classList.remove('hidden');
+    S.view='spin';
+    document.getElementById('spin-wrap').classList.remove('hidden');
     document.getElementById('pano-wrap').classList.remove('active');
     document.getElementById('int-thumb').classList.remove('active');
-    drawFrame(state.frame);
+    draw(S.frame);
   }
 }
 
-// ════════════════════════════════════════════════════════════
-//  SWATCH BUILDERS
-// ════════════════════════════════════════════════════════════
-function swatchSVG(p, s, shine) {
-  const id = 'sw' + Math.random().toString(36).slice(2,7);
-  return `<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="${id}" cx="38%" cy="30%" r="62%">
-        <stop offset="0%" stop-color="${shine}"/>
-        <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-      </radialGradient>
-      <clipPath id="c${id}"><circle cx="18" cy="18" r="16"/></clipPath>
-    </defs>
-    <circle cx="18" cy="18" r="16" fill="${s}"/>
-    <path d="M2 18Q9 3 34 3L34 33Q9 33 2 18Z" fill="${p}" clip-path="url(#c${id})"/>
-    <path d="M2 18Q9 33 34 33" stroke="rgba(0,0,0,0.22)" stroke-width="0.7" fill="none" clip-path="url(#c${id})"/>
-    <circle cx="18" cy="18" r="16" fill="url(#${id})"/>
-  </svg>`;
+// ── SWATCHES ─────────────────────────────────────────────
+function swSVG(p,s,shine){
+  const id='g'+Math.random().toString(36).slice(2,7);
+  return `<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="${id}" cx="38%" cy="30%" r="62%"><stop offset="0%" stop-color="${shine}"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient><clipPath id="c${id}"><circle cx="18" cy="18" r="16"/></clipPath></defs><circle cx="18" cy="18" r="16" fill="${s}"/><path d="M2 18Q9 3 34 3L34 33Q9 33 2 18Z" fill="${p}" clip-path="url(#c${id})"/><path d="M2 18Q9 33 34 33" stroke="rgba(0,0,0,0.22)" stroke-width="0.7" fill="none" clip-path="url(#c${id})"/><circle cx="18" cy="18" r="16" fill="url(#${id})"/></svg>`;
+}
+function iSVG(hex,hexB){
+  const id='i'+Math.random().toString(36).slice(2,7);
+  if(hexB) return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="${hex}"/><path d="M16 2A14 14 0 0 1 30 16H16Z" fill="${hexB}"/></svg>`;
+  return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="${id}" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,0.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient></defs><circle cx="16" cy="16" r="14" fill="${hex}"/><circle cx="16" cy="16" r="14" fill="url(#${id})"/></svg>`;
 }
 
-function intSwatchSVG(hex, hexB) {
-  const id = 'is' + Math.random().toString(36).slice(2,7);
-  if(hexB) {
-    return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="16" cy="16" r="14" fill="${hex}"/>
-      <path d="M16 2A14 14 0 0 1 30 16H16Z" fill="${hexB}"/>
-    </svg>`;
-  }
-  return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-    <defs><radialGradient id="${id}" cx="35%" cy="30%" r="60%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
-      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-    </radialGradient></defs>
-    <circle cx="16" cy="16" r="14" fill="${hex}"/>
-    <circle cx="16" cy="16" r="14" fill="url(#${id})"/>
-  </svg>`;
-}
-
-function buildExtSwatches() {
-  const row = document.getElementById('swatches-ext');
-  row.innerHTML = '';
-  EXT_COLOURS.forEach((c, i) => {
-    const shine = c.hex.p.startsWith('#e') ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.25)';
-    const div = document.createElement('div');
-    div.className = 'swatch-ext' + (i===state.extIdx?' active':'');
-    div.innerHTML = swatchSVG(c.hex.p, c.hex.s, shine);
-    div.title = c.name;
-    div.onclick = () => setExt(i);
-    row.appendChild(div);
+function buildExtSwatches(){
+  const row=document.getElementById('swatches-ext'); row.innerHTML='';
+  EXT.forEach((c,i)=>{
+    const shine=c.hex.p.startsWith('#e')?'rgba(255,255,255,0.65)':'rgba(255,255,255,0.25)';
+    const d=document.createElement('div');
+    d.className='sw-ext'+(i===S.extIdx?' active':'');
+    d.innerHTML=swSVG(c.hex.p,c.hex.s,shine); d.title=c.name;
+    d.onclick=()=>setExt(i); row.appendChild(d);
   });
 }
-
-function buildIntSwatches(extSlug) {
-  const row = document.getElementById('swatches-int');
-  row.innerHTML = '';
-  const available = getAvailableInteriors(extSlug).map(i=>i.slug);
-  // Find current int colour, default to first available
-  let currentIntSlug = INT_COLOURS[state.intIdx]?.slug;
-  if(!available.includes(currentIntSlug)) { state.intIdx=0; currentIntSlug=INT_COLOURS[0].slug; }
-
-  INT_COLOURS.forEach((c, i) => {
-    const isAvail = c.availableFor==='all' || c.availableFor.includes(extSlug);
-    const isActive = i===state.intIdx && isAvail;
-    const div = document.createElement('div');
-    div.className = 'swatch-int' + (isActive?' active':'') + (!isAvail?' unavailable':'');
-    div.innerHTML = intSwatchSVG(c.hex, c.hexB);
-    div.title = c.name;
-    if(isAvail) div.onclick = () => setInt(i);
-    row.appendChild(div);
+function buildIntSwatches(extSlug){
+  const row=document.getElementById('swatches-int'); row.innerHTML='';
+  const av=availInt(extSlug).map(i=>i.slug);
+  INT.forEach((c,i)=>{
+    const ok=c.for==='all'||c.for.includes(extSlug);
+    const d=document.createElement('div');
+    d.className='sw-int'+(i===S.intIdx&&ok?' active':'')+(!ok?' na':'');
+    d.innerHTML=iSVG(c.hex,c.hexB); d.title=c.name;
+    if(ok) d.onclick=()=>setInt(i); row.appendChild(d);
   });
 }
-
-// ════════════════════════════════════════════════════════════
-//  SET COLOUR
-// ════════════════════════════════════════════════════════════
-function setExt(idx) {
-  state.extIdx = idx;
-  const c = EXT_COLOURS[idx];
-
-  document.querySelectorAll('.swatch-ext').forEach((s,i) => s.classList.toggle('active', i===idx));
-  document.getElementById('ext-name').textContent = c.name;
-
-  // Update atmosphere
-  document.getElementById('viz-stage').style.background = '#111';
-
-  // If in spin view, load new frames
-  if(state.view === 'spin') {
-    loadExtColour(idx);
-  } else {
-    // Stay in pano but check interior availability
-    const int = getAvailableInteriors(c.slug)[0];
-    if(int) loadPano(panoUrl(c.fn, int.fileName));
-  }
-
-  // Rebuild interior swatches for this exterior
-  buildIntSwatches(c.slug);
-
-  // Update thumb
-  updateIntThumb();
+function updateThumb(){
+  const ext=EXT[S.extIdx]; const av=availInt(ext.slug);
+  const int=av[Math.min(S.intIdx,av.length-1)]||av[0];
+  if(int) document.getElementById('int-thumb-img').src=panoUrl(ext.fn,int.fn);
 }
 
-function setInt(idx) {
-  state.intIdx = idx;
-  const c = INT_COLOURS[idx];
-  document.querySelectorAll('.swatch-int').forEach((s,i) => s.classList.toggle('active', i===idx));
-  document.getElementById('int-name').textContent = c.name;
-
-  updateIntThumb();
-
-  // If currently in pano, reload with new interior
-  if(state.view === 'pano') {
-    const ext = EXT_COLOURS[state.extIdx];
-    loadPano(panoUrl(ext.fn, c.fileName));
-  }
+function setExt(idx){
+  S.extIdx=idx; S.view='spin';
+  const c=EXT[idx];
+  document.querySelectorAll('.sw-ext').forEach((s,i)=>s.classList.toggle('active',i===idx));
+  document.getElementById('ext-name').textContent=c.name;
+  document.getElementById('spin-wrap').classList.remove('hidden');
+  document.getElementById('pano-wrap').classList.remove('active');
+  document.getElementById('int-thumb').classList.remove('active');
+  loadExt(idx); buildIntSwatches(c.slug); updateThumb();
+}
+function setInt(idx){
+  S.intIdx=idx;
+  document.querySelectorAll('.sw-int').forEach((s,i)=>s.classList.toggle('active',i===idx));
+  document.getElementById('int-name').textContent=INT[idx].name;
+  updateThumb();
+  if(S.view==='pano') loadPano(panoUrl(EXT[S.extIdx].fn,INT[idx].fn));
 }
 
-function updateIntThumb() {
-  const ext = EXT_COLOURS[state.extIdx];
-  const availInts = getAvailableInteriors(ext.slug);
-  const int = availInts[Math.min(state.intIdx, availInts.length-1)] || availInts[0];
-  if(int) {
-    const url = panoUrl(ext.fn, int.fileName);
-    document.getElementById('int-thumb-img').src = url;
-  }
+// ── OVERLAY OPEN/CLOSE ────────────────────────────────────
+function openViz(){
+  const overlay=document.getElementById('viz-overlay');
+  const el=document.documentElement;
+  (el.requestFullscreen?.())||el.webkitRequestFullscreen?.()
+    ||el.mozRequestFullScreen?.()
+    ||el.msRequestFullscreen?.()
+    ||Promise.resolve();
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  // Init on first open
+  if(!S._inited){ S._inited=true; buildExtSwatches(); buildIntSwatches(EXT[S.extIdx].slug); updateThumb(); loadExt(S.extIdx); }
+}
+function closeViz(){
+  document.getElementById('viz-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  (document.exitFullscreen?.())||document.webkitExitFullscreen?.()
+    ||document.mozCancelFullScreen?.()
+    ||document.msExitFullscreen?.()
+    ||Promise.resolve();
 }
 
-// ════════════════════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════════════════════
-buildExtSwatches();
-buildIntSwatches(EXT_COLOURS[state.extIdx].slug);
-updateIntThumb();
-loadExtColour(state.extIdx);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeViz(); });
+
+const hv=document.getElementById('hero-video');
+if(hv) hv.play().catch(()=>{ document.addEventListener('pointerdown',()=>hv.play().catch(()=>{}),{once:true}); });
 </script>
 </body>
 </html>
