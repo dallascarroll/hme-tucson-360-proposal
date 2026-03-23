@@ -426,11 +426,11 @@ const FRAMES = 36;
 function spinFrames(fn) {
   return Array.from({length: FRAMES}, (_, i) => {
     const n = String(i + 1).padStart(4, '0');
-    return `${BASE}/exterior/2026_Tucson_LTD_FWD_${fn}_Black_360_Landscape_LowerGrand_${n}.jpeg`;
+    return `${BASE}/exterior/2026_Tucson_LTD_FWD_${fn}_Black_360_Landscape_LowerGrand_${n}.webp`;
   });
 }
 function panoUrl(extFn, intFn) {
-  return `${BASE}/interior/2026_Tucson_LTD_FWD_${extFn}_${intFn}_Pano_LowerGrand.jpg`;
+  return `${BASE}/interior/2026_Tucson_LTD_FWD_${extFn}_${intFn}_Pano_LowerGrand.webp`;
 }
 
 const INT = [
