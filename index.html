@@ -410,7 +410,10 @@ function panoUrl(extFn,intFn){
 }
 
 // Interior swatch image path
-function intImgSrc(slug){ return './assets/swatches/interior-'+slug+'.webp'; }
+function intImgSrc(slug){
+  var map={'black':'interior-black.webp','gray':'interior-gray.webp','green-gray-3tone':'interior-green-gray-3tone.webp'};
+  return './assets/swatches/'+(map[slug]||'interior-'+slug+'.webp');
+}
 
 const INT = [
   { slug:'black',            name:'Schwarz',          fn:'Black',         hex:'#111',    hexB:null,     for:'all' },
@@ -532,7 +535,7 @@ function loadPano(url, restore, onReady){
   S.pv=pannellum.viewer(el,{
     type:'equirectangular', panorama:url, autoLoad:true,
     showControls:false, mouseZoom:true, draggable:true, friction:.15,
-    hfov:restore?S.pHfov:110, pitch:restore?S.pPitch:0, yaw:restore?S.pYaw:0,
+    hfov:restore?S.pHfov:110, pitch:restore?S.pPitch:-12, yaw:restore?S.pYaw:0,
     minHfov:50, maxHfov:130, compass:false,
   });
   // When pano is loaded, fade out the crossfade cover
@@ -571,6 +574,10 @@ function goToSpin(){
 }
 
 function goToPano(){
+  // Show black cover instantly before pannellum grid appears
+  const cf=document.getElementById('pano-crossfade');
+  cf.style.transition='none';
+  cf.classList.add('show');
   S.view='pano';
   document.getElementById('spin-wrap').classList.add('hidden');
   document.getElementById('pano-wrap').classList.add('active');
@@ -578,7 +585,12 @@ function goToPano(){
   const ext=EXT[S.extIdx];
   const av=availInt(ext.slug);
   const int=av[Math.min(S.intIdx,av.length-1)]||av[0];
-  if(int) loadPano(panoUrl(ext.fn,int.fn), false);
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      cf.style.transition='opacity 0.3s ease';
+      if(int) loadPano(panoUrl(ext.fn,int.fn), false);
+    });
+  });
 }
 
 function onIntThumbClick(){
