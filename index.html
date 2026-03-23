@@ -392,11 +392,12 @@
 
 <script>
 // ================================================
-//  ASSET CONFIG
+//  SUPABASE CONFIG
 // ================================================
-const BASE   = './assets';
-const FRAMES = 36;
-const S7BASE = 'https://s7d1.scene7.com/is/image/hyundai/2026-tucson-limited-';
+var SUPABASE_URL = 'https://ifrystxhgelwybaoqxwx.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcnlzdHhoZ2Vsd3liYW9xeHd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNDI2MjUsImV4cCI6MjA4OTgxODYyNX0.T2GSMWQXFbxVcaeeNZQ3rsIUX_RB0GpT1_JlcFJrgzU';
+var BASE = './assets';
+var FRAMES = 36;
 
 function spinFrames(fn) {
   return Array.from({length: FRAMES}, function(_, i) {
@@ -407,40 +408,111 @@ function spinFrames(fn) {
 function panoUrl(extFn, intFn) {
   return BASE + '/interior/2026_Tucson_LTD_FWD_' + extFn + '_' + intFn + '_Pano_LowerGrand.webp';
 }
-function extSwatchUrl(slug) {
-  return BASE + '/swatches/' + slug + '.webp';
-}
+function extSwatchUrl(slug) { return BASE + '/swatches/' + slug + '.webp'; }
 function intSwatchUrl(slug) {
   var map = {
-    'black':            '2026-tucson-limited-fwd-black-leather.webp',
-    'gray':             '2026-tucson-limited-fwd-gray-leather.webp',
-    'green-gray-3tone': '2026-tucson-limited-fwd-gray-green-leather.webp'
+    'black':'2026-tucson-limited-fwd-black-leather.webp',
+    'gray':'2026-tucson-limited-fwd-gray-leather.webp',
+    'green-gray-3tone':'2026-tucson-limited-fwd-gray-green-leather.webp'
   };
   return BASE + '/swatches/' + (map[slug] || slug + '.webp');
 }
 
-var INT = [
-  { slug:'black',            name:'Black',          fn:'Black',          availFor:'all' },
-  { slug:'gray',             name:'Gray',              fn:'Gray',           availFor:'all' },
-  { slug:'green-gray-3tone', name:'Green/Gray 3-Tone', fn:'GreenGray3Tone', availFor:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] }
-];
+function sbFetch(path) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  }).then(function(r) { return r.json(); });
+}
 
-var EXT = [
-  { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',        s7:'atlantis-blue',        bg:'#1c3a5c' },
-  { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte',  s7:'ecotronic-gray-matte', bg:'#5a5e62' },
-  { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl',  s7:'ecotronic-gray',       bg:'#6e7276' },
-  { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic', s7:'hampton-gray',         bg:'#7a7e82' },
-  { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',        s7:'phantom-black',        bg:'#1c1c22' },
-  { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl',  s7:'rockwood-green',       bg:'#2e4a36' },
-  { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl',  s7:'serenity-white',       bg:'#e8e6e0' },
-  { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',    s7:'shimmering-silver',    bg:'#a8a8b0' },
-  { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',    s7:'ultimate-red',         bg:'#7a1418' }
-];
-EXT.forEach(function(c) { c.frames = spinFrames(c.fn); });
+var EXT = [];
+var INT = [];
+var VEHICLE = {};
 
 function availInt(extSlug) {
   return INT.filter(function(i) {
     return i.availFor === 'all' || i.availFor.indexOf(extSlug) !== -1;
+  });
+}
+
+function loadFallbackConfig() {
+  INT = [
+    { slug:'black',            name:'Black',            fn:'Black',         hex:'#111',    availFor:'all' },
+    { slug:'gray',             name:'Gray',             fn:'Gray',          hex:'#686868', availFor:'all' },
+    { slug:'green-gray-3tone', name:'Green/Gray 3-Tone',fn:'GreenGray3Tone',hex:'#4a5c4a',
+      availFor:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] }
+  ];
+  EXT = [
+    { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',        hex:{p:'#1c3a5c',s:'#111'} },
+    { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte',  hex:{p:'#5a5e62',s:'#111'} },
+    { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl',  hex:{p:'#6e7276',s:'#111'} },
+    { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic', hex:{p:'#7a7e82',s:'#111'} },
+    { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',        hex:{p:'#1c1c22',s:'#111'} },
+    { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl',  hex:{p:'#2e4a36',s:'#111'} },
+    { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl',  hex:{p:'#e8e6e0',s:'#111'} },
+    { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',    hex:{p:'#a8a8b0',s:'#111'} },
+    { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',    hex:{p:'#7a1418',s:'#111'} }
+  ];
+  EXT.forEach(function(c) { c.frames = spinFrames(c.fn); });
+  VEHICLE = { year:2026, name:'TUCSON', trim:'Limited FWD', baseMsrp:3975000 };
+}
+
+function loadConfig(modelSlug, trimSlug, onReady) {
+  sbFetch('models?slug=eq.' + modelSlug + '&select=id,year,name,base_msrp&limit=1')
+  .then(function(models) {
+    var model = models[0];
+    VEHICLE = { year: model.year, name: model.name, baseMsrp: model.base_msrp };
+    return sbFetch('trims?model_id=eq.' + model.id + '&slug=eq.' + trimSlug + '&select=id,name,price_delta&limit=1')
+    .then(function(trims) {
+      var trim = trims[0];
+      VEHICLE.trim = trim.name;
+      VEHICLE.baseMsrp += trim.price_delta;
+      var extP = sbFetch(
+        'trim_exterior_colours?trim_id=eq.' + trim.id +
+        '&select=exterior_colour:exterior_colours(id,name,slug,filename_key,hex_primary,hex_secondary,sort_order)'
+      ).then(function(rows) {
+        EXT = rows.map(function(r){ return r.exterior_colour; })
+          .sort(function(a,b){ return a.sort_order - b.sort_order; })
+          .map(function(c) {
+            return { _id:c.id, slug:c.slug, name:c.name, fn:c.filename_key,
+                     hex:{p:c.hex_primary||'#888',s:c.hex_secondary||'#111'},
+                     frames:spinFrames(c.filename_key) };
+          });
+      });
+      var intP = sbFetch(
+        'trim_interior_colours?trim_id=eq.' + trim.id +
+        '&select=exterior_colour_id,interior_colour:interior_colours(id,name,slug,filename_key,hex,sort_order)'
+      ).then(function(rows) {
+        var map = {};
+        rows.forEach(function(r) {
+          var ic = r.interior_colour;
+          if (!map[ic.slug]) map[ic.slug] = { slug:ic.slug, name:ic.name, fn:ic.filename_key, hex:ic.hex, sortOrder:ic.sort_order, _ecIds:[] };
+          if (r.exterior_colour_id) map[ic.slug]._ecIds.push(r.exterior_colour_id);
+        });
+        return map;
+      });
+      return Promise.all([extP, intP]);
+    });
+  })
+  .then(function(results) {
+    var intMap = results[1];
+    INT = Object.values(intMap).sort(function(a,b){ return a.sortOrder-b.sortOrder; }).map(function(ic) {
+      if (ic._ecIds.length === 0) { ic.availFor = 'all'; }
+      else {
+        ic.availFor = ic._ecIds.map(function(id) {
+          var ec = EXT.find(function(e){ return e._id === id; });
+          return ec ? ec.slug : id;
+        });
+      }
+      delete ic._ecIds; delete ic.sortOrder;
+      return ic;
+    });
+    EXT.forEach(function(e){ delete e._id; });
+    onReady();
+  })
+  .catch(function(err) {
+    console.warn('Supabase unavailable, using fallback config:', err.message);
+    loadFallbackConfig();
+    onReady();
   });
 }
 
@@ -764,9 +836,11 @@ document.addEventListener('keydown',  function(e) {
 });
 
 // ================================================
-//  BOOT
+//  BOOT — load config from Supabase then preload
 // ================================================
-preloadAll();
+loadConfig('tucson-2026', 'limited-fwd', function() {
+  preloadAll();
+});
 
 // Hero is a static image — no video autoplay needed
 </script>
