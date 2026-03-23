@@ -4,983 +4,654 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TUCSON 360° Experience — Digital Giant</title>
-  <meta name="description" content="A working prototype of the TUCSON 360° Experience visualizer, built by Digital Giant.">
+  <meta name="description" content="A working prototype of the TUCSON 360° Experience, built by Digital Giant for Hyundai Motor Europe.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
   <style>
-    /* ── RESET ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --dg-black:   #0a0a0a;
-      --dg-white:   #f4f4f0;
-      --dg-accent:  #e8ff00;
-      --hme-blue:   #002c5f;
-      --hme-teal:   #00aad2;
-      --t-fast:     0.2s ease;
-      --t-med:      0.45s ease;
+      --dg-black:  #0a0a0a;
+      --dg-white:  #f4f4f0;
+      --dg-accent: #e8ff00;
+      --hme-blue:  #002c5f;
+      --hme-teal:  #00aad2;
     }
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--dg-black);
-      color: var(--dg-white);
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
+    body { background: var(--dg-black); color: var(--dg-white); font-family: 'Inter', sans-serif; font-size: 15px; overflow-x: hidden; }
 
     /* ── NAV ── */
-    .nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-      height: 60px;
-      background: rgba(10,10,10,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .nav-logo {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: var(--dg-white);
-      text-transform: uppercase;
-    }
-    .nav-logo span { color: var(--dg-accent); }
-    .nav-tag {
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: rgba(255,255,255,0.35);
-      text-transform: uppercase;
-    }
-    .nav-cta {
-      background: var(--dg-accent);
-      color: var(--dg-black);
-      border: none;
-      border-radius: 3px;
-      padding: 7px 18px;
-      font-size: 11px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: opacity var(--t-fast);
-      text-decoration: none;
-      display: inline-block;
-    }
-    .nav-cta:hover { opacity: 0.85; }
+    .nav { position: fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 40px; height:60px; background:rgba(10,10,10,0.94); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,0.06); }
+    .nav-logo { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; letter-spacing:3px; color:var(--dg-white); }
+    .nav-logo span { color:var(--dg-accent); }
+    .nav-tag { font-size:11px; letter-spacing:2px; color:rgba(255,255,255,0.3); text-transform:uppercase; }
+    .nav-cta { background:var(--dg-accent); color:var(--dg-black); border:none; border-radius:3px; padding:7px 18px; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; text-decoration:none; display:inline-block; }
 
     /* ── HERO ── */
-    .hero {
-      padding: 140px 40px 80px;
-      max-width: 960px;
-      margin: 0 auto;
-    }
-    .hero-eyebrow {
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: var(--hme-teal);
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .hero-eyebrow::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 1px;
-      background: var(--hme-teal);
-    }
-    .hero-headline {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(42px, 7vw, 80px);
-      font-weight: 700;
-      line-height: 0.95;
-      letter-spacing: -1px;
-      margin-bottom: 28px;
-    }
-    .hero-headline em {
-      font-style: normal;
-      color: var(--dg-accent);
-    }
-    .hero-sub {
-      font-size: 17px;
-      color: rgba(255,255,255,0.55);
-      max-width: 580px;
-      line-height: 1.7;
-      margin-bottom: 36px;
-    }
-    .hero-pills {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 50px;
-    }
-    .pill {
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 100px;
-      padding: 5px 14px;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-    }
-    .pill.active {
-      border-color: var(--hme-teal);
-      color: var(--hme-teal);
-    }
+    .hero { padding:130px 40px 70px; max-width:960px; margin:0 auto; }
+    .hero-eyebrow { font-size:11px; letter-spacing:3px; color:var(--hme-teal); text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+    .hero-eyebrow::before { content:''; display:block; width:24px; height:1px; background:var(--hme-teal); }
+    .hero-headline { font-family:'Rajdhani',sans-serif; font-size:clamp(40px,7vw,78px); font-weight:700; line-height:0.95; letter-spacing:-1px; margin-bottom:26px; }
+    .hero-headline em { font-style:normal; color:var(--dg-accent); }
+    .hero-sub { font-size:17px; color:rgba(255,255,255,0.52); max-width:560px; line-height:1.7; margin-bottom:32px; }
+    .hero-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:50px; }
+    .pill { border:1px solid rgba(255,255,255,0.14); border-radius:100px; padding:5px 14px; font-size:11px; letter-spacing:1px; color:rgba(255,255,255,0.45); text-transform:uppercase; }
+    .pill.on { border-color:var(--hme-teal); color:var(--hme-teal); }
 
-    /* ── SECTION LABELS ── */
-    .section-label {
-      font-size: 10px;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.3);
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      padding-left: 2px;
-    }
+    /* ── DEMO HEADER ── */
+    .demo-header { text-align:center; padding:0 40px 28px; }
+    .section-label { font-size:10px; letter-spacing:3px; color:rgba(255,255,255,0.28); text-transform:uppercase; margin-bottom:12px; }
+    .demo-header h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(20px,3vw,30px); font-weight:500; letter-spacing:1px; color:rgba(255,255,255,0.88); margin-bottom:8px; }
+    .demo-header p { font-size:13px; color:rgba(255,255,255,0.32); }
 
-    /* ── LIVE DEMO SECTION ── */
-    .demo-section {
-      margin: 0 0 0;
-      padding: 0 0 80px;
-    }
-    .demo-label {
-      text-align: center;
-      padding: 0 40px 28px;
-    }
-    .demo-label h2 {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(22px, 3vw, 32px);
-      font-weight: 500;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 8px;
-    }
-    .demo-label p {
-      font-size: 13px;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 0.5px;
-    }
-    .demo-note {
-      text-align: center;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.2);
-      padding-top: 16px;
-      text-transform: uppercase;
-    }
+    /* ══════════════════════════════════════════
+       VISUALIZER
+    ══════════════════════════════════════════ */
+    .viz-root { width:100%; background:#000; }
 
-    /* ── VISUALIZER WRAPPER ── */
-    .viz-wrapper {
-      width: 100%;
-      background: #000;
-      position: relative;
-    }
+    /* ── STAGE ── */
+    .stage { position:relative; width:100%; aspect-ratio:16/9; min-height:400px; max-height:80vh; overflow:hidden; background:#111; }
+
+    /* Spin viewer canvas — fills stage */
+    #spin-canvas-wrap { position:absolute; inset:0; z-index:3; cursor:grab; display:flex; align-items:center; justify-content:center; }
+    #spin-canvas-wrap:active { cursor:grabbing; }
+    #spin-canvas-wrap canvas { width:100%; height:100%; object-fit:cover; display:block; }
+    #spin-canvas-wrap.hidden { display:none; }
+
+    /* Pano viewer — fills stage */
+    #pano-wrap { position:absolute; inset:0; z-index:3; display:none; }
+    #pano-wrap.active { display:block; }
+    /* Override pannellum to fill */
+    #pano-inner { width:100%; height:100%; }
+
+    /* Spin load bar */
+    #spin-loadbar { position:absolute; bottom:0; left:0; height:2px; background:var(--hme-teal); width:0; z-index:20; transition:width 0.2s; }
+
+    /* Drag hint */
+    #drag-hint { position:absolute; bottom:70px; left:50%; transform:translateX(-50%); z-index:15; display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,0.45); pointer-events:none; transition:opacity 0.5s; white-space:nowrap; }
+
+    /* Title top-left */
+    .stage-title { position:absolute; top:22px; left:26px; z-index:10; }
+    .stage-title h2 { font-size:clamp(12px,1.4vw,15px); font-weight:500; color:#fff; letter-spacing:0.2px; }
+    .stage-title-rule { width:28px; height:2px; background:var(--hme-teal); margin-top:5px; }
+
+    /* Interior thumb — top right */
+    .int-thumb { position:absolute; top:16px; right:18px; z-index:10; width:88px; height:62px; border-radius:6px; overflow:hidden; cursor:pointer; border:2px solid rgba(255,255,255,0.22); transition:border-color 0.2s; background:#111; }
+    .int-thumb:hover, .int-thumb.active { border-color:var(--hme-teal); }
+    .int-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .int-thumb-icon { position:absolute; bottom:5px; left:50%; transform:translateX(-50%); pointer-events:none; }
+
+    /* Trim / MSRP */
+    .trim-btn { position:absolute; bottom:22px; left:22px; z-index:10; background:#fff; color:#111; border:none; border-radius:4px; padding:9px 14px; font-size:12px; font-weight:500; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:7px; }
+    .trim-caret { font-size:9px; color:#777; }
+    .msrp-block { position:absolute; bottom:22px; right:22px; z-index:10; text-align:right; }
+    .msrp-val { font-size:clamp(20px,2.8vw,30px); font-weight:600; color:#fff; line-height:1.1; }
+    .msrp-label { font-size:11px; color:rgba(255,255,255,0.55); margin-top:2px; }
+
+    /* ── CONTROL STRIP ── */
+    .strip { background:#f2f2f0; padding:13px 22px 15px; border-top:1px solid #e0e0e0; }
+    .strip-disclaimer { font-size:10.5px; color:#999; margin-bottom:10px; }
+    .strip-controls { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .strip-group { display:flex; flex-direction:column; gap:6px; }
+    .strip-label { font-size:11.5px; color:#444; }
+    .strip-label strong { font-weight:500; }
+    .swatches-ext, .swatches-int { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+
+    /* Exterior swatches */
+    .swatch-ext { width:36px; height:36px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform 0.15s, border-color 0.15s; overflow:hidden; flex-shrink:0; }
+    .swatch-ext svg { display:block; }
+    .swatch-ext.active { border-color:#111; transform:scale(1.15); }
+
+    /* Interior swatches */
+    .swatch-int { width:32px; height:32px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform 0.15s, border-color 0.15s; overflow:hidden; flex-shrink:0; }
+    .swatch-int svg { display:block; }
+    .swatch-int.active { border-color:#111; transform:scale(1.1); }
+    .swatch-int.unavailable { opacity:0.22; cursor:not-allowed; pointer-events:none; }
+
+    .cta-btn { background:var(--hme-teal); color:#fff; border:none; border-radius:4px; padding:10px 22px; font-size:12px; font-weight:500; font-family:inherit; cursor:pointer; white-space:nowrap; transition:background 0.2s; }
+    .cta-btn:hover { background:#0090b5; }
+
+    .demo-note { text-align:center; font-size:10px; letter-spacing:1px; color:rgba(255,255,255,0.18); padding:12px 0 0; text-transform:uppercase; }
 
     /* ── WHAT WE BUILD ── */
-    .what-section {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 100px 40px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-    }
-    @media (max-width: 700px) {
-      .what-section { grid-template-columns: 1fr; gap: 50px; }
-    }
-    .what-left h2 {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(30px, 4vw, 48px);
-      font-weight: 600;
-      line-height: 1.05;
-      margin-bottom: 20px;
-    }
-    .what-left h2 span { color: var(--dg-accent); }
-    .what-left p {
-      font-size: 15px;
-      color: rgba(255,255,255,0.5);
-      line-height: 1.75;
-    }
-    .what-right { display: flex; flex-direction: column; gap: 0; }
-    .what-item {
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 22px 0;
-    }
-    .what-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .what-item-num {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--hme-teal);
-      margin-bottom: 6px;
-    }
-    .what-item-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--dg-white);
-      margin-bottom: 5px;
-    }
-    .what-item-desc {
-      font-size: 13px;
-      color: rgba(255,255,255,0.4);
-      line-height: 1.6;
-    }
+    .what-section { max-width:960px; margin:0 auto; padding:100px 40px; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+    @media(max-width:700px){ .what-section{ grid-template-columns:1fr; gap:50px; } }
+    .what-left h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(28px,4vw,46px); font-weight:600; line-height:1.05; margin-bottom:18px; }
+    .what-left h2 span { color:var(--dg-accent); }
+    .what-left p { font-size:15px; color:rgba(255,255,255,0.48); line-height:1.75; }
+    .what-item { border-top:1px solid rgba(255,255,255,0.08); padding:20px 0; }
+    .what-item:last-child { border-bottom:1px solid rgba(255,255,255,0.08); }
+    .what-item-num { font-family:'Rajdhani',sans-serif; font-size:11px; letter-spacing:2px; color:var(--hme-teal); margin-bottom:5px; }
+    .what-item-title { font-size:14px; font-weight:500; margin-bottom:4px; }
+    .what-item-desc { font-size:12px; color:rgba(255,255,255,0.38); line-height:1.6; }
 
-    /* ── STACK SECTION ── */
-    .stack-section {
-      border-top: 1px solid rgba(255,255,255,0.06);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.02);
-      padding: 70px 40px;
-    }
-    .stack-inner {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-    .stack-inner h3 {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 22px;
-      font-weight: 500;
-      letter-spacing: 1px;
-      margin-bottom: 32px;
-      color: rgba(255,255,255,0.7);
-    }
-    .stack-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .stack-item {
-      background: var(--dg-black);
-      padding: 22px 24px;
-    }
-    .stack-item-role {
-      font-size: 9px;
-      letter-spacing: 2px;
-      color: rgba(255,255,255,0.25);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .stack-item-name {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--dg-white);
-      letter-spacing: 0.5px;
-    }
-    .stack-item-desc {
-      font-size: 11px;
-      color: rgba(255,255,255,0.3);
-      margin-top: 4px;
-      line-height: 1.5;
-    }
+    /* ── STACK ── */
+    .stack-section { border-top:1px solid rgba(255,255,255,0.06); border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); padding:70px 40px; }
+    .stack-inner { max-width:960px; margin:0 auto; }
+    .stack-inner h3 { font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:500; letter-spacing:1px; margin-bottom:28px; color:rgba(255,255,255,0.65); }
+    .stack-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.07); border-radius:8px; overflow:hidden; }
+    .stack-item { background:var(--dg-black); padding:20px 22px; }
+    .stack-item-role { font-size:9px; letter-spacing:2px; color:rgba(255,255,255,0.22); text-transform:uppercase; margin-bottom:5px; }
+    .stack-item-name { font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:600; letter-spacing:0.5px; }
+    .stack-item-desc { font-size:11px; color:rgba(255,255,255,0.28); margin-top:3px; line-height:1.5; }
 
     /* ── TIMELINE ── */
-    .timeline-section {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 100px 40px;
-    }
-    .timeline-section h2 {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(28px, 3.5vw, 42px);
-      font-weight: 600;
-      margin-bottom: 48px;
-    }
-    .timeline { display: flex; flex-direction: column; gap: 0; }
-    .tl-item {
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      gap: 24px;
-      padding: 24px 0;
-      border-top: 1px solid rgba(255,255,255,0.07);
-    }
-    .tl-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
-    .tl-date {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--hme-teal);
-      letter-spacing: 1px;
-      padding-top: 2px;
-    }
-    .tl-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--dg-white);
-      margin-bottom: 4px;
-    }
-    .tl-desc {
-      font-size: 12px;
-      color: rgba(255,255,255,0.35);
-      line-height: 1.6;
-    }
-    .tl-badge {
-      display: inline-block;
-      background: rgba(232,255,0,0.1);
-      border: 1px solid rgba(232,255,0,0.3);
-      color: var(--dg-accent);
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      padding: 2px 8px;
-      border-radius: 100px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
+    .timeline-section { max-width:960px; margin:0 auto; padding:100px 40px; }
+    .timeline-section h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(26px,3.5vw,40px); font-weight:600; margin-bottom:44px; }
+    .tl-item { display:grid; grid-template-columns:120px 1fr; gap:22px; padding:22px 0; border-top:1px solid rgba(255,255,255,0.07); }
+    .tl-item:last-child { border-bottom:1px solid rgba(255,255,255,0.07); }
+    .tl-date { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:500; color:var(--hme-teal); letter-spacing:1px; padding-top:2px; }
+    .tl-title { font-size:13px; font-weight:500; margin-bottom:4px; }
+    .tl-desc { font-size:11px; color:rgba(255,255,255,0.33); line-height:1.6; }
+    .tl-badge { display:inline-block; background:rgba(232,255,0,0.1); border:1px solid rgba(232,255,0,0.3); color:var(--dg-accent); font-size:9px; letter-spacing:1.5px; padding:2px 8px; border-radius:100px; text-transform:uppercase; margin-bottom:5px; }
 
-    /* ── CTA FOOTER ── */
-    .footer-cta {
-      background: var(--hme-blue);
-      padding: 80px 40px;
-      text-align: center;
-    }
-    .footer-cta h2 {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(28px, 4vw, 48px);
-      font-weight: 600;
-      line-height: 1.1;
-      margin-bottom: 16px;
-    }
-    .footer-cta p {
-      font-size: 15px;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 36px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .footer-cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary {
-      background: var(--dg-accent);
-      color: var(--dg-black);
-      border: none;
-      border-radius: 4px;
-      padding: 13px 28px;
-      font-size: 12px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: opacity var(--t-fast);
-    }
-    .btn-primary:hover { opacity: 0.88; }
-    .btn-ghost {
-      background: transparent;
-      color: rgba(255,255,255,0.7);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 4px;
-      padding: 13px 28px;
-      font-size: 12px;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color var(--t-fast), color var(--t-fast);
-    }
-    .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+    /* ── FOOTER CTA ── */
+    .footer-cta { background:var(--hme-blue); padding:80px 40px; text-align:center; }
+    .footer-cta h2 { font-family:'Rajdhani',sans-serif; font-size:clamp(26px,4vw,46px); font-weight:600; line-height:1.1; margin-bottom:14px; }
+    .footer-cta p { font-size:15px; color:rgba(255,255,255,0.58); margin-bottom:32px; max-width:480px; margin-left:auto; margin-right:auto; }
+    .footer-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .btn-y { background:var(--dg-accent); color:var(--dg-black); border:none; border-radius:4px; padding:13px 28px; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
+    .btn-g { background:transparent; color:rgba(255,255,255,0.65); border:1px solid rgba(255,255,255,0.22); border-radius:4px; padding:13px 28px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; }
 
     /* ── FOOTER ── */
-    .footer {
-      padding: 28px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-    .footer-logo {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.3);
-    }
-    .footer-copy {
-      font-size: 11px;
-      color: rgba(255,255,255,0.2);
-    }
+    .footer { padding:26px 40px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.06); }
+    .footer-logo { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; letter-spacing:3px; color:rgba(255,255,255,0.28); }
+    .footer-copy { font-size:11px; color:rgba(255,255,255,0.18); }
 
-    /* ── VISUALIZER STYLES (embedded) ── */
-    /* These are the Hyundai skin variables */
-    .viz-root {
-      font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
-      color: #111;
-      width: 100%;
-    }
-    .stage {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      min-height: 380px;
-      max-height: 75vh;
-      overflow: hidden;
-      background: #1a1a1a;
-      cursor: grab;
-    }
-    .stage:active { cursor: grabbing; }
-    .stage-bg, .stage-car {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
-    .stage-bg { z-index: 1; }
-    .stage-atmo {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      transition: background 0.7s ease;
-    }
-    .stage-car {
-      z-index: 3;
-      object-position: center bottom;
-      transition: opacity 0.4s ease;
-    }
-    .stage-title {
-      position: absolute;
-      top: 22px; left: 26px;
-      z-index: 10;
-    }
-    .stage-title h2 {
-      font-size: clamp(12px, 1.4vw, 15px);
-      font-weight: 500;
-      color: #fff;
-      letter-spacing: 0.2px;
-    }
-    .stage-title-rule {
-      width: 28px; height: 2px;
-      background: #00aad2;
-      margin-top: 5px;
-    }
-    .int-thumb {
-      position: absolute;
-      top: 16px; right: 18px;
-      z-index: 10;
-      width: 86px; height: 60px;
-      border-radius: 6px;
-      overflow: hidden;
-      cursor: pointer;
-      border: 2px solid rgba(255,255,255,0.22);
-      transition: border-color 0.2s;
-      background: #111;
-    }
-    .int-thumb:hover, .int-thumb.active { border-color: #00aad2; }
-    .int-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .int-thumb-icon {
-      position: absolute;
-      bottom: 5px; left: 50%;
-      transform: translateX(-50%);
-      pointer-events: none;
-    }
-    .trim-selector {
-      position: absolute;
-      bottom: 22px; left: 22px;
-      z-index: 10;
-    }
-    .trim-btn {
-      background: #fff;
-      color: #111;
-      border: none;
-      border-radius: 4px;
-      padding: 9px 14px;
-      font-size: 12px;
-      font-weight: 500;
-      font-family: inherit;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .trim-caret { font-size: 9px; color: #777; }
-    .msrp-block {
-      position: absolute;
-      bottom: 22px; right: 22px;
-      z-index: 10;
-      text-align: right;
-    }
-    .msrp-val {
-      font-size: clamp(22px, 3vw, 30px);
-      font-weight: 600;
-      color: #fff;
-      line-height: 1.1;
-    }
-    .msrp-label {
-      font-size: 11px;
-      color: rgba(255,255,255,0.55);
-      margin-top: 2px;
-    }
-    .strip {
-      background: #f2f2f0;
-      padding: 13px 22px 15px;
-      border-top: 1px solid #e0e0e0;
-    }
-    .strip-disclaimer {
-      font-size: 10.5px;
-      color: #999;
-      margin-bottom: 10px;
-    }
-    .strip-controls {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .strip-group { display: flex; flex-direction: column; gap: 6px; }
-    .strip-label { font-size: 11.5px; color: #444; }
-    .strip-label strong { font-weight: 500; }
-    .swatches-ext, .swatches-int { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-    .swatch-ext, .swatch-int {
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.15s, border-color 0.15s;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .swatch-ext { width: 36px; height: 36px; }
-    .swatch-int { width: 32px; height: 32px; }
-    .swatch-ext svg, .swatch-int svg { display: block; }
-    .swatch-ext.active { border-color: #111; transform: scale(1.14); }
-    .swatch-int.active { border-color: #111; transform: scale(1.1); }
-    .cta-btn {
-      background: #00aad2;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 22px;
-      font-size: 12px;
-      font-weight: 500;
-      font-family: inherit;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.2s;
-    }
-    .cta-btn:hover { background: #0090b5; }
-    @media (max-width: 500px) {
-      .strip-controls { gap: 10px; }
-      .cta-btn { width: 100%; text-align: center; }
+    @media(max-width:600px){
+      .nav { padding:0 20px; } .nav-tag { display:none; }
+      .hero { padding:100px 20px 50px; }
+      .strip-controls { gap:10px; }
+      .cta-btn { width:100%; text-align:center; }
+      .what-section, .timeline-section, .stack-section { padding-left:20px; padding-right:20px; }
+      .footer { padding:20px; flex-direction:column; gap:8px; text-align:center; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav class="nav">
-    <div class="nav-logo">Digital<span>·</span>Giant</div>
-    <div class="nav-tag">Prototype · TUCSON 360°</div>
-    <a href="mailto:dallas@digital-giant.com" class="nav-cta">Get in touch</a>
-  </nav>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Digital<span>·</span>Giant</div>
+  <div class="nav-tag">Prototype · TUCSON 360°</div>
+  <a href="mailto:dallas@digital-giant.com" class="nav-cta">Get in touch</a>
+</nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-eyebrow">Hyundai Motor Europe · IONIQ 3 brief response</div>
-    <h1 class="hero-headline">
-      We built it<br>
-      <em>before</em> the<br>
-      brief closed.
-    </h1>
-    <p class="hero-sub">
-      Below is a fully working 360° vehicle visualizer — live, interactive, pulling real Hyundai assets. This is what we'd deliver for the IONIQ 3 PIP, built on a modular platform that works for any model or market.
-    </p>
-    <div class="hero-pills">
-      <div class="pill active">Live prototype</div>
-      <div class="pill active">Real Hyundai assets</div>
-      <div class="pill active">AEM-embeddable</div>
-      <div class="pill">360° ready</div>
-      <div class="pill">Themeable per brand</div>
-      <div class="pill">Jun 1 delivery</div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Hyundai Motor Europe · IONIQ 3 brief response</div>
+  <h1 class="hero-headline">We built it<br><em>before</em> the<br>brief closed.</h1>
+  <p class="hero-sub">A fully working 360° vehicle visualizer — live, interactive, with real Tucson assets. This is what we'd deliver for the IONIQ 3 PIP, on a modular platform that scales to any model or market.</p>
+  <div class="hero-pills">
+    <div class="pill on">Live prototype</div>
+    <div class="pill on">Real assets</div>
+    <div class="pill on">AEM-embeddable</div>
+    <div class="pill">360° spin viewer</div>
+    <div class="pill">Equirectangular pano</div>
+    <div class="pill">Jun 1 delivery</div>
+  </div>
+</section>
+
+<!-- DEMO HEADER -->
+<div class="demo-header">
+  <div class="section-label">Live interactive prototype</div>
+  <h2>TUCSON 360° Experience — working now</h2>
+  <p>Select a colour. Drag to spin. Tap the interior thumbnail. This is production-grade code.</p>
+</div>
+
+<!-- VISUALIZER -->
+<div class="viz-root">
+  <div class="stage" id="viz-stage">
+
+    <!-- 360 spin viewer -->
+    <div id="spin-canvas-wrap">
+      <canvas id="spin-canvas"></canvas>
     </div>
-  </section>
-
-  <!-- LIVE DEMO -->
-  <section class="demo-section">
-    <div class="demo-label">
-      <div class="section-label">Live interactive prototype</div>
-      <h2>The TUCSON 360° Experience — working now</h2>
-      <p>Select colours below. Click the interior thumbnail. This is production-grade code, not a mockup.</p>
+    <div id="spin-loadbar"></div>
+    <div id="drag-hint">
+      <svg width="32" height="12" viewBox="0 0 32 12" fill="none">
+        <path d="M2 6Q2 2 16 2Q28 2 30 5" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <polyline points="25,2 30,5 27,9" stroke="white" stroke-width="1.2" stroke-linejoin="round" fill="none" opacity="0.5"/>
+      </svg>
+      Drag to rotate
     </div>
 
-    <div class="viz-wrapper">
-      <div id="viz-mount"></div>
+    <!-- Pano viewer -->
+    <div id="pano-wrap">
+      <div id="pano-inner"></div>
     </div>
 
-    <div class="demo-note">Prototype uses live Hyundai USA assets · IONIQ 3 assets slot in directly</div>
-  </section>
-
-  <!-- WHAT WE BUILD -->
-  <section class="what-section">
-    <div class="what-left">
-      <div class="section-label">Scope of delivery</div>
-      <h2>Everything in the brief. <span>Plus the platform behind it.</span></h2>
-      <p>The visualizer you just used isn't a one-off. It's the first instance of a modular platform — add a new model, a new market, or a new campaign without rebuilding anything.</p>
+    <!-- Title -->
+    <div class="stage-title">
+      <h2>TUCSON 360° Experience</h2>
+      <div class="stage-title-rule"></div>
     </div>
-    <div class="what-right">
-      <div class="what-item">
-        <div class="what-item-num">01</div>
-        <div class="what-item-title">360° exterior in all 15 colours</div>
-        <div class="what-item-desc">~36 frames per colour. Drag-to-spin on desktop, swipe on mobile. Preloaded for instant response.</div>
-      </div>
-      <div class="what-item">
-        <div class="what-item-num">02</div>
-        <div class="what-item-title">Interior panorama</div>
-        <div class="what-item-desc">1 interior colour, full panoramic view. Transitions cleanly from exterior with a single tap.</div>
-      </div>
-      <div class="what-item">
-        <div class="what-item-num">03</div>
-        <div class="what-item-title">Colour-reactive environment</div>
-        <div class="what-item-desc">Background atmosphere shifts per exterior colour — the Renault R5 effect, built in from day one.</div>
-      </div>
-      <div class="what-item">
-        <div class="what-item-num">04</div>
-        <div class="what-item-title">AEM HTML snippet — drop-in</div>
-        <div class="what-item-desc">One script tag, one data attribute. Slot into any AEM component or PIP highlight section.</div>
-      </div>
-      <div class="what-item">
-        <div class="what-item-num">05</div>
-        <div class="what-item-title">Fully themeable CSS</div>
-        <div class="what-item-desc">Every colour, font, and size is a CSS variable. HME's agency reskins it without touching logic.</div>
-      </div>
-      <div class="what-item">
-        <div class="what-item-num">06</div>
-        <div class="what-item-title">Modular data layer</div>
-        <div class="what-item-desc">New model = new database rows. No code changes. IONIQ 5, Nexo, Santa Fe — all reuse the same platform.</div>
+
+    <!-- Interior thumbnail -->
+    <div class="int-thumb" id="int-thumb" onclick="toggleView()">
+      <img id="int-thumb-img" src="" alt="Interior">
+      <div class="int-thumb-icon">
+        <svg viewBox="0 0 36 14" width="26" height="10" fill="none">
+          <path d="M2 7Q2 2 18 2Q30 2 34 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <polyline points="28,3 34,6 30,10" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+        </svg>
       </div>
     </div>
-  </section>
 
-  <!-- TECH STACK -->
-  <section class="stack-section">
-    <div class="stack-inner">
-      <div class="section-label">Technology</div>
-      <h3>Built on a stack that scales</h3>
-      <div class="stack-grid">
-        <div class="stack-item">
-          <div class="stack-item-role">Frontend</div>
-          <div class="stack-item-name">Vanilla JS</div>
-          <div class="stack-item-desc">Zero framework dependency. Embeds anywhere.</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-item-role">Database</div>
-          <div class="stack-item-name">Supabase</div>
-          <div class="stack-item-desc">Postgres. Content team edits data directly in browser.</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-item-role">Hosting</div>
-          <div class="stack-item-name">Netlify</div>
-          <div class="stack-item-desc">Auto-deploy on push. CDN-distributed globally.</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-item-role">Version control</div>
-          <div class="stack-item-name">GitHub</div>
-          <div class="stack-item-desc">Staging branch for UAT. Main = live.</div>
-        </div>
-        <div class="stack-item">
-          <div class="stack-item-role">Asset CDN</div>
-          <div class="stack-item-name">Scene7 / S3</div>
-          <div class="stack-item-desc">Works with Hyundai's existing CDN or any S3-compatible store.</div>
-        </div>
-      </div>
+    <!-- Trim / MSRP -->
+    <button class="trim-btn">Limited FWD <span class="trim-caret">▾</span></button>
+    <div class="msrp-block">
+      <div class="msrp-val" id="msrp-val">$39,750</div>
+      <div class="msrp-label">Starting MSRP</div>
     </div>
-  </section>
+  </div>
 
-  <!-- TIMELINE -->
-  <section class="timeline-section">
-    <div class="section-label">Delivery plan</div>
-    <h2>Go-live Jun 1, 2026</h2>
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-date">31 Mar</div>
-        <div>
-          <div class="tl-badge">Done</div>
-          <div class="tl-title">Prototype & proposal</div>
-          <div class="tl-desc">Working visualizer, architecture, costing — delivered ahead of deadline.</div>
-        </div>
+  <!-- CONTROL STRIP -->
+  <div class="strip">
+    <div class="strip-disclaimer">Vehicle shown for illustrative purposes only. Actual model may vary.</div>
+    <div class="strip-controls">
+      <div class="strip-group">
+        <div class="swatches-ext" id="swatches-ext"></div>
+        <div class="strip-label">Exterior: <strong id="ext-name">Phantom Black</strong></div>
       </div>
-      <div class="tl-item">
-        <div class="tl-date">Wk Apr 1</div>
-        <div>
-          <div class="tl-title">Kickoff & scope lock</div>
-          <div class="tl-desc">Confirm colour list, asset specs, AEM integration requirements, UAT contacts.</div>
-        </div>
+      <div class="strip-group">
+        <div class="swatches-int" id="swatches-int"></div>
+        <div class="strip-label">Interior: <strong id="int-name">Black</strong></div>
       </div>
-      <div class="tl-item">
-        <div class="tl-date">14 Apr</div>
-        <div>
-          <div class="tl-title">UX/UI design approved</div>
-          <div class="tl-desc">IONIQ 3 skin, intro animation, colour-reactive background — signed off.</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-date">30 Apr</div>
-        <div>
-          <div class="tl-title">All 360° assets delivered</div>
-          <div class="tl-desc">15 colour sequences + interior panorama + studio environment — complete.</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-date">14 May</div>
-        <div>
-          <div class="tl-title">Experience build complete</div>
-          <div class="tl-desc">All features integrated, responsive, AEM embed snippet packaged.</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-date">28 May</div>
-        <div>
-          <div class="tl-title">QA, staging & UAT</div>
-          <div class="tl-desc">Cross-browser, cross-device. UAT with HME team. Issues resolved.</div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-date">1 Jun</div>
-        <div>
-          <div class="tl-badge">Go-live</div>
-          <div class="tl-title">Production delivery</div>
-          <div class="tl-desc">Live on IONIQ 3 PIP. Monitoring active. Hypercare window open.</div>
-        </div>
-      </div>
+      <button class="cta-btn">Build &amp; Price</button>
     </div>
-  </section>
+  </div>
+</div>
+<div class="demo-note">Prototype uses real Digital Giant Tucson assets · IONIQ 3 assets slot in via same pipeline</div>
 
-  <!-- FOOTER CTA -->
-  <section class="footer-cta">
-    <h2>Let's make this happen.</h2>
-    <p>We're ready to kick off. The platform is built — we just need the green light and your asset specs.</p>
-    <div class="footer-cta-btns">
-      <button class="btn-primary">Request full proposal</button>
-      <button class="btn-ghost">Talk to Dallas Carroll</button>
+<!-- WHAT WE BUILD -->
+<section class="what-section">
+  <div class="what-left">
+    <div class="section-label">Scope of delivery</div>
+    <h2>Everything in the brief. <span>Plus the platform.</span></h2>
+    <p>The visualizer above isn't a one-off. It's the first instance of a modular platform — add a new model, market, or campaign without rebuilding anything.</p>
+  </div>
+  <div>
+    <div class="what-item"><div class="what-item-num">01</div><div class="what-item-title">360° exterior in all colours</div><div class="what-item-desc">36 frames per colour, drag-to-spin. Preloaded for instant response.</div></div>
+    <div class="what-item"><div class="what-item-num">02</div><div class="what-item-title">Equirectangular interior panorama</div><div class="what-item-desc">Full WebGL pano per interior colour. One tap from exterior view.</div></div>
+    <div class="what-item"><div class="what-item-num">03</div><div class="what-item-title">Colour-reactive atmosphere</div><div class="what-item-desc">Stage tint shifts per exterior colour — the Renault R5 effect, built in.</div></div>
+    <div class="what-item"><div class="what-item-num">04</div><div class="what-item-title">AEM HTML snippet — drop-in</div><div class="what-item-desc">One script tag, one data attribute. Slots into any PIP highlight section.</div></div>
+    <div class="what-item"><div class="what-item-num">05</div><div class="what-item-title">Themeable CSS</div><div class="what-item-desc">Every colour, font, and size is a CSS variable. HME reskins without touching logic.</div></div>
+    <div class="what-item"><div class="what-item-num">06</div><div class="what-item-title">Modular data layer</div><div class="what-item-desc">New model = new config file. IONIQ 3, Nexo, Santa Fe — same platform.</div></div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack-section">
+  <div class="stack-inner">
+    <div class="section-label">Technology</div>
+    <h3>Built on a stack that scales</h3>
+    <div class="stack-grid">
+      <div class="stack-item"><div class="stack-item-role">Frontend</div><div class="stack-item-name">Vanilla JS</div><div class="stack-item-desc">Zero framework. Embeds anywhere.</div></div>
+      <div class="stack-item"><div class="stack-item-role">360° viewer</div><div class="stack-item-name">Canvas API</div><div class="stack-item-desc">36-frame preloaded spin, drag/swipe.</div></div>
+      <div class="stack-item"><div class="stack-item-role">Pano viewer</div><div class="stack-item-name">Pannellum</div><div class="stack-item-desc">WebGL equirectangular. Open source.</div></div>
+      <div class="stack-item"><div class="stack-item-role">Database</div><div class="stack-item-name">Supabase</div><div class="stack-item-desc">Postgres. Content team edits directly.</div></div>
+      <div class="stack-item"><div class="stack-item-role">Hosting</div><div class="stack-item-name">Netlify</div><div class="stack-item-desc">Auto-deploy on push. Global CDN.</div></div>
+      <div class="stack-item"><div class="stack-item-role">Version control</div><div class="stack-item-name">GitHub</div><div class="stack-item-desc">dev branch → staging → main → live.</div></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-logo">DIGITAL GIANT</div>
-    <div class="footer-copy">849 S Broadway, Los Angeles CA · dallas@digital-giant.com</div>
-  </footer>
+<!-- TIMELINE -->
+<section class="timeline-section">
+  <div class="section-label">Delivery plan</div>
+  <h2>Go-live Jun 1, 2026</h2>
+  <div>
+    <div class="tl-item"><div class="tl-date">31 Mar</div><div><div class="tl-badge">Done</div><div class="tl-title">Prototype & proposal</div><div class="tl-desc">Working visualizer, architecture, costing — delivered ahead of deadline.</div></div></div>
+    <div class="tl-item"><div class="tl-date">Wk Apr 1</div><div><div class="tl-title">Kickoff & scope lock</div><div class="tl-desc">Confirm colour list, asset specs, AEM integration requirements.</div></div></div>
+    <div class="tl-item"><div class="tl-date">14 Apr</div><div><div class="tl-title">UX/UI approved</div><div class="tl-desc">IONIQ 3 skin, intro animation, colour-reactive background — signed off.</div></div></div>
+    <div class="tl-item"><div class="tl-date">30 Apr</div><div><div class="tl-title">All assets delivered</div><div class="tl-desc">15 colour sequences + interior panoramas + studio environment.</div></div></div>
+    <div class="tl-item"><div class="tl-date">14 May</div><div><div class="tl-title">Build complete</div><div class="tl-desc">All features integrated, responsive, AEM embed packaged.</div></div></div>
+    <div class="tl-item"><div class="tl-date">28 May</div><div><div class="tl-title">QA, staging & UAT</div><div class="tl-desc">Cross-browser, cross-device. UAT with HME team.</div></div></div>
+    <div class="tl-item"><div class="tl-date">1 Jun</div><div><div class="tl-badge">Go-live</div><div class="tl-title">Production delivery</div><div class="tl-desc">Live on IONIQ 3 PIP. Hypercare window open.</div></div></div>
+  </div>
+</section>
 
-  <!-- EMBEDDED VISUALIZER SCRIPT -->
-  <script>
-  (function() {
-    var BASE = 'https://s7d1.scene7.com/is/image/hyundai/';
+<!-- FOOTER CTA -->
+<section class="footer-cta">
+  <h2>Let's make this happen.</h2>
+  <p>We're ready to kick off. The platform is built — we just need the green light and your asset specs.</p>
+  <div class="footer-btns">
+    <button class="btn-y">Request full proposal</button>
+    <button class="btn-g">Talk to Dallas Carroll</button>
+  </div>
+</section>
 
-    var COLORS = [
-      { name:'Ultimate Red',       slug:'ultimate-red',       imgId:'2026-tucson-0291-vlp:4-3', c1:'#7a1418', c2:'#4a0a0c', shine:'rgba(200,70,70,0.38)', atmo:'rgba(70,5,5,0.2)' },
-      { name:'Phantom Black',      slug:'phantom-black',      imgId:'2026-tucson-0281-vlp:4-3', c1:'#1c1c22', c2:'#0a0a10', shine:'rgba(80,80,110,0.3)',  atmo:'rgba(0,0,0,0.25)' },
-      { name:'Amazon Gray',        slug:'amazon-gray',        imgId:'2026-tucson-0296-vlp:4-3', c1:'#4a5248', c2:'#2e3530', shine:'rgba(110,130,110,0.35)', atmo:'rgba(35,48,35,0.16)' },
-      { name:'Shimmering Silver',  slug:'shimmering-silver',  imgId:'2026-tucson-0292-vlp:4-3', c1:'#a8a8b0', c2:'#808088', shine:'rgba(220,220,235,0.55)', atmo:'rgba(140,140,160,0.1)' },
-      { name:'Deep Sea',           slug:'deep-sea',           imgId:'2025-tucson-nx4-0278-vlp:4-3', c1:'#1a2e4a', c2:'#0e1c30', shine:'rgba(50,100,180,0.4)', atmo:'rgba(8,24,65,0.22)' },
-      { name:'Creamy White Pearl', slug:'creamy-white-pearl', imgId:'2025-tucson-nx4-0294-vlp:4-3', c1:'#e8e5de', c2:'#c8c5be', shine:'rgba(255,255,255,0.72)', atmo:'rgba(200,195,175,0.08)' },
-      { name:'Cashmere Bronze',    slug:'cashmere-bronze',    imgId:'2025-tucson-nx4-0273-vlp:7-5', c1:'#7a7060', c2:'#504840', shine:'rgba(160,140,100,0.35)', atmo:'rgba(80,65,25,0.16)' },
-      { name:'Nocturne Gray',      slug:'nocturne-gray',      imgId:'2026-tucson-0281-vlp:4-3', c1:'#3e3e44', c2:'#252528', shine:'rgba(100,100,120,0.3)', atmo:'rgba(28,28,38,0.22)' },
-    ];
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">DIGITAL GIANT</div>
+  <div class="footer-copy">849 S Broadway, Los Angeles CA · dallas@digital-giant.com</div>
+</footer>
 
-    var INTERIORS = [
-      { name:'Black', c1:'#111', c2:'#000' },
-      { name:'Gray',  c1:'#686868', c2:'#444' },
-    ];
+<script>
+// ════════════════════════════════════════════════════════════
+//  ASSET CONFIG — exact filenames from manifest
+// ════════════════════════════════════════════════════════════
+const ASSET_BASE = './assets';
+const FRAME_COUNT = 36;
 
-    var state = { extIdx:1, intIdx:1, view:'exterior', dragging:false, dragX:0 };
+function spinFrames(extName) {
+  return Array.from({ length: FRAME_COUNT }, (_, i) => {
+    const n = String(i + 1).padStart(4, '0');
+    return `${ASSET_BASE}/exterior/2026_Tucson_LTD_FWD_${extName}_Black_360_Landscape_LowerGrand_${n}.jpeg`;
+  });
+}
+function panoUrl(extName, intFileName) {
+  return `${ASSET_BASE}/interior/2026_Tucson_LTD_FWD_${extName}_${intFileName}_Pano_LowerGrand.jpg`;
+}
 
-    var SCENE_BG = BASE + '2026-tucson-0266-vlp:16-9?wid=1440&hei=810&qlt=85,0&fmt=webp';
-    var INT_HERO = BASE + '2026-tucson-0292-vlp:4-3?wid=1400&hei=900&qlt=90,0&fmt=webp';
+const INT_COLOURS = [
+  { slug:'black',            name:'Black',            fileName:'Black',         hex:'#111', hexB:null,     availableFor:'all' },
+  { slug:'gray',             name:'Gray',             fileName:'Gray',          hex:'#686868', hexB:null,  availableFor:'all' },
+  { slug:'green-gray-3tone', name:'Green Gray 3-Tone',fileName:'GreenGray3Tone',hex:'#4a5c4a', hexB:'#8a9e7a',
+    availableFor:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] },
+];
 
-    function heroUrl(c) {
-      return BASE + c.imgId + '?wid=1400&hei=900&qlt=90,0&fmt=webp';
-    }
+const EXT_COLOURS = [
+  { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',        hex:{p:'#1c3a5c',s:'#0e2038'}, atmo:'rgba(15,35,70,0.22)' },
+  { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte',  hex:{p:'#5a5e62',s:'#383c40'}, atmo:'rgba(40,42,46,0.20)' },
+  { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl',  hex:{p:'#6e7276',s:'#4a4e52'}, atmo:'rgba(50,54,58,0.18)' },
+  { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic', hex:{p:'#7a7e82',s:'#565a5e'}, atmo:'rgba(55,58,62,0.18)' },
+  { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',        hex:{p:'#1c1c22',s:'#0a0a10'}, atmo:'rgba(0,0,0,0.28)' },
+  { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl',  hex:{p:'#2e4a36',s:'#1a2e20'}, atmo:'rgba(20,45,28,0.22)' },
+  { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl',  hex:{p:'#e8e6e0',s:'#c8c6c0'}, atmo:'rgba(200,198,192,0.08)' },
+  { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',    hex:{p:'#a8a8b0',s:'#888890'}, atmo:'rgba(140,140,160,0.12)' },
+  { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',    hex:{p:'#7a1418',s:'#4a0a0c'}, atmo:'rgba(70,5,5,0.22)' },
+];
 
-    function swatchSVG(c, id) {
-      return '<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">'
-        +'<defs><radialGradient id="g'+id+'" cx="38%" cy="30%" r="62%">'
-        +'<stop offset="0%" stop-color="'+c.shine+'"/>'
-        +'<stop offset="100%" stop-color="rgba(0,0,0,0)"/>'
-        +'</radialGradient>'
-        +'<clipPath id="cp'+id+'"><circle cx="18" cy="18" r="16"/></clipPath></defs>'
-        +'<circle cx="18" cy="18" r="16" fill="'+c.c2+'"/>'
-        +'<path d="M2 18Q9 3 34 3L34 33Q9 33 2 18Z" fill="'+c.c1+'" clip-path="url(#cp'+id+')"/>'
-        +'<path d="M2 18Q9 33 34 33" stroke="rgba(0,0,0,0.22)" stroke-width="0.7" fill="none" clip-path="url(#cp'+id+')"/>'
-        +'<circle cx="18" cy="18" r="16" fill="url(#g'+id+')"/>'
-        +'</svg>';
-    }
+// Attach frames
+EXT_COLOURS.forEach(c => { c.frames = spinFrames(c.fn); });
 
-    function intSwatchSVG(c, id) {
-      return '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">'
-        +'<defs><radialGradient id="ig'+id+'" cx="35%" cy="30%" r="60%">'
-        +'<stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>'
-        +'<stop offset="100%" stop-color="rgba(0,0,0,0)"/>'
-        +'</radialGradient></defs>'
-        +'<circle cx="16" cy="16" r="14" fill="'+c.c2+'"/>'
-        +'<path d="M2 16Q8 3 30 3L30 29Q8 29 2 16Z" fill="'+c.c1+'"/>'
-        +'<circle cx="16" cy="16" r="14" fill="url(#ig'+id+')"/>'
-        +'</svg>';
-    }
+function getAvailableInteriors(extSlug) {
+  return INT_COLOURS.filter(i => i.availableFor === 'all' || i.availableFor.includes(extSlug));
+}
 
-    function icon360() {
-      return '<svg viewBox="0 0 36 14" width="26" height="10" fill="none">'
-        +'<path d="M2 7Q2 2 18 2Q30 2 34 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>'
-        +'<polyline points="28,3 34,6 30,10" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>'
-        +'</svg>';
-    }
+// ════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════
+const state = {
+  extIdx:   4,   // Phantom Black default
+  intIdx:   0,   // Black default
+  view:    'spin',  // 'spin' | 'pano'
+  // spin
+  frame:    0,
+  imgCache: {},
+  dragging: false,
+  dragX:    0,
+  dragAccum:0,
+  sensitivity: 5,
+  // pano
+  pannellumViewer: null,
+};
 
-    function render() {
-      var mount = document.getElementById('viz-mount');
-      if (!mount) return;
+// ════════════════════════════════════════════════════════════
+//  SPIN VIEWER
+// ════════════════════════════════════════════════════════════
+const canvas  = document.getElementById('spin-canvas');
+const ctx     = canvas.getContext('2d');
+const loadBar = document.getElementById('spin-loadbar');
+const hint    = document.getElementById('drag-hint');
 
-      var extSwatches = COLORS.map(function(c,i) {
-        return '<div class="swatch-ext'+(i===state.extIdx?' active':'')+'" data-ext="'+i+'" title="'+c.name+'">'+swatchSVG(c,'e'+i)+'</div>';
-      }).join('');
-
-      var intSwatches = INTERIORS.map(function(c,i) {
-        return '<div class="swatch-int'+(i===state.intIdx?' active':'')+'" data-int="'+i+'" title="'+c.name+'">'+intSwatchSVG(c,'i'+i)+'</div>';
-      }).join('');
-
-      var c = COLORS[state.extIdx];
-      var currentHero = state.view === 'interior' ? INT_HERO : heroUrl(c);
-
-      mount.innerHTML =
-        '<div class="viz-root">'
-          +'<div class="stage" id="vz-stage">'
-            +'<img class="stage-bg" src="'+SCENE_BG+'" id="vz-scene" alt="">'
-            +'<div class="stage-atmo" id="vz-atmo" style="background:'+c.atmo+'"></div>'
-            +'<img class="stage-car" src="'+currentHero+'" id="vz-hero" alt="Tucson" draggable="false">'
-            +'<div class="stage-title"><h2>TUCSON 360° Experience</h2><div class="stage-title-rule"></div></div>'
-            +'<div class="int-thumb'+(state.view==='interior'?' active':'')+'" id="vz-int-thumb">'
-              +'<img src="'+INT_HERO+'" alt="Interior">'
-              +'<div class="int-thumb-icon">'+icon360()+'</div>'
-            +'</div>'
-            +'<div class="trim-selector"><div class="trim-btn">SEL Premium <span class="trim-caret">▾</span></div></div>'
-            +'<div class="msrp-block">'
-              +'<div class="msrp-val" id="vz-msrp">$33,800</div>'
-              +'<div class="msrp-label">Starting MSRP</div>'
-            +'</div>'
-          +'</div>'
-          +'<div class="strip">'
-            +'<div class="strip-disclaimer">Vehicle shown for illustrative purposes only. Actual model may vary.</div>'
-            +'<div class="strip-controls">'
-              +'<div class="strip-group">'
-                +'<div class="swatches-ext" id="vz-ext-swatches">'+extSwatches+'</div>'
-                +'<div class="strip-label">Exterior: <strong id="vz-ext-name">'+COLORS[state.extIdx].name+'</strong></div>'
-              +'</div>'
-              +'<div class="strip-group">'
-                +'<div class="swatches-int" id="vz-int-swatches">'+intSwatches+'</div>'
-                +'<div class="strip-label">Interior: <strong id="vz-int-name">'+INTERIORS[state.intIdx].name+'</strong></div>'
-              +'</div>'
-              +'<button class="cta-btn">Build &amp; Price</button>'
-            +'</div>'
-          +'</div>'
-        +'</div>';
-
-      attachEvents();
-    }
-
-    function attachEvents() {
-      document.getElementById('vz-ext-swatches')
-        ?.querySelectorAll('.swatch-ext')
-        .forEach(function(el) {
-          el.addEventListener('click', function() { setExt(parseInt(el.dataset.ext)); });
-        });
-
-      document.getElementById('vz-int-swatches')
-        ?.querySelectorAll('.swatch-int')
-        .forEach(function(el) {
-          el.addEventListener('click', function() { setInt(parseInt(el.dataset.int)); });
-        });
-
-      var thumb = document.getElementById('vz-int-thumb');
-      if (thumb) thumb.addEventListener('click', toggleInterior);
-
-      var stage = document.getElementById('vz-stage');
-      if (stage) {
-        stage.addEventListener('mousedown', function(e) { state.dragging=true; state.dragX=e.clientX; });
-        stage.addEventListener('touchstart', function(e) { state.dragging=true; state.dragX=e.touches[0].clientX; }, {passive:true});
+function preloadFrames(frames, onProgress, onDone) {
+  state.imgCache = {};
+  let loaded = 0;
+  const total = frames.length;
+  frames.forEach((url, i) => {
+    const img = new Image();
+    img.onload = () => {
+      state.imgCache[i] = img;
+      loaded++;
+      if (loaded === 1) {
+        canvas.width  = img.naturalWidth  || 1920;
+        canvas.height = img.naturalHeight || 1080;
+        drawFrame(0);
       }
-      window.addEventListener('mousemove', onDrag);
-      window.addEventListener('touchmove', onDrag, {passive:true});
-      window.addEventListener('mouseup', function() { state.dragging=false; });
-      window.addEventListener('touchend', function() { state.dragging=false; });
-    }
+      onProgress(loaded / total);
+      if (loaded === total) onDone();
+    };
+    img.onerror = () => { loaded++; onProgress(loaded/total); if(loaded===total) onDone(); };
+    img.src = url;
+  });
+}
 
-    function setExt(idx) {
-      state.extIdx = idx;
-      state.view = 'exterior';
-      var c = COLORS[idx];
-      document.querySelectorAll('.swatch-ext').forEach(function(s,i) { s.classList.toggle('active',i===idx); });
-      var el = document.getElementById('vz-ext-name');
-      if (el) el.textContent = c.name;
-      var atmo = document.getElementById('vz-atmo');
-      if (atmo) atmo.style.background = c.atmo;
-      var scene = document.getElementById('vz-scene');
-      if (scene) scene.style.opacity = '1';
-      var thumb = document.getElementById('vz-int-thumb');
-      if (thumb) thumb.classList.remove('active');
-      swapHero(heroUrl(c));
-    }
+function drawFrame(idx) {
+  const img = state.imgCache[idx];
+  if (!img) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+}
 
-    function setInt(idx) {
-      state.intIdx = idx;
-      document.querySelectorAll('.swatch-int').forEach(function(s,i) { s.classList.toggle('active',i===idx); });
-      var el = document.getElementById('vz-int-name');
-      if (el) el.textContent = INTERIORS[idx].name;
-    }
+function loadExtColour(extIdx) {
+  const c = EXT_COLOURS[extIdx];
+  loadBar.style.width   = '0%';
+  loadBar.style.opacity = '1';
+  state.frame = 0;
 
-    function toggleInterior() {
-      state.view = state.view === 'interior' ? 'exterior' : 'interior';
-      var thumb = document.getElementById('vz-int-thumb');
-      if (thumb) thumb.classList.toggle('active', state.view === 'interior');
-      var scene = document.getElementById('vz-scene');
-      if (state.view === 'interior') {
-        if (scene) scene.style.opacity = '0.2';
-        swapHero(INT_HERO);
-      } else {
-        if (scene) scene.style.opacity = '1';
-        swapHero(heroUrl(COLORS[state.extIdx]));
-      }
-    }
+  preloadFrames(
+    c.frames,
+    (pct) => { loadBar.style.width = (pct * 100) + '%'; },
+    ()    => { loadBar.style.opacity = '0'; }
+  );
 
-    function swapHero(url) {
-      var hero = document.getElementById('vz-hero');
-      if (!hero) return;
-      hero.style.opacity = '0';
-      var img = new Image();
-      img.onload = function() { hero.src = url; hero.style.opacity = '1'; };
-      img.onerror = function() { hero.style.opacity = '1'; };
-      img.src = url;
-    }
+  // Atmosphere
+  document.getElementById('viz-stage').style.background = '#111';
+}
 
-    function onDrag(e) {
-      if (!state.dragging || state.view !== 'exterior') return;
-      var x = e.touches ? e.touches[0].clientX : e.clientX;
-      var delta = x - state.dragX;
-      if (Math.abs(delta) < 40) return;
-      // Cycle to adjacent colour on drag (placeholder for true 360 frames)
-      var dir = delta > 0 ? -1 : 1;
-      var next = (state.extIdx + dir + COLORS.length) % COLORS.length;
-      state.dragX = x;
-      setExt(next);
-    }
+// Drag handlers
+const spinWrap = document.getElementById('spin-canvas-wrap');
+spinWrap.addEventListener('mousedown',  e => startDrag(e.clientX));
+spinWrap.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), {passive:true});
+window.addEventListener('mousemove',  e => { if(state.view==='spin') moveDrag(e.clientX); });
+window.addEventListener('touchmove',  e => { if(state.view==='spin') moveDrag(e.touches[0].clientX); }, {passive:true});
+window.addEventListener('mouseup',  endDrag);
+window.addEventListener('touchend', endDrag);
 
-    render();
-  })();
-  </script>
+// Hide hint on first drag
+let hintHidden = false;
+function hideHint() { if(!hintHidden){ hintHidden=true; hint.style.opacity='0'; setTimeout(()=>hint.remove(),600); } }
 
+function startDrag(x) {
+  if(state.view!=='spin') return;
+  state.dragging=true; state.dragX=x; state.dragAccum=0;
+  hideHint();
+}
+function moveDrag(x) {
+  if(!state.dragging || state.view!=='spin') return;
+  const delta = x - state.dragX;
+  state.dragX = x;
+  state.dragAccum += delta;
+  const steps = Math.trunc(state.dragAccum / state.sensitivity);
+  if(steps !== 0) {
+    state.dragAccum -= steps * state.sensitivity;
+    const total = EXT_COLOURS[state.extIdx].frames.length;
+    state.frame = ((state.frame - steps) + total) % total;
+    drawFrame(state.frame);
+  }
+}
+function endDrag() { state.dragging = false; }
+
+// ════════════════════════════════════════════════════════════
+//  PANO VIEWER
+// ════════════════════════════════════════════════════════════
+function loadPano(url) {
+  const panoInner = document.getElementById('pano-inner');
+  if(state.pannellumViewer) { state.pannellumViewer.destroy(); state.pannellumViewer=null; }
+  panoInner.innerHTML = '';
+  state.pannellumViewer = pannellum.viewer(panoInner, {
+    type:         'equirectangular',
+    panorama:     url,
+    autoLoad:     true,
+    showControls: false,
+    mouseZoom:    true,
+    draggable:    true,
+    friction:     0.15,
+    hfov:         110,
+    minHfov:      50,
+    maxHfov:      130,
+    compass:      false,
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+//  VIEW TOGGLE (spin ↔ pano)
+// ════════════════════════════════════════════════════════════
+function toggleView() {
+  if(state.view === 'spin') {
+    state.view = 'pano';
+    document.getElementById('spin-canvas-wrap').classList.add('hidden');
+    document.getElementById('pano-wrap').classList.add('active');
+    document.getElementById('int-thumb').classList.add('active');
+    const ext = EXT_COLOURS[state.extIdx];
+    const int = getAvailableInteriors(ext.slug)[state.intIdx] || INT_COLOURS[0];
+    loadPano(panoUrl(ext.fn, int.fileName));
+  } else {
+    state.view = 'spin';
+    document.getElementById('spin-canvas-wrap').classList.remove('hidden');
+    document.getElementById('pano-wrap').classList.remove('active');
+    document.getElementById('int-thumb').classList.remove('active');
+    drawFrame(state.frame);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  SWATCH BUILDERS
+// ════════════════════════════════════════════════════════════
+function swatchSVG(p, s, shine) {
+  const id = 'sw' + Math.random().toString(36).slice(2,7);
+  return `<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="${id}" cx="38%" cy="30%" r="62%">
+        <stop offset="0%" stop-color="${shine}"/>
+        <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+      </radialGradient>
+      <clipPath id="c${id}"><circle cx="18" cy="18" r="16"/></clipPath>
+    </defs>
+    <circle cx="18" cy="18" r="16" fill="${s}"/>
+    <path d="M2 18Q9 3 34 3L34 33Q9 33 2 18Z" fill="${p}" clip-path="url(#c${id})"/>
+    <path d="M2 18Q9 33 34 33" stroke="rgba(0,0,0,0.22)" stroke-width="0.7" fill="none" clip-path="url(#c${id})"/>
+    <circle cx="18" cy="18" r="16" fill="url(#${id})"/>
+  </svg>`;
+}
+
+function intSwatchSVG(hex, hexB) {
+  const id = 'is' + Math.random().toString(36).slice(2,7);
+  if(hexB) {
+    return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="14" fill="${hex}"/>
+      <path d="M16 2A14 14 0 0 1 30 16H16Z" fill="${hexB}"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="${id}" cx="35%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient></defs>
+    <circle cx="16" cy="16" r="14" fill="${hex}"/>
+    <circle cx="16" cy="16" r="14" fill="url(#${id})"/>
+  </svg>`;
+}
+
+function buildExtSwatches() {
+  const row = document.getElementById('swatches-ext');
+  row.innerHTML = '';
+  EXT_COLOURS.forEach((c, i) => {
+    const shine = c.hex.p.startsWith('#e') ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.25)';
+    const div = document.createElement('div');
+    div.className = 'swatch-ext' + (i===state.extIdx?' active':'');
+    div.innerHTML = swatchSVG(c.hex.p, c.hex.s, shine);
+    div.title = c.name;
+    div.onclick = () => setExt(i);
+    row.appendChild(div);
+  });
+}
+
+function buildIntSwatches(extSlug) {
+  const row = document.getElementById('swatches-int');
+  row.innerHTML = '';
+  const available = getAvailableInteriors(extSlug).map(i=>i.slug);
+  // Find current int colour, default to first available
+  let currentIntSlug = INT_COLOURS[state.intIdx]?.slug;
+  if(!available.includes(currentIntSlug)) { state.intIdx=0; currentIntSlug=INT_COLOURS[0].slug; }
+
+  INT_COLOURS.forEach((c, i) => {
+    const isAvail = c.availableFor==='all' || c.availableFor.includes(extSlug);
+    const isActive = i===state.intIdx && isAvail;
+    const div = document.createElement('div');
+    div.className = 'swatch-int' + (isActive?' active':'') + (!isAvail?' unavailable':'');
+    div.innerHTML = intSwatchSVG(c.hex, c.hexB);
+    div.title = c.name;
+    if(isAvail) div.onclick = () => setInt(i);
+    row.appendChild(div);
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+//  SET COLOUR
+// ════════════════════════════════════════════════════════════
+function setExt(idx) {
+  state.extIdx = idx;
+  const c = EXT_COLOURS[idx];
+
+  document.querySelectorAll('.swatch-ext').forEach((s,i) => s.classList.toggle('active', i===idx));
+  document.getElementById('ext-name').textContent = c.name;
+
+  // Update atmosphere
+  document.getElementById('viz-stage').style.background = '#111';
+
+  // If in spin view, load new frames
+  if(state.view === 'spin') {
+    loadExtColour(idx);
+  } else {
+    // Stay in pano but check interior availability
+    const int = getAvailableInteriors(c.slug)[0];
+    if(int) loadPano(panoUrl(c.fn, int.fileName));
+  }
+
+  // Rebuild interior swatches for this exterior
+  buildIntSwatches(c.slug);
+
+  // Update thumb
+  updateIntThumb();
+}
+
+function setInt(idx) {
+  state.intIdx = idx;
+  const c = INT_COLOURS[idx];
+  document.querySelectorAll('.swatch-int').forEach((s,i) => s.classList.toggle('active', i===idx));
+  document.getElementById('int-name').textContent = c.name;
+
+  updateIntThumb();
+
+  // If currently in pano, reload with new interior
+  if(state.view === 'pano') {
+    const ext = EXT_COLOURS[state.extIdx];
+    loadPano(panoUrl(ext.fn, c.fileName));
+  }
+}
+
+function updateIntThumb() {
+  const ext = EXT_COLOURS[state.extIdx];
+  const availInts = getAvailableInteriors(ext.slug);
+  const int = availInts[Math.min(state.intIdx, availInts.length-1)] || availInts[0];
+  if(int) {
+    const url = panoUrl(ext.fn, int.fileName);
+    document.getElementById('int-thumb-img').src = url;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════
+buildExtSwatches();
+buildIntSwatches(EXT_COLOURS[state.extIdx].slug);
+updateIntThumb();
+loadExtColour(state.extIdx);
+</script>
 </body>
 </html>
