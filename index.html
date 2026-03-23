@@ -23,12 +23,7 @@
   body { font-family:var(--font); color:var(--text); background:#fff; }
 
   /* ── NAV ── */
-  nav {
-    position:sticky; top:0; z-index:1000;
-    background:var(--white); border-bottom:1px solid var(--border);
-    height:60px; display:flex; align-items:center;
-    padding:0 24px; justify-content:space-between;
-  }
+  nav { position:sticky; top:0; z-index:1000; background:var(--white); border-bottom:1px solid var(--border); height:60px; display:flex; align-items:center; padding:0 24px; justify-content:space-between; }
   .nav-logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
   .nav-logo svg { width:100px; height:24px; }
   .nav-links { display:flex; gap:28px; list-style:none; }
@@ -39,11 +34,7 @@
   .nav-cta:hover { background:var(--blue-lt); }
 
   /* ── HERO ── */
-  .hero {
-    position:relative; height:88vh; min-height:500px;
-    background:linear-gradient(160deg,#0a0f1a 0%,#0d1e35 50%,#0a2040 100%);
-    display:flex; align-items:flex-end; overflow:hidden;
-  }
+  .hero { position:relative; height:88vh; min-height:500px; background:linear-gradient(160deg,#0a0f1a 0%,#0d1e35 50%,#0a2040 100%); display:flex; align-items:flex-end; overflow:hidden; }
   .hero-img { position:absolute; inset:0; overflow:hidden; }
   .hero-img video { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
   .hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.1) 55%,transparent 100%); }
@@ -54,7 +45,7 @@
   .hero-actions { display:flex; gap:12px; flex-wrap:wrap; }
   .btn-primary { background:var(--blue); color:white; border:none; padding:14px 28px; font-size:14px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); text-transform:uppercase; transition:background .15s; }
   .btn-primary:hover { background:#003f7f; }
-  .btn-outline { background:transparent; color:white; border:1.5px solid rgba(255,255,255,.5); padding:14px 28px; font-size:14px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); text-transform:uppercase; transition:border-color .15s,background .15s; }
+  .btn-outline { background:transparent; color:white; border:1.5px solid rgba(255,255,255,.5); padding:14px 28px; font-size:14px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); text-transform:uppercase; }
   .btn-outline:hover { border-color:white; background:rgba(255,255,255,.08); }
 
   /* ── SUB NAV ── */
@@ -64,7 +55,7 @@
   .sub-nav a:hover { color:var(--blue); }
   .sub-nav a.active { color:var(--blue); border-bottom-color:var(--blue); }
 
-  /* ── SECTION ── */
+  /* ── SECTIONS ── */
   section { padding:72px 40px; }
   .section-label { font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--blue); margin-bottom:12px; }
   .section-title { font-size:clamp(26px,3.5vw,44px); font-weight:700; line-height:1.1; letter-spacing:-.02em; color:var(--text); margin-bottom:16px; }
@@ -89,7 +80,7 @@
   .config-launch-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(0,0,0,.2); }
   .config-launch-btn svg { width:16px; height:16px; }
 
-  /* ── FULL-PAGE 360 OVERLAY ── */
+  /* ── OVERLAY (no fullscreen, just fixed in viewport) ── */
   #viz-overlay {
     position:fixed; inset:0; z-index:9000;
     background:#000;
@@ -98,7 +89,7 @@
   }
   #viz-overlay.open { display:flex; }
 
-  .config-topbar { height:52px; flex-shrink:0; background:rgba(0,0,0,.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(255,255,255,.1); z-index:2; }
+  .config-topbar { height:52px; flex-shrink:0; background:rgba(0,0,0,.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(255,255,255,.1); }
   .config-topbar-left { display:flex; align-items:center; gap:12px; }
   .config-topbar-logo svg { width:80px; opacity:.85; }
   .config-topbar-divider { width:1px; height:18px; background:rgba(255,255,255,.2); }
@@ -107,32 +98,55 @@
   .config-close-btn:hover { background:rgba(255,255,255,.18); }
   .config-close-btn svg { width:12px; height:12px; }
 
-  /* ── VISUALIZER (inside overlay) ── */
-  .viz-body { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  /* ── VISUALIZER BODY ── */
+  .viz-body { flex:1; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
   .viz-stage { position:relative; flex:1; min-height:0; background:#111; overflow:hidden; }
-  #spin-wrap { position:absolute; inset:0; z-index:3; cursor:grab; display:flex; align-items:center; justify-content:center; }
+
+  /* Spin — canvas fills stage via absolute */
+  #spin-wrap { position:absolute; inset:0; z-index:3; cursor:grab; }
   #spin-wrap:active { cursor:grabbing; }
   #spin-wrap canvas { width:100%; height:100%; object-fit:cover; display:block; }
   #spin-wrap.hidden { display:none; }
+
+  /* Pano */
   #pano-wrap { position:absolute; inset:0; z-index:3; display:none; }
   #pano-wrap.active { display:block; }
   #pano-inner { width:100%; height:100%; }
-  #loadbar { position:absolute; bottom:0; left:0; height:3px; background:var(--teal); width:0; z-index:20; transition:width .15s; }
+
+  /* Loading overlay per colour */
+  #colour-loader {
+    position:absolute; inset:0; z-index:5;
+    background:rgba(0,0,0,.55);
+    display:none;
+    align-items:center; justify-content:center;
+    flex-direction:column; gap:12px;
+  }
+  #colour-loader.show { display:flex; }
+  .loader-bar-track { width:200px; height:3px; background:rgba(255,255,255,.15); border-radius:2px; }
+  .loader-bar-fill { height:100%; background:var(--teal); border-radius:2px; width:0; transition:width .1s; }
+  .loader-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,.5); }
+
+  /* Global preload bar (bottom of stage) */
+  #global-bar { position:absolute; bottom:0; left:0; height:2px; background:var(--teal); width:0; z-index:20; transition:width .1s; opacity:.6; }
+
+  /* Drag hint */
   #drag-hint { position:absolute; bottom:80px; left:50%; transform:translateX(-50%); z-index:15; display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.45); pointer-events:none; transition:opacity .5s; white-space:nowrap; }
+
+  /* Stage UI */
   .viz-title { position:absolute; top:20px; left:22px; z-index:10; }
   .viz-title h3 { font-size:13px; font-weight:600; color:#fff; letter-spacing:.5px; }
   .viz-title-rule { width:28px; height:2px; background:var(--teal); margin-top:5px; }
   .int-thumb { position:absolute; top:14px; right:16px; z-index:10; width:88px; height:62px; border-radius:4px; overflow:hidden; cursor:pointer; border:2px solid rgba(255,255,255,.22); transition:border-color .2s; background:#111; }
   .int-thumb:hover, .int-thumb.active { border-color:var(--teal); }
-  .int-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .int-thumb img { width:100%; height:100%; object-fit:cover; display:block; transition:opacity .3s; }
   .int-thumb-icon { position:absolute; bottom:4px; left:50%; transform:translateX(-50%); pointer-events:none; }
-  .trim-pill { position:absolute; bottom:20px; left:20px; z-index:10; background:#fff; color:#111; border:none; padding:8px 14px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; display:flex; align-items:center; gap:6px; letter-spacing:.02em; }
+  .trim-pill { position:absolute; bottom:20px; left:20px; z-index:10; background:#fff; color:#111; border:none; padding:8px 14px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; display:flex; align-items:center; gap:6px; }
   .trim-caret { font-size:9px; color:#888; }
   .msrp-block { position:absolute; bottom:20px; right:20px; z-index:10; text-align:right; }
   .msrp-val { font-size:clamp(20px,2.8vw,30px); font-weight:700; color:#fff; line-height:1.1; }
   .msrp-label { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
 
-  /* Strip */
+  /* ── STRIP ── */
   .viz-strip { background:#fff; padding:14px 22px 16px; border-top:1px solid #e0e0e0; flex-shrink:0; }
   .viz-disclaimer { font-size:10.5px; color:#999; margin-bottom:10px; }
   .viz-controls { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -143,19 +157,19 @@
   .sw-ext { width:36px; height:36px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform .15s,border-color .15s; overflow:hidden; flex-shrink:0; }
   .sw-ext svg { display:block; }
   .sw-ext.active { border-color:#111; transform:scale(1.14); }
+  .sw-ext.loading { opacity:.6; cursor:wait; }
   .sw-int { width:32px; height:32px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; transition:transform .15s,border-color .15s; overflow:hidden; flex-shrink:0; }
   .sw-int svg { display:block; }
   .sw-int.active { border-color:#111; transform:scale(1.1); }
   .sw-int.na { opacity:.2; cursor:not-allowed; pointer-events:none; }
-  .viz-cta { background:var(--teal); color:#fff; border:none; padding:10px 22px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; white-space:nowrap; letter-spacing:.04em; text-transform:uppercase; transition:background .2s; }
+  .viz-cta { background:var(--teal); color:#fff; border:none; padding:10px 22px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; white-space:nowrap; letter-spacing:.04em; text-transform:uppercase; }
   .viz-cta:hover { background:#0090b5; }
 
   /* ── GALLERY ── */
   .gallery { padding:0 40px 72px; }
   .gallery-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; height:400px; }
   .gallery-item { background:#d0d4dc; overflow:hidden; position:relative; }
-  .gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
-  .gallery-placeholder { width:100%; height:100%; background:linear-gradient(135deg,#c8ccd4 0%,#b0b5c0 100%); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.5); font-size:12px; letter-spacing:.1em; }
+  .gallery-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.5); font-size:12px; letter-spacing:.1em; }
 
   /* ── FOOTER ── */
   footer { background:var(--text); color:white; padding:48px 40px 28px; }
@@ -247,26 +261,11 @@
 
 <!-- SPECS BAR -->
 <div class="specs-bar">
-  <div class="spec-item">
-    <div class="spec-value">190<span class="spec-unit">PS</span></div>
-    <div class="spec-label">Max. Leistung</div>
-  </div>
-  <div class="spec-item">
-    <div class="spec-value">62<span class="spec-unit">km</span></div>
-    <div class="spec-label">Elektr. Reichweite (WLTP)</div>
-  </div>
-  <div class="spec-item">
-    <div class="spec-value">8.9<span class="spec-unit">s</span></div>
-    <div class="spec-label">0–100 km/h</div>
-  </div>
-  <div class="spec-item">
-    <div class="spec-value">1.660<span class="spec-unit">L</span></div>
-    <div class="spec-label">Max. Kofferraumvolumen</div>
-  </div>
-  <div class="spec-item">
-    <div class="spec-value">5<span class="spec-unit">J.</span></div>
-    <div class="spec-label">Fahrzeuggarantie</div>
-  </div>
+  <div class="spec-item"><div class="spec-value">190<span class="spec-unit">PS</span></div><div class="spec-label">Max. Leistung</div></div>
+  <div class="spec-item"><div class="spec-value">62<span class="spec-unit">km</span></div><div class="spec-label">Elektr. Reichweite (WLTP)</div></div>
+  <div class="spec-item"><div class="spec-value">8.9<span class="spec-unit">s</span></div><div class="spec-label">0–100 km/h</div></div>
+  <div class="spec-item"><div class="spec-value">1.660<span class="spec-unit">L</span></div><div class="spec-label">Max. Kofferraumvolumen</div></div>
+  <div class="spec-item"><div class="spec-value">5<span class="spec-unit">J.</span></div><div class="spec-label">Fahrzeuggarantie</div></div>
 </div>
 
 <!-- INTRO -->
@@ -279,26 +278,14 @@
 <!-- GALLERY -->
 <div class="gallery">
   <div class="gallery-grid">
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2a40 0%,#0d1e35 100%)">
-        <span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">EXTERIOR</span>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background:linear-gradient(135deg,#2a2520 0%,#1a1510 100%)">
-        <span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">INTERIOR</span>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2030 0%,#0d1525 100%)">
-        <span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">DETAIL</span>
-      </div>
-    </div>
+    <div class="gallery-item"><div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2a40 0%,#0d1e35 100%)"><span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">EXTERIOR</span></div></div>
+    <div class="gallery-item"><div class="gallery-placeholder" style="background:linear-gradient(135deg,#2a2520 0%,#1a1510 100%)"><span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">INTERIOR</span></div></div>
+    <div class="gallery-item"><div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2030 0%,#0d1525 100%)"><span style="font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.3)">DETAIL</span></div></div>
   </div>
 </div>
 
-<!-- 360 CTA SECTION -->
-<div class="config-section" id="viz-cta-section">
+<!-- 360 CTA -->
+<div class="config-section">
   <div class="config-text">
     <div class="section-label">360° Erlebnis</div>
     <h2 class="section-title">Entdecke den TUCSON<br>von allen Seiten.</h2>
@@ -320,26 +307,10 @@
   <div class="section-label">Ausstattung</div>
   <h2 class="section-title">Konnektivität und Komfort<br>auf höchstem Niveau.</h2>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;margin-top:40px">
-    <div>
-      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
-      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Panorama-Display</h3>
-      <p style="font-size:14px;color:var(--mid);line-height:1.5">Elegant gewölbtes 12,3-Zoll-Doppeldisplay für Kombiinstrument und Infotainment.</p>
-    </div>
-    <div>
-      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
-      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Digitaler Fahrzeugschlüssel</h3>
-      <p style="font-size:14px;color:var(--mid);line-height:1.5">Fahrzeug per Smartphone verriegeln, entriegeln und starten — ohne Telefon aus der Tasche.</p>
-    </div>
-    <div>
-      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
-      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Autobahnassistent 1.5</h3>
-      <p style="font-size:14px;color:var(--mid);line-height:1.5">Hält automatisch Geschwindigkeit, Spur und Sicherheitsabstand zum vorausfahrenden Fahrzeug.</p>
-    </div>
-    <div>
-      <div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div>
-      <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">5 Jahre Garantie</h3>
-      <p style="font-size:14px;color:var(--mid);line-height:1.5">Umfangreiches Garantiepaket ohne Kilometerlimit für sorgenfreies Fahren.</p>
-    </div>
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Panorama-Display</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">Elegant gewölbtes 12,3-Zoll-Doppeldisplay für Kombiinstrument und Infotainment.</p></div>
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Digitaler Fahrzeugschlüssel</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">Fahrzeug per Smartphone verriegeln, entriegeln und starten.</p></div>
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Autobahnassistent 1.5</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">Hält automatisch Geschwindigkeit, Spur und Sicherheitsabstand.</p></div>
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">5 Jahre Garantie</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">Umfangreiches Garantiepaket ohne Kilometerlimit.</p></div>
   </div>
 </section>
 
@@ -359,25 +330,13 @@
 
 <!-- BOTTOM BAR -->
 <div class="bottom-bar">
-  <a class="bottom-bar-item" href="#">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-    Probefahrt
-  </a>
-  <a class="bottom-bar-item" href="#">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    Broschüre
-  </a>
-  <a class="bottom-bar-item highlight" href="#" onclick="event.preventDefault();openViz()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
-    360° Erlebnis
-  </a>
-  <a class="bottom-bar-item" href="#">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    Händlersuche
-  </a>
+  <a class="bottom-bar-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Probefahrt</a>
+  <a class="bottom-bar-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Broschüre</a>
+  <a class="bottom-bar-item highlight" href="#" onclick="event.preventDefault();openViz()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>360° Erlebnis</a>
+  <a class="bottom-bar-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Händlersuche</a>
 </div>
 
-<!-- FULL-PAGE 360 OVERLAY -->
+<!-- FULL-PAGE 360 OVERLAY (no fullscreen API — stays in window) -->
 <div id="viz-overlay">
   <div class="config-topbar">
     <div class="config-topbar-left">
@@ -397,9 +356,22 @@
 
   <div class="viz-body">
     <div class="viz-stage">
+      <!-- Spin viewer -->
       <div id="spin-wrap"><canvas id="spin-canvas"></canvas></div>
+
+      <!-- Pano viewer -->
       <div id="pano-wrap"><div id="pano-inner"></div></div>
-      <div id="loadbar"></div>
+
+      <!-- Colour switch loader overlay -->
+      <div id="colour-loader">
+        <div class="loader-label" id="loader-label">Lade Farbe...</div>
+        <div class="loader-bar-track"><div class="loader-bar-fill" id="loader-fill"></div></div>
+      </div>
+
+      <!-- Global preload progress (bottom strip) -->
+      <div id="global-bar"></div>
+
+      <!-- Drag hint -->
       <div id="drag-hint">
         <svg width="32" height="12" viewBox="0 0 32 12" fill="none">
           <path d="M2 6Q2 2 16 2Q28 2 30 5" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.5"/>
@@ -407,7 +379,9 @@
         </svg>
         Zum Drehen ziehen
       </div>
+
       <div class="viz-title"><h3>TUCSON 360° Erlebnis</h3><div class="viz-title-rule"></div></div>
+
       <div class="int-thumb" id="int-thumb" onclick="toggleView()">
         <img id="int-thumb-img" src="" alt="Innenraum">
         <div class="int-thumb-icon">
@@ -417,9 +391,10 @@
           </svg>
         </div>
       </div>
+
       <button class="trim-pill">Limited FWD <span class="trim-caret">▾</span></button>
       <div class="msrp-block">
-        <div class="msrp-val" id="msrp-val">ab 39.750 €</div>
+        <div class="msrp-val">ab 39.750 €</div>
         <div class="msrp-label">Unverbindliche Preisempfehlung</div>
       </div>
     </div>
@@ -442,185 +417,460 @@
 </div>
 
 <script>
-// ── ASSET CONFIG ──────────────────────────────────────────
-const BASE = './assets';
+// ════════════════════════════════════════════════════════
+//  ASSET CONFIG
+// ════════════════════════════════════════════════════════
+const BASE   = './assets';
 const FRAMES = 36;
 
 function spinFrames(fn) {
-  return Array.from({length:FRAMES},(_,i)=>{
-    const n=String(i+1).padStart(4,'0');
+  return Array.from({length: FRAMES}, (_, i) => {
+    const n = String(i + 1).padStart(4, '0');
     return `${BASE}/exterior/2026_Tucson_LTD_FWD_${fn}_Black_360_Landscape_LowerGrand_${n}.jpeg`;
   });
 }
-function panoUrl(extFn,intFn){ return `${BASE}/interior/2026_Tucson_LTD_FWD_${extFn}_${intFn}_Pano_LowerGrand.jpg`; }
+function panoUrl(extFn, intFn) {
+  return `${BASE}/interior/2026_Tucson_LTD_FWD_${extFn}_${intFn}_Pano_LowerGrand.jpg`;
+}
 
 const INT = [
-  {slug:'black',           name:'Schwarz',         fn:'Black',         hex:'#111',    hexB:null,    for:'all'},
-  {slug:'gray',            name:'Grau',             fn:'Gray',          hex:'#686868', hexB:null,    for:'all'},
-  {slug:'green-gray-3tone',name:'Grün-Grau 3-Tone', fn:'GreenGray3Tone',hex:'#4a5c4a', hexB:'#8a9e7a',
-    for:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver']},
+  { slug:'black',            name:'Schwarz',          fn:'Black',         hex:'#111',    hexB:null,     for:'all' },
+  { slug:'gray',             name:'Grau',              fn:'Gray',          hex:'#686868', hexB:null,     for:'all' },
+  { slug:'green-gray-3tone', name:'Grün-Grau 3-Tone',  fn:'GreenGray3Tone',hex:'#4a5c4a', hexB:'#8a9e7a',
+    for: ['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] },
 ];
 
 const EXT = [
-  {slug:'atlantis-blue',        name:'Atlantis Blue',        fn:'AtlantisBlue',       hex:{p:'#1c3a5c',s:'#0e2038'}},
-  {slug:'ecotronic-gray-matte', name:'Ecotronic Gray Matte', fn:'EcotronicGrayMatte', hex:{p:'#5a5e62',s:'#383c40'}},
-  {slug:'ecotronic-gray-pearl', name:'Ecotronic Gray Pearl', fn:'EcotronicGrayPearl', hex:{p:'#6e7276',s:'#4a4e52'}},
-  {slug:'hampton-gray-metallic',name:'Hampton Gray Metallic',fn:'HamptonGrayMetallic',hex:{p:'#7a7e82',s:'#565a5e'}},
-  {slug:'phantom-black',        name:'Phantom Black',        fn:'PhantomBlack',       hex:{p:'#1c1c22',s:'#0a0a10'}},
-  {slug:'rockwood-green-pearl', name:'Rockwood Green Pearl', fn:'RockwoodGreenPearl', hex:{p:'#2e4a36',s:'#1a2e20'}},
-  {slug:'serenity-white-pearl', name:'Serenity White Pearl', fn:'SerenityWhitePearl', hex:{p:'#e8e6e0',s:'#c8c6c0'}},
-  {slug:'shimmering-silver',    name:'Shimmering Silver',    fn:'ShimmeringSilver',   hex:{p:'#a8a8b0',s:'#888890'}},
-  {slug:'ultimate-red-pearl',   name:'Ultimate Red Pearl',   fn:'UltimateRedPearl',   hex:{p:'#7a1418',s:'#4a0a0c'}},
+  { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',       hex:{p:'#1c3a5c',s:'#0e2038'} },
+  { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte', hex:{p:'#5a5e62',s:'#383c40'} },
+  { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl', hex:{p:'#6e7276',s:'#4a4e52'} },
+  { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic',hex:{p:'#7a7e82',s:'#565a5e'} },
+  { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',       hex:{p:'#1c1c22',s:'#0a0a10'} },
+  { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl', hex:{p:'#2e4a36',s:'#1a2e20'} },
+  { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl', hex:{p:'#e8e6e0',s:'#c8c6c0'} },
+  { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',   hex:{p:'#a8a8b0',s:'#888890'} },
+  { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',   hex:{p:'#7a1418',s:'#4a0a0c'} },
 ];
-EXT.forEach(c=>{ c.frames=spinFrames(c.fn); });
+EXT.forEach(c => { c.frames = spinFrames(c.fn); });
 
-function availInt(extSlug){ return INT.filter(i=>i.for==='all'||i.for.includes(extSlug)); }
+function availInt(extSlug) {
+  return INT.filter(i => i.for === 'all' || i.for.includes(extSlug));
+}
 
-// ── STATE ─────────────────────────────────────────────────
-const S = {extIdx:4, intIdx:0, view:'spin', frame:0, cache:{}, dragging:false, dragX:0, dragAccum:0, sens:5, pv:null};
+// ════════════════════════════════════════════════════════
+//  PRELOAD CACHE
+//  imageCache[extIdx][frameIdx] = HTMLImageElement
+//  panoCache[extFn][intFn]      = Image (pre-fetched)
+// ════════════════════════════════════════════════════════
+const imageCache = {};   // spin frames per colour
+const panoCache  = {};   // pano per ext/int combo
 
-// ── SPIN ─────────────────────────────────────────────────
-const canvas = document.getElementById('spin-canvas');
-const ctx    = canvas.getContext('2d');
-const lbar   = document.getElementById('loadbar');
-const hint   = document.getElementById('drag-hint');
-let hintGone = false;
+// ── Preload ALL colours in background ──────────────────
+function preloadAll() {
+  let totalFrames = EXT.length * FRAMES;
+  let loadedFrames = 0;
+  const bar = document.getElementById('global-bar');
 
-function preload(frames, onProg, onDone){
-  S.cache={}; let done=0;
-  frames.forEach((url,i)=>{
-    const img=new Image();
-    img.onload=()=>{ S.cache[i]=img; done++; if(done===1){canvas.width=img.naturalWidth||1920;canvas.height=img.naturalHeight||1080;draw(0);} onProg(done/frames.length); if(done===frames.length)onDone(); };
-    img.onerror=()=>{ done++; onProg(done/frames.length); if(done===frames.length)onDone(); };
-    img.src=url;
+  function onFrame() {
+    loadedFrames++;
+    bar.style.width = (loadedFrames / totalFrames * 100) + '%';
+    if (loadedFrames === totalFrames) {
+      bar.style.opacity = '0';
+    }
+  }
+
+  EXT.forEach((colour, extIdx) => {
+    imageCache[extIdx] = {};
+    colour.frames.forEach((url, frameIdx) => {
+      const img = new Image();
+      img.onload = img.onerror = onFrame;
+      img.src = url;
+      imageCache[extIdx][frameIdx] = img;
+    });
+  });
+
+  // Preload panos
+  EXT.forEach(ext => {
+    panoCache[ext.fn] = {};
+    INT.forEach(int => {
+      const avail = int.for === 'all' || int.for.includes(ext.slug);
+      if (!avail) return;
+      const url = panoUrl(ext.fn, int.fn);
+      const img = new Image();
+      img.src = url; // just fetch it — browser caches it
+      panoCache[ext.fn][int.fn] = url;
+    });
   });
 }
-function draw(i){ const img=S.cache[i]; if(!img)return; ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0); }
-function loadExt(idx){ lbar.style.width='0%'; lbar.style.opacity='1'; S.frame=0; preload(EXT[idx].frames, p=>{ lbar.style.width=(p*100)+'%'; }, ()=>{ lbar.style.opacity='0'; }); }
 
-const sw = document.getElementById('spin-wrap');
-sw.addEventListener('mousedown',  e=>startDrag(e.clientX));
-sw.addEventListener('touchstart', e=>startDrag(e.touches[0].clientX),{passive:true});
-window.addEventListener('mousemove',  e=>{ if(S.view==='spin')moveDrag(e.clientX); });
-window.addEventListener('touchmove',  e=>{ if(S.view==='spin')moveDrag(e.touches[0].clientX); },{passive:true});
-window.addEventListener('mouseup',  ()=>{ S.dragging=false; });
-window.addEventListener('touchend', ()=>{ S.dragging=false; });
+// ════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════
+const S = {
+  extIdx:   4,      // Phantom Black default
+  intIdx:   0,      // Black default
+  view:     'spin', // 'spin' | 'pano'
+  frame:    0,      // current frame index (0–35)
+  framePct: 0,      // 0.0–1.0 — preserved on colour switch
+  dragging: false,
+  dragX:    0,
+  dragAccum:0,
+  sens:     5,      // px per frame step
+  pv:       null,   // pannellum viewer instance
+  pYaw:     0,      // saved pano yaw
+  pPitch:   0,      // saved pano pitch
+  pHfov:    110,    // saved pano hfov
+  inited:   false,
+};
 
-function hideHint(){ if(!hintGone){hintGone=true;hint.style.opacity='0';setTimeout(()=>hint.remove(),600);} }
-function startDrag(x){ if(S.view!=='spin')return; S.dragging=true;S.dragX=x;S.dragAccum=0;hideHint(); }
-function moveDrag(x){
-  if(!S.dragging||S.view!=='spin')return;
-  const d=x-S.dragX; S.dragX=x; S.dragAccum+=d;
-  const steps=Math.trunc(S.dragAccum/S.sens);
-  if(steps!==0){ S.dragAccum-=steps*S.sens; const t=EXT[S.extIdx].frames.length; S.frame=((S.frame-steps)+t)%t; draw(S.frame); }
+// ════════════════════════════════════════════════════════
+//  CANVAS / SPIN
+// ════════════════════════════════════════════════════════
+const canvas = document.getElementById('spin-canvas');
+const ctx    = canvas.getContext('2d');
+
+function drawFrame(extIdx, frameIdx) {
+  const cache = imageCache[extIdx];
+  if (!cache) return;
+  const img = cache[frameIdx];
+  if (!img || !img.complete || !img.naturalWidth) return;
+  // Size canvas to first loaded image dimensions (once)
+  if (canvas.width !== img.naturalWidth) {
+    canvas.width  = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+  }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
 }
 
-// ── PANO ─────────────────────────────────────────────────
-function loadPano(url){
-  const el=document.getElementById('pano-inner');
-  if(S.pv){S.pv.destroy();S.pv=null;} el.innerHTML='';
-  S.pv=pannellum.viewer(el,{type:'equirectangular',panorama:url,autoLoad:true,showControls:false,mouseZoom:true,draggable:true,friction:.15,hfov:110,minHfov:50,maxHfov:130,compass:false});
+// Show frame for current state immediately if cached
+function showCurrentFrame() {
+  drawFrame(S.extIdx, S.frame);
 }
 
-function toggleView(){
-  if(S.view==='spin'){
-    S.view='pano';
-    document.getElementById('spin-wrap').classList.add('hidden');
-    document.getElementById('pano-wrap').classList.add('active');
-    document.getElementById('int-thumb').classList.add('active');
-    const ext=EXT[S.extIdx]; const av=availInt(ext.slug); const int=av[Math.min(S.intIdx,av.length-1)]||av[0];
-    if(int) loadPano(panoUrl(ext.fn,int.fn));
+// Switch to a new exterior colour — preserve angle, instant if cached
+function switchExtColour(newIdx) {
+  const wasLoaded = isExtLoaded(newIdx);
+
+  S.extIdx = newIdx;
+
+  // Preserve angle as a percentage, convert to new frame index
+  S.frame = Math.round(S.framePct * (FRAMES - 1));
+
+  if (wasLoaded) {
+    // Instant — already in cache
+    showCurrentFrame();
+    hideColourLoader();
   } else {
-    S.view='spin';
-    document.getElementById('spin-wrap').classList.remove('hidden');
-    document.getElementById('pano-wrap').classList.remove('active');
-    document.getElementById('int-thumb').classList.remove('active');
-    draw(S.frame);
+    // Show loader until this colour's frames arrive
+    showColourLoader(EXT[newIdx].name);
+    waitForFrame(newIdx, S.frame, () => {
+      showCurrentFrame();
+      hideColourLoader();
+    });
+  }
+
+  // Update thumb to new colour's current interior
+  updateThumb();
+}
+
+function isExtLoaded(extIdx) {
+  const cache = imageCache[extIdx];
+  if (!cache) return false;
+  // Check if the specific frame we need is loaded
+  const img = cache[S.frame];
+  return img && img.complete && img.naturalWidth > 0;
+}
+
+function waitForFrame(extIdx, frameIdx, cb) {
+  const cache = imageCache[extIdx];
+  if (!cache) { setTimeout(() => waitForFrame(extIdx, frameIdx, cb), 50); return; }
+  const img = cache[frameIdx];
+  if (!img) { setTimeout(() => waitForFrame(extIdx, frameIdx, cb), 50); return; }
+  if (img.complete && img.naturalWidth > 0) { cb(); return; }
+  img.onload = cb;
+  img.onerror = cb;
+}
+
+function showColourLoader(name) {
+  const el = document.getElementById('colour-loader');
+  document.getElementById('loader-label').textContent = 'Lade ' + name + '...';
+  document.getElementById('loader-fill').style.width = '0%';
+  el.classList.add('show');
+  // Animate bar based on how many frames of this colour are loaded
+  const idx = S.extIdx;
+  const interval = setInterval(() => {
+    if (!el.classList.contains('show')) { clearInterval(interval); return; }
+    const cache = imageCache[idx];
+    if (!cache) return;
+    let loaded = 0;
+    for (let i = 0; i < FRAMES; i++) {
+      const img = cache[i];
+      if (img && img.complete && img.naturalWidth > 0) loaded++;
+    }
+    document.getElementById('loader-fill').style.width = (loaded / FRAMES * 100) + '%';
+    if (loaded === FRAMES) clearInterval(interval);
+  }, 50);
+}
+
+function hideColourLoader() {
+  document.getElementById('colour-loader').classList.remove('show');
+}
+
+// ════════════════════════════════════════════════════════
+//  DRAG TO SPIN
+// ════════════════════════════════════════════════════════
+const spinWrap = document.getElementById('spin-wrap');
+let hintGone = false;
+
+spinWrap.addEventListener('mousedown',  e => startDrag(e.clientX));
+spinWrap.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), {passive: true});
+window.addEventListener('mousemove',    e => { if (S.view === 'spin') moveDrag(e.clientX); });
+window.addEventListener('touchmove',    e => { if (S.view === 'spin') moveDrag(e.touches[0].clientX); }, {passive: true});
+window.addEventListener('mouseup',      () => { S.dragging = false; });
+window.addEventListener('touchend',     () => { S.dragging = false; });
+
+function hideHint() {
+  if (!hintGone) {
+    hintGone = true;
+    const h = document.getElementById('drag-hint');
+    h.style.opacity = '0';
+    setTimeout(() => h.remove(), 600);
   }
 }
 
-// ── SWATCHES ─────────────────────────────────────────────
-function swSVG(p,s,shine){
-  const id='g'+Math.random().toString(36).slice(2,7);
-  return `<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="${id}" cx="38%" cy="30%" r="62%"><stop offset="0%" stop-color="${shine}"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient><clipPath id="c${id}"><circle cx="18" cy="18" r="16"/></clipPath></defs><circle cx="18" cy="18" r="16" fill="${s}"/><path d="M2 18Q9 3 34 3L34 33Q9 33 2 18Z" fill="${p}" clip-path="url(#c${id})"/><path d="M2 18Q9 33 34 33" stroke="rgba(0,0,0,0.22)" stroke-width="0.7" fill="none" clip-path="url(#c${id})"/><circle cx="18" cy="18" r="16" fill="url(#${id})"/></svg>`;
-}
-function iSVG(hex,hexB){
-  const id='i'+Math.random().toString(36).slice(2,7);
-  if(hexB) return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="${hex}"/><path d="M16 2A14 14 0 0 1 30 16H16Z" fill="${hexB}"/></svg>`;
-  return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="${id}" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,0.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient></defs><circle cx="16" cy="16" r="14" fill="${hex}"/><circle cx="16" cy="16" r="14" fill="url(#${id})"/></svg>`;
+function startDrag(x) {
+  if (S.view !== 'spin') return;
+  S.dragging = true; S.dragX = x; S.dragAccum = 0;
+  hideHint();
 }
 
-function buildExtSwatches(){
-  const row=document.getElementById('swatches-ext'); row.innerHTML='';
-  EXT.forEach((c,i)=>{
-    const shine=c.hex.p.startsWith('#e')?'rgba(255,255,255,0.65)':'rgba(255,255,255,0.25)';
-    const d=document.createElement('div');
-    d.className='sw-ext'+(i===S.extIdx?' active':'');
-    d.innerHTML=swSVG(c.hex.p,c.hex.s,shine); d.title=c.name;
-    d.onclick=()=>setExt(i); row.appendChild(d);
-  });
-}
-function buildIntSwatches(extSlug){
-  const row=document.getElementById('swatches-int'); row.innerHTML='';
-  const av=availInt(extSlug).map(i=>i.slug);
-  INT.forEach((c,i)=>{
-    const ok=c.for==='all'||c.for.includes(extSlug);
-    const d=document.createElement('div');
-    d.className='sw-int'+(i===S.intIdx&&ok?' active':'')+(!ok?' na':'');
-    d.innerHTML=iSVG(c.hex,c.hexB); d.title=c.name;
-    if(ok) d.onclick=()=>setInt(i); row.appendChild(d);
-  });
-}
-function updateThumb(){
-  const ext=EXT[S.extIdx]; const av=availInt(ext.slug);
-  const int=av[Math.min(S.intIdx,av.length-1)]||av[0];
-  if(int) document.getElementById('int-thumb-img').src=panoUrl(ext.fn,int.fn);
+function moveDrag(x) {
+  if (!S.dragging || S.view !== 'spin') return;
+  const delta = x - S.dragX;
+  S.dragX = x;
+  S.dragAccum += delta;
+  const steps = Math.trunc(S.dragAccum / S.sens);
+  if (steps !== 0) {
+    S.dragAccum -= steps * S.sens;
+    S.frame = ((S.frame - steps) + FRAMES) % FRAMES;
+    S.framePct = S.frame / (FRAMES - 1); // save angle as percentage
+    drawFrame(S.extIdx, S.frame);
+  }
 }
 
-function setExt(idx){
-  S.extIdx=idx; S.view='spin';
-  const c=EXT[idx];
-  document.querySelectorAll('.sw-ext').forEach((s,i)=>s.classList.toggle('active',i===idx));
-  document.getElementById('ext-name').textContent=c.name;
-  document.getElementById('spin-wrap').classList.remove('hidden');
-  document.getElementById('pano-wrap').classList.remove('active');
-  document.getElementById('int-thumb').classList.remove('active');
-  loadExt(idx); buildIntSwatches(c.slug); updateThumb();
+// ════════════════════════════════════════════════════════
+//  PANO VIEWER — preserves orientation on colour switch
+// ════════════════════════════════════════════════════════
+function savePanoState() {
+  if (S.pv) {
+    S.pYaw   = S.pv.getYaw();
+    S.pPitch = S.pv.getPitch();
+    S.pHfov  = S.pv.getHfov();
+  }
 }
-function setInt(idx){
-  S.intIdx=idx;
-  document.querySelectorAll('.sw-int').forEach((s,i)=>s.classList.toggle('active',i===idx));
-  document.getElementById('int-name').textContent=INT[idx].name;
+
+function loadPano(url, restoreOrientation) {
+  const el = document.getElementById('pano-inner');
+  if (S.pv) { S.pv.destroy(); S.pv = null; }
+  el.innerHTML = '';
+  S.pv = pannellum.viewer(el, {
+    type:         'equirectangular',
+    panorama:     url,
+    autoLoad:     true,
+    showControls: false,
+    mouseZoom:    true,
+    draggable:    true,
+    friction:     0.15,
+    hfov:         restoreOrientation ? S.pHfov  : 110,
+    pitch:        restoreOrientation ? S.pPitch : 0,
+    yaw:          restoreOrientation ? S.pYaw   : 0,
+    minHfov:      50,
+    maxHfov:      130,
+    compass:      false,
+  });
+}
+
+function toggleView() {
+  if (S.view === 'spin') {
+    // Switch to pano
+    S.view = 'pano';
+    document.getElementById('spin-wrap').classList.add('hidden');
+    document.getElementById('pano-wrap').classList.add('active');
+    document.getElementById('int-thumb').classList.add('active');
+    // Load pano — don't restore orientation (first open for this colour)
+    const ext = EXT[S.extIdx];
+    const av  = availInt(ext.slug);
+    const int = av[Math.min(S.intIdx, av.length - 1)] || av[0];
+    if (int) loadPano(panoUrl(ext.fn, int.fn), false);
+  } else {
+    // Switch back to spin
+    S.view = 'spin';
+    document.getElementById('spin-wrap').classList.remove('hidden');
+    document.getElementById('pano-wrap').classList.remove('active');
+    document.getElementById('int-thumb').classList.remove('active');
+    drawFrame(S.extIdx, S.frame);
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  SWATCHES
+// ════════════════════════════════════════════════════════
+function swSVG(p, s, shine) {
+  const id = 'g' + Math.random().toString(36).slice(2, 7);
+  return `<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="${id}" cx="38%" cy="30%" r="62%">
+        <stop offset="0%" stop-color="${shine}"/>
+        <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+      </radialGradient>
+      <clipPath id="c${id}"><circle cx="18" cy="18" r="16"/></clipPath>
+    </defs>
+    <circle cx="18" cy="18" r="16" fill="${s}"/>
+    <path d="M2 18Q9 3 34 3L34 33Q9 33 2 18Z" fill="${p}" clip-path="url(#c${id})"/>
+    <path d="M2 18Q9 33 34 33" stroke="rgba(0,0,0,0.22)" stroke-width="0.7" fill="none" clip-path="url(#c${id})"/>
+    <circle cx="18" cy="18" r="16" fill="url(#${id})"/>
+  </svg>`;
+}
+
+function iSVG(hex, hexB) {
+  const id = 'i' + Math.random().toString(36).slice(2, 7);
+  if (hexB) return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="14" fill="${hex}"/><path d="M16 2A14 14 0 0 1 30 16H16Z" fill="${hexB}"/></svg>`;
+  return `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="${id}" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,0.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient></defs>
+    <circle cx="16" cy="16" r="14" fill="${hex}"/>
+    <circle cx="16" cy="16" r="14" fill="url(#${id})"/>
+  </svg>`;
+}
+
+function buildExtSwatches() {
+  const row = document.getElementById('swatches-ext');
+  row.innerHTML = '';
+  EXT.forEach((c, i) => {
+    const shine = c.hex.p.startsWith('#e') ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.25)';
+    const d = document.createElement('div');
+    d.className = 'sw-ext' + (i === S.extIdx ? ' active' : '');
+    d.innerHTML = swSVG(c.hex.p, c.hex.s, shine);
+    d.title = c.name;
+    d.onclick = () => setExt(i);
+    row.appendChild(d);
+  });
+}
+
+function buildIntSwatches(extSlug) {
+  const row = document.getElementById('swatches-int');
+  row.innerHTML = '';
+  INT.forEach((c, i) => {
+    const ok = c.for === 'all' || c.for.includes(extSlug);
+    const d = document.createElement('div');
+    d.className = 'sw-int' + (i === S.intIdx && ok ? ' active' : '') + (!ok ? ' na' : '');
+    d.innerHTML = iSVG(c.hex, c.hexB);
+    d.title = c.name;
+    if (ok) d.onclick = () => setInt(i);
+    row.appendChild(d);
+  });
+}
+
+function updateThumb() {
+  const ext = EXT[S.extIdx];
+  const av  = availInt(ext.slug);
+  const int = av[Math.min(S.intIdx, av.length - 1)] || av[0];
+  if (int) document.getElementById('int-thumb-img').src = panoUrl(ext.fn, int.fn);
+}
+
+// ════════════════════════════════════════════════════════
+//  SET COLOUR HANDLERS
+// ════════════════════════════════════════════════════════
+function setExt(idx) {
+  if (idx === S.extIdx) return;
+
+  // Update UI immediately
+  document.querySelectorAll('.sw-ext').forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.getElementById('ext-name').textContent = EXT[idx].name;
+
+  if (S.view === 'spin') {
+    switchExtColour(idx);
+  } else {
+    // In pano view — save orientation, switch colour, reload pano preserving orientation
+    savePanoState();
+    S.extIdx = idx;
+    const ext = EXT[idx];
+    const av  = availInt(ext.slug);
+    // If current interior not available for new colour, fall back to first available
+    const currentInt = INT[S.intIdx];
+    const intAvail = currentInt && (currentInt.for === 'all' || currentInt.for.includes(ext.slug));
+    if (!intAvail) { S.intIdx = 0; }
+    const int = av[Math.min(S.intIdx, av.length - 1)] || av[0];
+    if (int) loadPano(panoUrl(ext.fn, int.fn), true); // restore orientation
+    buildIntSwatches(ext.slug);
+    updateThumb();
+  }
+}
+
+function setInt(idx) {
+  if (idx === S.intIdx && S.view !== 'pano') return;
+  S.intIdx = idx;
+  document.querySelectorAll('.sw-int').forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.getElementById('int-name').textContent = INT[idx].name;
   updateThumb();
-  if(S.view==='pano') loadPano(panoUrl(EXT[S.extIdx].fn,INT[idx].fn));
+
+  if (S.view === 'pano') {
+    // Save orientation, reload same pano with new interior colour, restore orientation
+    savePanoState();
+    const ext = EXT[S.extIdx];
+    loadPano(panoUrl(ext.fn, INT[idx].fn), true);
+  }
 }
 
-// ── OVERLAY OPEN/CLOSE ────────────────────────────────────
-function openViz(){
-  const overlay=document.getElementById('viz-overlay');
-  const el=document.documentElement;
-  (el.requestFullscreen?.())||el.webkitRequestFullscreen?.()
-    ||el.mozRequestFullScreen?.()
-    ||el.msRequestFullscreen?.()
-    ||Promise.resolve();
-  overlay.classList.add('open');
-  document.body.style.overflow='hidden';
-  // Init on first open
-  if(!S._inited){ S._inited=true; buildExtSwatches(); buildIntSwatches(EXT[S.extIdx].slug); updateThumb(); loadExt(S.extIdx); }
+// ════════════════════════════════════════════════════════
+//  OVERLAY OPEN / CLOSE (no fullscreen API)
+// ════════════════════════════════════════════════════════
+function openViz() {
+  document.getElementById('viz-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  if (!S.inited) {
+    S.inited = true;
+    buildExtSwatches();
+    buildIntSwatches(EXT[S.extIdx].slug);
+    updateThumb();
+    // Draw first available frame immediately
+    const firstImg = imageCache[S.extIdx]?.[0];
+    if (firstImg && firstImg.complete) {
+      canvas.width  = firstImg.naturalWidth  || 1920;
+      canvas.height = firstImg.naturalHeight || 1080;
+      drawFrame(S.extIdx, S.frame);
+    } else {
+      // Wait for first frame to arrive
+      const poll = setInterval(() => {
+        const img = imageCache[S.extIdx]?.[0];
+        if (img && img.complete && img.naturalWidth) {
+          canvas.width  = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          drawFrame(S.extIdx, S.frame);
+          clearInterval(poll);
+        }
+      }, 50);
+    }
+  }
 }
-function closeViz(){
+
+function closeViz() {
   document.getElementById('viz-overlay').classList.remove('open');
-  document.body.style.overflow='';
-  (document.exitFullscreen?.())||document.webkitExitFullscreen?.()
-    ||document.mozCancelFullScreen?.()
-    ||document.msExitFullscreen?.()
-    ||Promise.resolve();
+  document.body.style.overflow = '';
 }
 
-document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeViz(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeViz(); });
 
-const hv=document.getElementById('hero-video');
-if(hv) hv.play().catch(()=>{ document.addEventListener('pointerdown',()=>hv.play().catch(()=>{}),{once:true}); });
+// ════════════════════════════════════════════════════════
+//  BOOT — start preloading everything immediately
+// ════════════════════════════════════════════════════════
+preloadAll();
+
+const hv = document.getElementById('hero-video');
+if (hv) hv.play().catch(() => {
+  document.addEventListener('pointerdown', () => hv.play().catch(() => {}), {once: true});
+});
 </script>
 </body>
 </html>
