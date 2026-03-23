@@ -141,10 +141,10 @@
   .swatches-ext, .swatches-int { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
   .sw-ext {
-    width:46px; height:32px;
-    border-radius:3px;
+    width:44px; height:44px;
+    border-radius:50%;
     cursor:pointer;
-    border:2px solid transparent;
+    border:2.5px solid transparent;
     transition:transform .15s, border-color .15s, box-shadow .15s;
     overflow:hidden;
     flex-shrink:0;
@@ -153,27 +153,26 @@
   }
   .sw-ext img { width:100%; height:100%; object-fit:cover; display:block; }
   .sw-ext.active {
-    border-color:var(--blue);
-    transform:scale(1.12);
-    box-shadow:0 2px 8px rgba(0,44,95,.25);
+    border-color:#111;
+    transform:scale(1.14);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.15);
   }
-  .sw-ext:hover:not(.active) { border-color:rgba(0,44,95,.4); transform:scale(1.06); }
+  .sw-ext:hover:not(.active) { border-color:rgba(0,0,0,0.35); transform:scale(1.06); }
 
-  /* Interior swatches — circular, smaller */
+  /* Interior swatches — circular, same as exterior */
   .sw-int {
-    width:36px; height:36px;
+    width:44px; height:44px;
     border-radius:50%;
     cursor:pointer;
     border:2.5px solid transparent;
-    transition:transform .15s, border-color .15s;
+    transition:transform .15s, border-color .15s, box-shadow .15s;
     overflow:hidden;
     flex-shrink:0;
     background:#ccc;
   }
   .sw-int img { width:100%; height:100%; object-fit:cover; display:block; }
-  .sw-int svg { display:block; }
-  .sw-int.active { border-color:var(--blue); transform:scale(1.12); }
-  .sw-int:hover:not(.active) { border-color:rgba(0,44,95,.4); transform:scale(1.06); }
+  .sw-int.active { border-color:#111; transform:scale(1.14); box-shadow:0 0 0 1px rgba(0,0,0,0.15); }
+  .sw-int:hover:not(.active) { border-color:rgba(0,0,0,0.35); transform:scale(1.06); }
   .sw-int.na { opacity:.2; cursor:not-allowed; pointer-events:none; }
 
   .viz-cta { background:var(--teal); color:#fff; border:none; padding:11px 24px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; white-space:nowrap; letter-spacing:.04em; text-transform:uppercase; }
@@ -397,8 +396,8 @@
 // ════════════════════════════════════════════════
 const BASE   = './assets';
 const FRAMES = 36;
-const S7     = 'https://s7d1.scene7.com/is/image/hyundai/2026-tucson-limited-';
-const S7Q    = '?qlt=85,0&fmt=webp&wid=80&hei=57'; // small swatch size
+
+
 
 function spinFrames(fn) {
   return Array.from({length:FRAMES},(_,i)=>{
@@ -410,12 +409,8 @@ function panoUrl(extFn,intFn){
   return `${BASE}/interior/2026_Tucson_LTD_FWD_${extFn}_${intFn}_Pano_LowerGrand.webp`;
 }
 
-// Interior swatches — SVG fallback (no Scene7 chips for interiors)
-function intSVG(hex,hexB){
-  const id='i'+Math.random().toString(36).slice(2,6);
-  if(hexB) return `<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="16" fill="${hex}"/><path d="M18 2A16 16 0 0 1 34 18H18Z" fill="${hexB}"/></svg>`;
-  return `<svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="${id}" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,0.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient></defs><circle cx="18" cy="18" r="16" fill="${hex}"/><circle cx="18" cy="18" r="16" fill="url(#${id})"/></svg>`;
-}
+// Interior swatch image path
+function intImgSrc(slug){ return './assets/swatches/interior-'+slug+'.webp'; }
 
 const INT = [
   { slug:'black',            name:'Schwarz',          fn:'Black',         hex:'#111',    hexB:null,     for:'all' },
@@ -657,7 +652,7 @@ function buildExtSwatches(){
 
     // Use real Hyundai Scene7 swatch image
     const img=document.createElement('img');
-    img.src=S7+c.s7+S7Q;
+    img.src='./assets/swatches/'+c.slug+'.webp';
     img.alt=c.name;
     // Fallback: coloured background if image fails
     img.onerror=()=>{ d.style.background=c.hex?.p||'#888'; img.style.display='none'; };
@@ -675,8 +670,11 @@ function buildIntSwatches(extSlug){
     const active=i===S.intIdx&&ok;
     const d=document.createElement('div');
     d.className='sw-int'+(active?' active':'')+(!ok?' na':'');
-    d.innerHTML=intSVG(c.hex,c.hexB);
     d.title=c.name;
+    const img=document.createElement('img');
+    img.src=intImgSrc(c.slug);
+    img.alt=c.name;
+    d.appendChild(img);
     if(ok) d.onclick=()=>setInt(i);
     row.appendChild(d);
   });
