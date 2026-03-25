@@ -243,6 +243,7 @@
 </head>
 <body>
 
+<div id="page-fade" style="position:fixed;inset:0;z-index:8999;background:#000;opacity:0;pointer-events:none;transition:opacity 0.4s ease;"></div>
 <nav>
   <a class="nav-logo" href="#">
     <svg viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -815,14 +816,22 @@ function updateThumb() {
 //  OVERLAY
 // ================================================
 function launchWithFade() {
+  // Same as openViz but also fades the local cta-fade overlay
   var fade = document.getElementById('cta-fade');
+  if (fade) fade.style.opacity = '1';
+  openViz();
+  // Reset local fade after transition completes
+  setTimeout(function() {
+    if (fade) fade.style.opacity = '0';
+  }, 800);
+}
+
+function openViz() {
+  var pageFade = document.getElementById('page-fade');
   var overlay = document.getElementById('viz-overlay');
   if (!overlay) return;
-
-  // Step 1: fade the video section to black
-  if (fade) fade.style.opacity = '1';
-
-  // Step 2: after fade-to-black, open the overlay (still invisible)
+  // Fade page to black
+  if (pageFade) { pageFade.style.pointerEvents = 'all'; pageFade.style.opacity = '1'; }
   setTimeout(function() {
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -847,23 +856,14 @@ function launchWithFade() {
         }
       }, 40);
     }
-    // Step 3: fade the overlay in
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         overlay.classList.add('visible');
-        // Reset the video section fade for next time
-        setTimeout(function() {
-          if (fade) fade.style.opacity = '0';
-        }, 400);
+        if (pageFade) { pageFade.style.opacity = '0'; setTimeout(function(){ pageFade.style.pointerEvents = 'none'; }, 400); }
       });
     });
   }, 380);
 }
-
-function openViz() {
-  // Direct open without fade (used by nav button, bottom bar etc.)
-  var overlay = document.getElementById('viz-overlay');
-  if (overlay) { overlay.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; }
   if (!S.inited) {
     S.inited = true;
     // Init canvas here — guaranteed DOM is ready
