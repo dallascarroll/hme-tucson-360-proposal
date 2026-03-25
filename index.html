@@ -65,19 +65,45 @@
   .spec-unit { font-size:18px; font-weight:400; }
   .spec-label { font-size:12px; color:rgba(255,255,255,.55); margin-top:6px; letter-spacing:.06em; text-transform:uppercase; }
 
-  .config-section { background:var(--off); padding:80px 40px; display:flex; align-items:center; gap:60px; flex-wrap:wrap; }
-  .config-text { flex:1; min-width:280px; }
-  .config-visual { flex:1; min-width:280px; background:var(--blue); padding:32px; color:white; position:relative; overflow:hidden; }
-  .config-visual::before { content:''; position:absolute; top:-40px; right:-40px; width:180px; height:180px; border:40px solid rgba(255,255,255,.06); border-radius:50%; }
-  .config-visual-title { font-size:22px; font-weight:700; margin-bottom:8px; }
-  .config-visual-sub { font-size:14px; color:rgba(255,255,255,.65); margin-bottom:24px; line-height:1.5; }
-  .config-launch-btn { display:inline-flex; align-items:center; gap:10px; background:white; color:var(--blue); border:none; padding:14px 24px; font-size:14px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; font-family:var(--font); }
-  .config-launch-btn:hover { box-shadow:0 8px 24px rgba(0,0,0,.2); }
-  .config-launch-btn svg { width:16px; height:16px; }
+  /* Inline video 360 module */
+  .viz-cta-section { width:100%; background:#000; }
+  .viz-cta-inner {
+    position:relative; width:100%; aspect-ratio:16/7;
+    min-height:380px; overflow:hidden; cursor:pointer;
+  }
+  .viz-cta-overlay {
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:16px;
+    background:rgba(0,0,0,0.28);
+    transition:background 0.3s ease;
+  }
+  .viz-cta-inner:hover .viz-cta-overlay { background:rgba(0,0,0,0.42); }
+  .viz-cta-label {
+    font-size:11px; font-weight:700; letter-spacing:.22em;
+    text-transform:uppercase; color:rgba(255,255,255,0.65);
+  }
+  .viz-cta-btn {
+    display:inline-flex; align-items:center; gap:12px;
+    background:var(--blue); color:white;
+    padding:16px 32px; font-size:14px; font-weight:700;
+    letter-spacing:.06em; text-transform:uppercase;
+    font-family:var(--font);
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .viz-cta-inner:hover .viz-cta-btn {
+    transform:scale(1.04);
+    box-shadow:0 12px 40px rgba(0,0,0,0.4);
+  }
+  .viz-cta-hint {
+    font-size:11px; color:rgba(255,255,255,0.4);
+    letter-spacing:.08em;
+  }
 
   /* ── OVERLAY ── */
-  #viz-overlay { position:fixed; inset:0; z-index:9000; background:#000; display:none; flex-direction:column; }
+  #viz-overlay { position:fixed; inset:0; z-index:9000; background:#000; display:none; flex-direction:column; opacity:0; transition:opacity 0.35s ease; }
   #viz-overlay.open { display:flex; }
+  #viz-overlay.open.visible { opacity:1; }
 
   .config-topbar { height:52px; flex-shrink:0; background:rgba(0,0,0,.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(255,255,255,.1); }
   .config-topbar-left { display:flex; align-items:center; gap:12px; }
@@ -217,6 +243,7 @@
 </head>
 <body>
 
+<div id="page-fade" style="position:fixed;inset:0;z-index:8999;background:#000;opacity:0;pointer-events:none;transition:opacity 0.4s ease;"></div>
 <nav>
   <a class="nav-logo" href="#">
     <svg viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -282,20 +309,22 @@
   </div>
 </div>
 
-<div class="config-section">
-  <div class="config-text">
-    <div class="section-label">360° Experience</div>
-    <h2 class="section-title">Explore the TUCSON<br>from every angle.</h2>
-    <p class="section-body" style="margin-bottom:28px">Spin the TUCSON 360°, change exterior colours and explore every interior — fully interactive.</p>
-    <button class="btn-primary" onclick="openViz()">Experience TUCSON 360°</button>
-  </div>
-  <div class="config-visual">
-    <div class="config-visual-title">TUCSON 360° Experience</div>
-    <div class="config-visual-sub">9 exterior colours. 3 interiors. Real assets — fully interactive in high resolution.</div>
-    <button class="config-launch-btn" onclick="openViz()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      Launch Experience
-    </button>
+<div class="viz-cta-section" id="viz-cta-section">
+  <div class="viz-cta-inner" id="viz-cta-inner" onclick="launchWithFade()">
+    <video id="cta-video" muted loop playsinline preload="metadata"
+           style="width:100%;height:100%;object-fit:cover;display:block;">
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+    <div class="viz-cta-overlay">
+      <div class="viz-cta-label">360° Experience</div>
+      <div class="viz-cta-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.2797426,14.9868494 L10.1464466,13.8535534 C9.95118446,13.6582912 9.95118446,13.3417088 10.1464466,13.1464466 C10.3417088,12.9511845 10.6582912,12.9511845 10.8535534,13.1464466 L12.8535534,15.1464466 C13.0488155,15.3417088 13.0488155,15.6582912 12.8535534,15.8535534 L10.8535534,17.8535534 C10.6582912,18.0488155 10.3417088,18.0488155 10.1464466,17.8535534 C9.95118446,17.6582912 9.95118446,17.3417088 10.1464466,17.1464466 L11.3044061,15.9884871 C6.13483244,15.8167229 2,13.7413901 2,11 C2,8.13669069 6.51079147,6 12,6 C17.4892085,6 22,8.13669069 22,11 C22,12.5021775 20.7611164,13.8263891 18.6925542,14.7433738 C18.4401046,14.8552836 18.1447329,14.7413536 18.0328231,14.4889039 C17.9209133,14.2364543 18.0348433,13.9410827 18.2872929,13.8291729 C20.0336708,13.0550111 21,12.0221261 21,11 C21,8.89274656 17.0042017,7 12,7 C6.99579829,7 3,8.89274656 3,11 C3,13.0051086 6.6178104,14.8160018 11.2797426,14.9868494 Z"/>
+        </svg>
+        Launch 360° Experience
+      </div>
+      <div class="viz-cta-hint">Click anywhere to explore</div>
+    </div>
   </div>
 </div>
 
@@ -786,39 +815,62 @@ function updateThumb() {
 // ================================================
 //  OVERLAY
 // ================================================
-function openViz() {
-  var overlay = document.getElementById('viz-overlay');
-  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  if (!S.inited) {
-    S.inited = true;
-    // Init canvas here — guaranteed DOM is ready
-    S.canvas = document.getElementById('spin-canvas');
-    S.ctx    = S.canvas ? S.canvas.getContext('2d') : null;
-    // Attach drag events to spin-wrap
-    var sw = document.getElementById('spin-wrap');
-    if (sw) {
-      sw.addEventListener('mousedown',  function(e) { startDrag(e.clientX); });
-      sw.addEventListener('touchstart', function(e) { startDrag(e.touches[0].clientX); }, {passive:true});
-    }
-    buildExtSwatches();
-    buildIntSwatches(EXT[S.extIdx].slug);
-    updateThumb();
-    // Draw first frame when ready
-    var poll = setInterval(function() {
-      if (isFrameReady(S.extIdx, 0)) {
-        clearInterval(poll);
-        var img = imageCache[S.extIdx][0];
-        if (S.canvas) { S.canvas.width = img.naturalWidth || 1920; S.canvas.height = img.naturalHeight || 1080; }
-        drawFrame(S.extIdx, S.frame);
-      }
-    }, 40);
-  }
+function launchWithFade() {
+  // Same as openViz but also fades the local cta-fade overlay
+  var fade = document.getElementById('cta-fade');
+  if (fade) fade.style.opacity = '1';
+  openViz();
+  // Reset local fade after transition completes
+  setTimeout(function() {
+    if (fade) fade.style.opacity = '0';
+  }, 800);
 }
 
+function openViz() {
+  var pageFade = document.getElementById('page-fade');
+  var overlay = document.getElementById('viz-overlay');
+  if (!overlay) return;
+  // Fade page to black
+  if (pageFade) { pageFade.style.pointerEvents = 'all'; pageFade.style.opacity = '1'; }
+  setTimeout(function() {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (!S.inited) {
+      S.inited = true;
+      S.canvas = document.getElementById('spin-canvas');
+      S.ctx = S.canvas ? S.canvas.getContext('2d') : null;
+      var sw = document.getElementById('spin-wrap');
+      if (sw) {
+        sw.addEventListener('mousedown', function(e) { startDrag(e.clientX); });
+        sw.addEventListener('touchstart', function(e) { startDrag(e.touches[0].clientX); }, {passive:true});
+      }
+      buildExtSwatches();
+      buildIntSwatches(EXT[S.extIdx].slug);
+      updateThumb();
+      var poll = setInterval(function() {
+        if (isFrameReady(S.extIdx, 0)) {
+          clearInterval(poll);
+          var img = imageCache[S.extIdx][0];
+          if (S.canvas) { S.canvas.width = img.naturalWidth || 1920; S.canvas.height = img.naturalHeight || 1080; }
+          drawFrame(S.extIdx, S.frame);
+        }
+      }, 40);
+    }
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        overlay.classList.add('visible');
+        if (pageFade) { pageFade.style.opacity = '0'; setTimeout(function(){ pageFade.style.pointerEvents = 'none'; }, 400); }
+      });
+    });
+  }, 380);
+}
 function closeViz() {
   var overlay = document.getElementById('viz-overlay');
-  if (overlay) overlay.classList.remove('open');
-  document.body.style.overflow = '';
+  if (overlay) { overlay.classList.remove('visible'); }
+  setTimeout(function() {
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }, 350);
 }
 
 // ================================================
@@ -843,6 +895,21 @@ document.addEventListener('keydown',  function(e) {
 loadConfig('tucson-2026', 'limited-fwd', function() {
   preloadAll();
 });
+
+// CTA video — play when scrolled into view, pause when out
+var ctaVideo = document.getElementById('cta-video');
+if (ctaVideo && 'IntersectionObserver' in window) {
+  var ctaObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        ctaVideo.play().catch(function(){});
+      } else {
+        ctaVideo.pause();
+      }
+    });
+  }, { threshold: 0.25 });
+  ctaObs.observe(document.getElementById('viz-cta-section'));
+}
 
 // Hero video autoplay
 var hv = document.getElementById('hero-video');
