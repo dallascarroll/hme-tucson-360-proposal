@@ -101,8 +101,9 @@
   }
 
   /* ── OVERLAY ── */
-  #viz-overlay { position:fixed; inset:0; z-index:9000; background:#000; display:none; flex-direction:column; }
+  #viz-overlay { position:fixed; inset:0; z-index:9000; background:#000; display:none; flex-direction:column; opacity:0; transition:opacity 0.35s ease; }
   #viz-overlay.open { display:flex; }
+  #viz-overlay.open.visible { opacity:1; }
 
   .config-topbar { height:52px; flex-shrink:0; background:rgba(0,0,0,.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(255,255,255,.1); }
   .config-topbar-left { display:flex; align-items:center; gap:12px; }
@@ -308,7 +309,7 @@
 </div>
 
 <div class="viz-cta-section" id="viz-cta-section">
-  <div class="viz-cta-inner" onclick="openViz()">
+  <div class="viz-cta-inner" id="viz-cta-inner" onclick="launchWithFade()">
     <video id="cta-video" muted loop playsinline preload="none"
            style="width:100%;height:100%;object-fit:cover;display:block;">
       <source src="hero.mp4" type="video/mp4">
@@ -813,9 +814,56 @@ function updateThumb() {
 // ================================================
 //  OVERLAY
 // ================================================
-function openViz() {
+function launchWithFade() {
+  var fade = document.getElementById('cta-fade');
   var overlay = document.getElementById('viz-overlay');
-  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  if (!overlay) return;
+
+  // Step 1: fade the video section to black
+  if (fade) fade.style.opacity = '1';
+
+  // Step 2: after fade-to-black, open the overlay (still invisible)
+  setTimeout(function() {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (!S.inited) {
+      S.inited = true;
+      S.canvas = document.getElementById('spin-canvas');
+      S.ctx = S.canvas ? S.canvas.getContext('2d') : null;
+      var sw = document.getElementById('spin-wrap');
+      if (sw) {
+        sw.addEventListener('mousedown', function(e) { startDrag(e.clientX); });
+        sw.addEventListener('touchstart', function(e) { startDrag(e.touches[0].clientX); }, {passive:true});
+      }
+      buildExtSwatches();
+      buildIntSwatches(EXT[S.extIdx].slug);
+      updateThumb();
+      var poll = setInterval(function() {
+        if (isFrameReady(S.extIdx, 0)) {
+          clearInterval(poll);
+          var img = imageCache[S.extIdx][0];
+          if (S.canvas) { S.canvas.width = img.naturalWidth || 1920; S.canvas.height = img.naturalHeight || 1080; }
+          drawFrame(S.extIdx, S.frame);
+        }
+      }, 40);
+    }
+    // Step 3: fade the overlay in
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        overlay.classList.add('visible');
+        // Reset the video section fade for next time
+        setTimeout(function() {
+          if (fade) fade.style.opacity = '0';
+        }, 400);
+      });
+    });
+  }, 380);
+}
+
+function openViz() {
+  // Direct open without fade (used by nav button, bottom bar etc.)
+  var overlay = document.getElementById('viz-overlay');
+  if (overlay) { overlay.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; }
   if (!S.inited) {
     S.inited = true;
     // Init canvas here — guaranteed DOM is ready
@@ -844,8 +892,11 @@ function openViz() {
 
 function closeViz() {
   var overlay = document.getElementById('viz-overlay');
-  if (overlay) overlay.classList.remove('open');
-  document.body.style.overflow = '';
+  if (overlay) { overlay.classList.remove('visible'); }
+  setTimeout(function() {
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }, 350);
 }
 
 // ================================================
