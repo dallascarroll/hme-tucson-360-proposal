@@ -311,7 +311,7 @@
 
 <div class="viz-cta-section" id="viz-cta-section">
   <div class="viz-cta-inner" id="viz-cta-inner" onclick="launchWithFade()">
-    <video id="cta-video" muted loop playsinline preload="none"
+    <video id="cta-video" muted loop playsinline preload="metadata"
            style="width:100%;height:100%;object-fit:cover;display:block;">
       <source src="hero.mp4" type="video/mp4">
     </video>
@@ -864,32 +864,6 @@ function openViz() {
     });
   }, 380);
 }
-  if (!S.inited) {
-    S.inited = true;
-    // Init canvas here — guaranteed DOM is ready
-    S.canvas = document.getElementById('spin-canvas');
-    S.ctx    = S.canvas ? S.canvas.getContext('2d') : null;
-    // Attach drag events to spin-wrap
-    var sw = document.getElementById('spin-wrap');
-    if (sw) {
-      sw.addEventListener('mousedown',  function(e) { startDrag(e.clientX); });
-      sw.addEventListener('touchstart', function(e) { startDrag(e.touches[0].clientX); }, {passive:true});
-    }
-    buildExtSwatches();
-    buildIntSwatches(EXT[S.extIdx].slug);
-    updateThumb();
-    // Draw first frame when ready
-    var poll = setInterval(function() {
-      if (isFrameReady(S.extIdx, 0)) {
-        clearInterval(poll);
-        var img = imageCache[S.extIdx][0];
-        if (S.canvas) { S.canvas.width = img.naturalWidth || 1920; S.canvas.height = img.naturalHeight || 1080; }
-        drawFrame(S.extIdx, S.frame);
-      }
-    }, 40);
-  }
-}
-
 function closeViz() {
   var overlay = document.getElementById('viz-overlay');
   if (overlay) { overlay.classList.remove('visible'); }
