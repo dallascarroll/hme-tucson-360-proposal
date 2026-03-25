@@ -237,9 +237,19 @@
 
 <section class="hero" style="padding:0">
   <div class="hero-img">
-    <img src="https://s7d1.scene7.com/is/image/hyundai/2026-tucson-0266-vlp:16-9?wid=1920&hei=820&qlt=90,0&fmt=webp" 
-         alt="2026 Hyundai TUCSON" 
-         style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+    <!--
+      HERO VIDEO: drop hero.mp4 into the repo root and it will autoplay/loop.
+      Falls back to the static first frame if video isn't present or can't play.
+    -->
+    <video id="hero-video" autoplay muted loop playsinline preload="auto"
+           poster="assets/hero-frame.jpg"
+           style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+      <source src="hero.mp4" type="video/mp4">
+      <source src="hero.webm" type="video/webm">
+      <!-- Fallback image if video can't play -->
+      <img src="assets/hero-frame.jpg" alt="2026 Hyundai TUCSON"
+           style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+    </video>
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
@@ -842,7 +852,11 @@ loadConfig('tucson-2026', 'limited-fwd', function() {
   preloadAll();
 });
 
-// Hero is a static image — no video autoplay needed
+// Hero video autoplay
+var hv = document.getElementById('hero-video');
+if (hv) hv.play().catch(function() {
+  document.addEventListener('pointerdown', function() { hv.play().catch(function(){}); }, {once:true});
+});
 </script>
 </body>
 </html>
