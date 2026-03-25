@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TUCSON | New Cars | Hyundai Motor Europe</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+<style>
+  :root {
+    --blue:    #002C5F;
+    --blue-lt: #003F7F;
+    --white:   #FFFFFF;
+    --off:     #F6F6F6;
+    --text:    #222222;
+    --mid:     #666666;
+    --border:  #E0E0E0;
+    --teal:    #00AAD2;
+    --font:    'HyundaiSansTextPro','Helvetica Neue',Arial,sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:var(--font); color:var(--text); background:#fff; }
+
+  nav { position:sticky; top:0; z-index:1000; background:var(--white); border-bottom:1px solid var(--border); height:60px; display:flex; align-items:center; padding:0 24px; justify-content:space-between; }
+  .nav-logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+  .nav-logo svg { width:100px; height:24px; }
+  .nav-links { display:flex; gap:28px; list-style:none; }
+  .nav-links a { font-size:13px; font-weight:500; color:var(--text); text-decoration:none; letter-spacing:.02em; }
+  .nav-links a:hover { color:var(--blue); }
+  .nav-right { display:flex; align-items:center; gap:16px; }
+  .nav-cta { background:var(--blue); color:white; border:none; padding:9px 18px; font-size:13px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); }
+  .nav-cta:hover { background:var(--blue-lt); }
+
+  .hero { position:relative; height:88vh; min-height:500px; background:linear-gradient(160deg,#0a0f1a 0%,#0d1e35 50%,#0a2040 100%); display:flex; align-items:flex-end; overflow:hidden; }
+  .hero-img { position:absolute; inset:0; overflow:hidden; }
+  .hero-img video { width:100%; height:100%; object-fit:cover; display:block; }
+  .hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.72) 0%,rgba(0,0,0,.1) 55%,transparent 100%); }
+  .hero-content { position:relative; z-index:2; padding:0 40px 52px; max-width:640px; }
+  .hero-badge { font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:12px; display:block; }
+  .hero-title { font-size:clamp(36px,5vw,64px); font-weight:700; line-height:1.0; color:white; margin-bottom:16px; letter-spacing:-.02em; }
+  .hero-sub { font-size:16px; color:rgba(255,255,255,.72); line-height:1.5; margin-bottom:28px; max-width:480px; }
+  .hero-actions { display:flex; gap:12px; flex-wrap:wrap; }
+  .btn-primary { background:var(--blue); color:white; border:none; padding:14px 28px; font-size:14px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); text-transform:uppercase; transition:background .15s; }
+  .btn-primary:hover { background:#003f7f; }
+  .btn-outline { background:transparent; color:white; border:1.5px solid rgba(255,255,255,.5); padding:14px 28px; font-size:14px; font-weight:600; letter-spacing:.04em; cursor:pointer; font-family:var(--font); text-transform:uppercase; }
+  .btn-outline:hover { border-color:white; background:rgba(255,255,255,.08); }
+
+  .sub-nav { background:white; border-bottom:1px solid var(--border); padding:0 40px; display:flex; overflow-x:auto; scrollbar-width:none; }
+  .sub-nav::-webkit-scrollbar { display:none; }
+  .sub-nav a { display:inline-block; padding:16px 20px; font-size:13px; font-weight:500; color:var(--mid); text-decoration:none; white-space:nowrap; border-bottom:2px solid transparent; transition:color .15s,border-color .15s; }
+  .sub-nav a:hover { color:var(--blue); }
+  .sub-nav a.active { color:var(--blue); border-bottom-color:var(--blue); }
+
+  section { padding:72px 40px; }
+  .section-label { font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--blue); margin-bottom:12px; }
+  .section-title { font-size:clamp(26px,3.5vw,44px); font-weight:700; line-height:1.1; letter-spacing:-.02em; color:var(--text); margin-bottom:16px; }
+  .section-body { font-size:16px; color:var(--mid); line-height:1.6; max-width:620px; }
+
+  .specs-bar { background:var(--blue); padding:36px 40px; display:flex; flex-wrap:wrap; }
+  .spec-item { flex:1; min-width:150px; padding:0 24px; border-right:1px solid rgba(255,255,255,.15); text-align:center; }
+  .spec-item:last-child { border-right:none; }
+  .spec-value { font-size:36px; font-weight:700; color:white; letter-spacing:-.02em; line-height:1; }
+  .spec-unit { font-size:18px; font-weight:400; }
+  .spec-label { font-size:12px; color:rgba(255,255,255,.55); margin-top:6px; letter-spacing:.06em; text-transform:uppercase; }
+
+  .config-section { background:var(--off); padding:80px 40px; display:flex; align-items:center; gap:60px; flex-wrap:wrap; }
+  .config-text { flex:1; min-width:280px; }
+  .config-visual { flex:1; min-width:280px; background:var(--blue); padding:32px; color:white; position:relative; overflow:hidden; }
+  .config-visual::before { content:''; position:absolute; top:-40px; right:-40px; width:180px; height:180px; border:40px solid rgba(255,255,255,.06); border-radius:50%; }
+  .config-visual-title { font-size:22px; font-weight:700; margin-bottom:8px; }
+  .config-visual-sub { font-size:14px; color:rgba(255,255,255,.65); margin-bottom:24px; line-height:1.5; }
+  .config-launch-btn { display:inline-flex; align-items:center; gap:10px; background:white; color:var(--blue); border:none; padding:14px 24px; font-size:14px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; font-family:var(--font); }
+  .config-launch-btn:hover { box-shadow:0 8px 24px rgba(0,0,0,.2); }
+  .config-launch-btn svg { width:16px; height:16px; }
+
+  /* ── OVERLAY ── */
+  #viz-overlay { position:fixed; inset:0; z-index:9000; background:#000; display:none; flex-direction:column; }
+  #viz-overlay.open { display:flex; }
+
+  .config-topbar { height:52px; flex-shrink:0; background:rgba(0,0,0,.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(255,255,255,.1); }
+  .config-topbar-left { display:flex; align-items:center; gap:12px; }
+  .config-topbar-logo svg { width:80px; opacity:.85; }
+  .config-topbar-divider { width:1px; height:18px; background:rgba(255,255,255,.2); }
+  .config-topbar-label { font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.6); }
+  .config-close-btn { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:.5px solid rgba(255,255,255,.2); color:white; padding:7px 14px; font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; font-family:var(--font); }
+  .config-close-btn:hover { background:rgba(255,255,255,.18); }
+  .config-close-btn svg { width:12px; height:12px; }
+
+  /* ── VISUALIZER ── */
+  .viz-body { flex:1; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+  .viz-stage { position:relative; flex:1; min-height:0; background:#111; overflow:hidden; }
+
+  #spin-wrap { position:absolute; inset:0; z-index:3; cursor:grab; }
+  #spin-wrap:active { cursor:grabbing; }
+  #spin-wrap canvas { width:100%; height:100%; object-fit:cover; display:block; }
+  #spin-wrap.hidden { display:none; }
+
+  #pano-wrap { position:absolute; inset:0; z-index:3; display:none; }
+  #pano-wrap.active { display:block; }
+  #pano-inner { width:100%; height:100%; }
+
+  /* Pano colour-switch: crossfade without showing loader grid */
+  #pano-crossfade {
+    position:absolute; inset:0; z-index:4;
+    background:#111;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+  }
+  #pano-crossfade.show { opacity:1; pointer-events:all; }
+
+  #global-bar { position:absolute; bottom:0; left:0; height:2px; background:var(--teal); width:0; z-index:20; transition:width .1s; opacity:.7; }
+
+  #drag-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:15; display:flex; flex-direction:column; align-items:center; gap:12px; font-size:15px; font-weight:300; letter-spacing:1.5px; color:rgba(255,255,255,0.95); pointer-events:none; transition:opacity .5s; white-space:nowrap; text-shadow:0 1px 6px rgba(0,0,0,0.6); }
+
+  .viz-title { position:absolute; top:20px; left:22px; z-index:10; }
+  .viz-title h3 { font-size:13px; font-weight:600; color:#fff; letter-spacing:.5px; }
+  .viz-title-rule { width:28px; height:2px; background:var(--teal); margin-top:5px; }
+
+  .int-thumb { position:absolute; top:14px; right:16px; z-index:10; width:88px; height:62px; border-radius:4px; overflow:hidden; cursor:pointer; border:2px solid rgba(255,255,255,.22); transition:border-color .2s; background:#111; }
+  .int-thumb:hover, .int-thumb.active { border-color:var(--teal); }
+  .int-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .int-thumb-icon { position:absolute; bottom:4px; left:50%; transform:translateX(-50%); pointer-events:none; }
+
+  .trim-pill { position:absolute; bottom:20px; left:20px; z-index:10; background:#fff; color:#111; border:none; padding:8px 14px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; display:flex; align-items:center; gap:6px; }
+  .trim-caret { font-size:9px; color:#888; }
+  .msrp-block { position:absolute; bottom:20px; right:20px; z-index:10; text-align:right; }
+  .msrp-val { font-size:clamp(20px,2.8vw,30px); font-weight:700; color:#fff; line-height:1.1; }
+  .msrp-label { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+
+  /* ── STRIP ── */
+  .viz-strip { background:#fff; padding:16px 24px 18px; border-top:1px solid #e0e0e0; flex-shrink:0; }
+  .viz-disclaimer { font-size:10.5px; color:#999; margin-bottom:12px; }
+  .viz-controls { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .viz-group { display:flex; flex-direction:column; gap:8px; }
+  .viz-label { font-size:11.5px; color:#555; }
+  .viz-label strong { font-weight:600; }
+
+  /* Real Hyundai swatch chips — rectangular, like the actual site */
+  .swatches-ext, .swatches-int { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+  .sw-ext {
+    width:44px; height:44px;
+    border-radius:50%;
+    cursor:pointer;
+    border:2.5px solid transparent;
+    transition:transform .15s, border-color .15s, box-shadow .15s;
+    overflow:hidden;
+    flex-shrink:0;
+    position:relative;
+    background:#ccc;
+  }
+  .sw-ext img { width:100%; height:100%; object-fit:cover; display:block; }
+  .sw-ext.active {
+    border-color:#111;
+    transform:scale(1.14);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.15);
+  }
+  .sw-ext:hover:not(.active) { border-color:rgba(0,0,0,0.35); transform:scale(1.06); }
+
+  /* Interior swatches — circular, same as exterior */
+  .sw-int {
+    width:44px; height:44px;
+    border-radius:50%;
+    cursor:pointer;
+    border:2.5px solid transparent;
+    transition:transform .15s, border-color .15s, box-shadow .15s;
+    overflow:hidden;
+    flex-shrink:0;
+    background:#ccc;
+  }
+  .sw-int img { width:100%; height:100%; object-fit:cover; display:block; }
+  .sw-int.active { border-color:#111; transform:scale(1.14); box-shadow:0 0 0 1px rgba(0,0,0,0.15); }
+  .sw-int:hover:not(.active) { border-color:rgba(0,0,0,0.35); transform:scale(1.06); }
+  .sw-int.na { opacity:.2; cursor:not-allowed; pointer-events:none; }
+
+  .viz-cta { background:var(--teal); color:#fff; border:none; padding:11px 24px; font-size:12px; font-weight:600; font-family:var(--font); cursor:pointer; white-space:nowrap; letter-spacing:.04em; text-transform:uppercase; }
+  .viz-cta:hover { background:#0090b5; }
+
+  /* ── REST OF PAGE ── */
+  .gallery { padding:0 40px 72px; }
+  .gallery-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; height:400px; }
+  .gallery-item { overflow:hidden; position:relative; }
+  .gallery-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.4); font-size:12px; letter-spacing:.1em; }
+
+  footer { background:var(--text); color:white; padding:48px 40px 28px; }
+  .footer-top { display:flex; justify-content:space-between; flex-wrap:wrap; gap:32px; margin-bottom:40px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,.1); }
+  .footer-col h4 { font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:14px; }
+  .footer-col ul { list-style:none; }
+  .footer-col li { margin-bottom:8px; }
+  .footer-col a { font-size:13px; color:rgba(255,255,255,.65); text-decoration:none; }
+  .footer-col a:hover { color:white; }
+  .footer-bottom { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .footer-copy { font-size:12px; color:rgba(255,255,255,.35); }
+
+  .bottom-bar { position:sticky; bottom:0; z-index:100; background:white; border-top:1px solid var(--border); display:flex; }
+  .bottom-bar-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 8px; gap:4px; font-size:11px; font-weight:600; letter-spacing:.04em; color:var(--mid); text-decoration:none; border-right:1px solid var(--border); cursor:pointer; transition:background .1s,color .1s; }
+  .bottom-bar-item:last-child { border-right:none; }
+  .bottom-bar-item:hover { background:var(--off); color:var(--blue); }
+  .bottom-bar-item.highlight { background:var(--blue); color:white; }
+  .bottom-bar-item.highlight:hover { background:var(--blue-lt); }
+  .bottom-bar-item svg { width:22px; height:22px; }
+
+  @media(max-width:680px){
+    nav { padding:0 16px; } .nav-links { display:none; }
+    section { padding:48px 20px; } .specs-bar { padding:28px 20px; }
+    .config-section { padding:48px 20px; flex-direction:column; }
+    .gallery { padding:0 20px 48px; }
+    .gallery-grid { grid-template-columns:1fr; height:auto; }
+    .gallery-item { height:200px; } .gallery-item:not(:first-child) { display:none; }
+    footer { padding:36px 20px 20px; } .hero-content { padding:0 20px 40px; }
+    .sub-nav { padding:0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <svg viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="4" y="36" font-family="'Helvetica Neue',Arial,sans-serif" font-size="32" font-weight="900" fill="#002C5F" letter-spacing="-1">HYUNDAI</text>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">New Cars</a></li>
+    <li><a href="#" style="color:#002C5F;font-weight:700;">TUCSON</a></li>
+    <li><a href="#">Electric</a></li>
+    <li><a href="#">Offers</a></li>
+    <li><a href="#">Business</a></li>
+    <li><a href="#">Service</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-cta" onclick="openViz()">360° Experience</button>
+  </div>
+</nav>
+
+<section class="hero" style="padding:0">
+  <div class="hero-img">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto"
+           style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-badge">New · 2026</span>
+    <h1 class="hero-title">Hyundai TUCSON.<br>Experience it now.</h1>
+    <p class="hero-sub">Modern design, refined interior, and innovative technology — built for every adventure.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openViz()">Experience TUCSON 360°</button>
+      <button class="btn-outline">Request a Quote</button>
+    </div>
+  </div>
+</section>
+
+<div class="sub-nav">
+  <a href="#" class="active">Highlights</a><a href="#">Design</a><a href="#">Features</a>
+  <a href="#">Powertrains</a><a href="#">N Line</a><a href="#">Models &amp; Pricing</a><a href="#">Accessories</a>
+</div>
+
+<div class="specs-bar">
+  <div class="spec-item"><div class="spec-value">190<span class="spec-unit">PS</span></div><div class="spec-label">Max. Power</div></div>
+  <div class="spec-item"><div class="spec-value">62<span class="spec-unit">km</span></div><div class="spec-label">Electric Range</div></div>
+  <div class="spec-item"><div class="spec-value">8.9<span class="spec-unit">s</span></div><div class="spec-label">0–100 km/h</div></div>
+  <div class="spec-item"><div class="spec-value">1.660<span class="spec-unit">L</span></div><div class="spec-label">Cargo Volume</div></div>
+  <div class="spec-item"><div class="spec-value">5<span class="spec-unit">J.</span></div><div class="spec-label">Vehicle Warranty</div></div>
+</div>
+
+<section>
+  <div class="section-label">Made for You</div>
+  <h2 class="section-title">Whatever life<br>has in store for you.</h2>
+  <p class="section-body">With modern design, a reimagined interior, and innovative technology, TUCSON is the perfect companion for every adventure.</p>
+</section>
+
+<div class="gallery">
+  <div class="gallery-grid">
+    <div class="gallery-item"><div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2a40,#0d1e35)">EXTERIOR</div></div>
+    <div class="gallery-item"><div class="gallery-placeholder" style="background:linear-gradient(135deg,#2a2520,#1a1510)">INTERIOR</div></div>
+    <div class="gallery-item"><div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a2030,#0d1525)">DETAIL</div></div>
+  </div>
+</div>
+
+<div class="config-section">
+  <div class="config-text">
+    <div class="section-label">360° Experience</div>
+    <h2 class="section-title">Explore the TUCSON<br>from every angle.</h2>
+    <p class="section-body" style="margin-bottom:28px">Spin the TUCSON 360°, change exterior colours and explore every interior — fully interactive.</p>
+    <button class="btn-primary" onclick="openViz()">Experience TUCSON 360°</button>
+  </div>
+  <div class="config-visual">
+    <div class="config-visual-title">TUCSON 360° Experience</div>
+    <div class="config-visual-sub">9 exterior colours. 3 interiors. Real assets — fully interactive in high resolution.</div>
+    <button class="config-launch-btn" onclick="openViz()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Launch Experience
+    </button>
+  </div>
+</div>
+
+<section style="background:var(--off)">
+  <div class="section-label">Features</div>
+  <h2 class="section-title">Connectivity and comfort<br>at the highest level.</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;margin-top:40px">
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Panorama-Display</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">12.3-inch dual display for instrument cluster and infotainment.</p></div>
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Digitaler Fahrzeugschlüssel</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">Lock, unlock and start via smartphone — hands-free.</p></div>
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Autobahnassistent 1.5</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">Automatically maintains speed, lane, and following distance.</p></div>
+    <div><div style="width:40px;height:3px;background:var(--blue);margin-bottom:16px"></div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">5 Jahre Garantie</h3><p style="font-size:14px;color:var(--mid);line-height:1.5">Comprehensive warranty package with no mileage limit.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-col"><h4>Modelle</h4><ul><li><a href="#">TUCSON</a></li><li><a href="#">Santa Fe</a></li><li><a href="#">IONIQ 5</a></li><li><a href="#">IONIQ 9</a></li></ul></div>
+    <div class="footer-col"><h4>Electric</h4><ul><li><a href="#">Why Electric?</a></li><li><a href="#">Charging</a></li><li><a href="#">Range</a></li></ul></div>
+    <div class="footer-col"><h4>Service</h4><ul><li><a href="#">Find a Dealer</a></li><li><a href="#">Test Drive</a></li><li><a href="#">Configurator</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Hyundai</a></li><li><a href="#">Sustainability</a></li><li><a href="#">Careers</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 Hyundai Motor Europe GmbH.</span>
+    <span class="footer-copy">Privacy Policy · Cookie Settings · Legal Notice</span>
+  </div>
+</footer>
+
+<div class="bottom-bar">
+  <a class="bottom-bar-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Test Drive</a>
+  <a class="bottom-bar-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Brochure</a>
+  <a class="bottom-bar-item highlight" href="#" onclick="event.preventDefault();openViz()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>360° Experience</a>
+  <a class="bottom-bar-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Find a Dealer</a>
+</div>
+
+<!-- OVERLAY -->
+<div id="viz-overlay">
+  <div class="config-topbar">
+    <div class="config-topbar-left">
+      <div class="config-topbar-logo">
+        <svg viewBox="0 0 200 48" fill="none"><text x="4" y="36" font-family="'Helvetica Neue',Arial,sans-serif" font-size="32" font-weight="900" fill="white" letter-spacing="-1">HYUNDAI</text></svg>
+      </div>
+      <div class="config-topbar-divider"></div>
+      <span class="config-topbar-label">TUCSON · 360° Experience</span>
+    </div>
+    <button class="config-close-btn" onclick="closeViz()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Close
+    </button>
+  </div>
+
+  <div class="viz-body">
+    <div class="viz-stage" style="background:#111 url(assets/hero-frame.jpg) center/cover no-repeat;">
+      <div id="spin-wrap"><canvas id="spin-canvas"></canvas></div>
+      <div id="pano-wrap"><div id="pano-inner"></div></div>
+      <!-- Crossfade overlay — hides pannellum grid during colour switch -->
+      <div id="pano-crossfade"></div>
+      <div id="global-bar"></div>
+      <div id="drag-hint">
+        <svg width="72" height="72" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white">
+          <path d="M11.2797426,14.9868494 L10.1464466,13.8535534 C9.95118446,13.6582912 9.95118446,13.3417088 10.1464466,13.1464466 C10.3417088,12.9511845 10.6582912,12.9511845 10.8535534,13.1464466 L12.8535534,15.1464466 C13.0488155,15.3417088 13.0488155,15.6582912 12.8535534,15.8535534 L10.8535534,17.8535534 C10.6582912,18.0488155 10.3417088,18.0488155 10.1464466,17.8535534 C9.95118446,17.6582912 9.95118446,17.3417088 10.1464466,17.1464466 L11.3044061,15.9884871 C6.13483244,15.8167229 2,13.7413901 2,11 C2,8.13669069 6.51079147,6 12,6 C17.4892085,6 22,8.13669069 22,11 C22,12.5021775 20.7611164,13.8263891 18.6925542,14.7433738 C18.4401046,14.8552836 18.1447329,14.7413536 18.0328231,14.4889039 C17.9209133,14.2364543 18.0348433,13.9410827 18.2872929,13.8291729 C20.0336708,13.0550111 21,12.0221261 21,11 C21,8.89274656 17.0042017,7 12,7 C6.99579829,7 3,8.89274656 3,11 C3,13.0051086 6.6178104,14.8160018 11.2797426,14.9868494 Z"/>
+        </svg>
+        Drag to rotate vehicle
+      </div>
+      <div class="viz-title"><h3>TUCSON 360° Experience</h3><div class="viz-title-rule"></div></div>
+      <div class="int-thumb" id="int-thumb" onclick="onIntThumbClick()">
+        <img id="int-thumb-img" src="" alt="">
+        <div class="int-thumb-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white" opacity="0.85">
+            <path d="M11.2797426,14.9868494 L10.1464466,13.8535534 C9.95118446,13.6582912 9.95118446,13.3417088 10.1464466,13.1464466 C10.3417088,12.9511845 10.6582912,12.9511845 10.8535534,13.1464466 L12.8535534,15.1464466 C13.0488155,15.3417088 13.0488155,15.6582912 12.8535534,15.8535534 L10.8535534,17.8535534 C10.6582912,18.0488155 10.3417088,18.0488155 10.1464466,17.8535534 C9.95118446,17.6582912 9.95118446,17.3417088 10.1464466,17.1464466 L11.3044061,15.9884871 C6.13483244,15.8167229 2,13.7413901 2,11 C2,8.13669069 6.51079147,6 12,6 C17.4892085,6 22,8.13669069 22,11 C22,12.5021775 20.7611164,13.8263891 18.6925542,14.7433738 C18.4401046,14.8552836 18.1447329,14.7413536 18.0328231,14.4889039 C17.9209133,14.2364543 18.0348433,13.9410827 18.2872929,13.8291729 C20.0336708,13.0550111 21,12.0221261 21,11 C21,8.89274656 17.0042017,7 12,7 C6.99579829,7 3,8.89274656 3,11 C3,13.0051086 6.6178104,14.8160018 11.2797426,14.9868494 Z"/>
+          </svg>
+        </div>
+      </div>
+      <button class="trim-pill">Limited FWD <span class="trim-caret">▾</span></button>
+      <div class="msrp-block">
+        <div class="msrp-val">From $39,750</div>
+        <div class="msrp-label">Starting MSRP</div>
+      </div>
+    </div>
+
+    <div class="viz-strip">
+      <div class="viz-disclaimer">Vehicle shown for illustrative purposes only. Actual model may vary.</div>
+      <div class="viz-controls">
+        <div class="viz-group">
+          <div class="swatches-ext" id="swatches-ext"></div>
+          <div class="viz-label">Exterior: <strong id="ext-name">Phantom Black</strong></div>
+        </div>
+        <div class="viz-group">
+          <div class="swatches-int" id="swatches-int"></div>
+          <div class="viz-label">Interior: <strong id="int-name">Black</strong></div>
+        </div>
+        <button class="viz-cta">Configure</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================
+//  SUPABASE CONFIG
+// ================================================
+var SUPABASE_URL = 'https://ifrystxhgelwybaoqxwx.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcnlzdHhoZ2Vsd3liYW9xeHd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNDI2MjUsImV4cCI6MjA4OTgxODYyNX0.T2GSMWQXFbxVcaeeNZQ3rsIUX_RB0GpT1_JlcFJrgzU';
+var BASE = './assets';
+var FRAMES = 36;
+
+function spinFrames(fn) {
+  return Array.from({length: FRAMES}, function(_, i) {
+    var n = String(i + 1).padStart(4, '0');
+    return BASE + '/exterior/2026_Tucson_LTD_FWD_' + fn + '_Black_360_Landscape_LowerGrand_' + n + '.webp';
+  });
+}
+function panoUrl(extFn, intFn) {
+  return BASE + '/interior/2026_Tucson_LTD_FWD_' + extFn + '_' + intFn + '_Pano_LowerGrand.webp';
+}
+function extSwatchUrl(slug) { return BASE + '/swatches/' + slug + '.webp'; }
+function intSwatchUrl(slug) {
+  var map = {
+    'black':'2026-tucson-limited-fwd-black-leather.webp',
+    'gray':'2026-tucson-limited-fwd-gray-leather.webp',
+    'green-gray-3tone':'2026-tucson-limited-fwd-gray-green-leather.webp'
+  };
+  return BASE + '/swatches/' + (map[slug] || slug + '.webp');
+}
+
+function sbFetch(path) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  }).then(function(r) { return r.json(); });
+}
+
+var EXT = [];
+var INT = [];
+var VEHICLE = {};
+
+function availInt(extSlug) {
+  return INT.filter(function(i) {
+    return i.availFor === 'all' || i.availFor.indexOf(extSlug) !== -1;
+  });
+}
+
+function loadFallbackConfig() {
+  INT = [
+    { slug:'black',            name:'Black',            fn:'Black',         hex:'#111',    availFor:'all' },
+    { slug:'gray',             name:'Gray',             fn:'Gray',          hex:'#686868', availFor:'all' },
+    { slug:'green-gray-3tone', name:'Green/Gray 3-Tone',fn:'GreenGray3Tone',hex:'#4a5c4a',
+      availFor:['ecotronic-gray-pearl','hampton-gray-metallic','phantom-black','serenity-white-pearl','shimmering-silver'] }
+  ];
+  EXT = [
+    { slug:'atlantis-blue',         name:'Atlantis Blue',         fn:'AtlantisBlue',        hex:{p:'#1c3a5c',s:'#111'} },
+    { slug:'ecotronic-gray-matte',  name:'Ecotronic Gray Matte',  fn:'EcotronicGrayMatte',  hex:{p:'#5a5e62',s:'#111'} },
+    { slug:'ecotronic-gray-pearl',  name:'Ecotronic Gray Pearl',  fn:'EcotronicGrayPearl',  hex:{p:'#6e7276',s:'#111'} },
+    { slug:'hampton-gray-metallic', name:'Hampton Gray Metallic', fn:'HamptonGrayMetallic', hex:{p:'#7a7e82',s:'#111'} },
+    { slug:'phantom-black',         name:'Phantom Black',         fn:'PhantomBlack',        hex:{p:'#1c1c22',s:'#111'} },
+    { slug:'rockwood-green-pearl',  name:'Rockwood Green Pearl',  fn:'RockwoodGreenPearl',  hex:{p:'#2e4a36',s:'#111'} },
+    { slug:'serenity-white-pearl',  name:'Serenity White Pearl',  fn:'SerenityWhitePearl',  hex:{p:'#e8e6e0',s:'#111'} },
+    { slug:'shimmering-silver',     name:'Shimmering Silver',     fn:'ShimmeringSilver',    hex:{p:'#a8a8b0',s:'#111'} },
+    { slug:'ultimate-red-pearl',    name:'Ultimate Red Pearl',    fn:'UltimateRedPearl',    hex:{p:'#7a1418',s:'#111'} }
+  ];
+  EXT.forEach(function(c) { c.frames = spinFrames(c.fn); });
+  VEHICLE = { year:2026, name:'TUCSON', trim:'Limited FWD', baseMsrp:3975000 };
+}
+
+function loadConfig(modelSlug, trimSlug, onReady) {
+  sbFetch('models?slug=eq.' + modelSlug + '&select=id,year,name,base_msrp&limit=1')
+  .then(function(models) {
+    var model = models[0];
+    VEHICLE = { year: model.year, name: model.name, baseMsrp: model.base_msrp };
+    return sbFetch('trims?model_id=eq.' + model.id + '&slug=eq.' + trimSlug + '&select=id,name,price_delta&limit=1')
+    .then(function(trims) {
+      var trim = trims[0];
+      VEHICLE.trim = trim.name;
+      VEHICLE.baseMsrp += trim.price_delta;
+      var extP = sbFetch(
+        'trim_exterior_colours?trim_id=eq.' + trim.id +
+        '&select=exterior_colour:exterior_colours(id,name,slug,filename_key,hex_primary,hex_secondary,sort_order)'
+      ).then(function(rows) {
+        EXT = rows.map(function(r){ return r.exterior_colour; })
+          .sort(function(a,b){ return a.sort_order - b.sort_order; })
+          .map(function(c) {
+            return { _id:c.id, slug:c.slug, name:c.name, fn:c.filename_key,
+                     hex:{p:c.hex_primary||'#888',s:c.hex_secondary||'#111'},
+                     frames:spinFrames(c.filename_key) };
+          });
+      });
+      var intP = sbFetch(
+        'trim_interior_colours?trim_id=eq.' + trim.id +
+        '&select=exterior_colour_id,interior_colour:interior_colours(id,name,slug,filename_key,hex,sort_order)'
+      ).then(function(rows) {
+        var map = {};
+        rows.forEach(function(r) {
+          var ic = r.interior_colour;
+          if (!map[ic.slug]) map[ic.slug] = { slug:ic.slug, name:ic.name, fn:ic.filename_key, hex:ic.hex, sortOrder:ic.sort_order, _ecIds:[] };
+          if (r.exterior_colour_id) map[ic.slug]._ecIds.push(r.exterior_colour_id);
+        });
+        return map;
+      });
+      return Promise.all([extP, intP]);
+    });
+  })
+  .then(function(results) {
+    var intMap = results[1];
+    INT = Object.values(intMap).sort(function(a,b){ return a.sortOrder-b.sortOrder; }).map(function(ic) {
+      if (ic._ecIds.length === 0) { ic.availFor = 'all'; }
+      else {
+        ic.availFor = ic._ecIds.map(function(id) {
+          var ec = EXT.find(function(e){ return e._id === id; });
+          return ec ? ec.slug : id;
+        });
+      }
+      delete ic._ecIds; delete ic.sortOrder;
+      return ic;
+    });
+    EXT.forEach(function(e){ delete e._id; });
+    onReady();
+  })
+  .catch(function(err) {
+    console.warn('Supabase unavailable, using fallback config:', err.message);
+    loadFallbackConfig();
+    onReady();
+  });
+}
+
+// ================================================
+//  PRELOAD CACHE
+// ================================================
+var imageCache = {};
+
+function preloadAll() {
+  var total = EXT.length * FRAMES;
+  var loaded = 0;
+  var bar = document.getElementById('global-bar');
+
+  EXT.forEach(function(c, ei) {
+    imageCache[ei] = {};
+    c.frames.forEach(function(url, fi) {
+      var img = new Image();
+      img.onload = img.onerror = function() {
+        loaded++;
+        if (bar) bar.style.width = (loaded / total * 100) + '%';
+        if (loaded === total && bar) bar.style.opacity = '0';
+      };
+      img.src = url;
+      imageCache[ei][fi] = img;
+    });
+  });
+
+  // Preload panos — just fetch into browser cache
+  EXT.forEach(function(ext) {
+    INT.forEach(function(int) {
+      var ok = int.availFor === 'all' || int.availFor.indexOf(ext.slug) !== -1;
+      if (ok) { var img = new Image(); img.src = panoUrl(ext.fn, int.fn); }
+    });
+  });
+}
+
+function isFrameReady(ei, fi) {
+  var img = imageCache[ei] && imageCache[ei][fi];
+  return img && img.complete && img.naturalWidth > 0;
+}
+
+// ================================================
+//  STATE
+// ================================================
+var S = {
+  extIdx: 4, intIdx: 0, view: 'spin',
+  frame: 0, framePct: 0,
+  dragging: false, dragX: 0, dragAccum: 0, sens: 5,
+  pv: null, pYaw: 0, pPitch: -20, pHfov: 110,
+  inited: false,
+  canvas: null, ctx: null
+};
+
+// ================================================
+//  SPIN
+// ================================================
+function drawFrame(ei, fi) {
+  if (!S.canvas || !S.ctx) return;
+  var img = imageCache[ei] && imageCache[ei][fi];
+  if (!img || !img.complete || !img.naturalWidth) return;
+  if (S.canvas.width !== img.naturalWidth) {
+    S.canvas.width  = img.naturalWidth;
+    S.canvas.height = img.naturalHeight;
+  }
+  S.ctx.clearRect(0, 0, S.canvas.width, S.canvas.height);
+  S.ctx.drawImage(img, 0, 0);
+}
+
+function startDrag(x) {
+  if (S.view !== 'spin') return;
+  S.dragging = true; S.dragX = x; S.dragAccum = 0;
+  hideHint();
+}
+function moveDrag(x) {
+  if (!S.dragging || S.view !== 'spin') return;
+  var delta = x - S.dragX; S.dragX = x; S.dragAccum += delta;
+  var steps = Math.trunc(S.dragAccum / S.sens);
+  if (steps !== 0) {
+    S.dragAccum -= steps * S.sens;
+    S.frame = ((S.frame - steps) + FRAMES) % FRAMES;
+    S.framePct = S.frame / (FRAMES - 1);
+    drawFrame(S.extIdx, S.frame);
+  }
+}
+
+var hintGone = false;
+function hideHint() {
+  if (!hintGone) {
+    hintGone = true;
+    var h = document.getElementById('drag-hint');
+    if (h) { h.style.opacity = '0'; setTimeout(function() { if(h.parentNode) h.parentNode.removeChild(h); }, 600); }
+  }
+}
+
+// ================================================
+//  PANO
+// ================================================
+function savePano() {
+  if (S.pv) { S.pYaw = S.pv.getYaw(); S.pPitch = S.pv.getPitch(); S.pHfov = S.pv.getHfov(); }
+}
+
+function loadPano(url, restore) {
+  var el = document.getElementById('pano-inner');
+  if (!el) return;
+  if (S.pv) { try { S.pv.destroy(); } catch(e){} S.pv = null; }
+  el.innerHTML = '';
+  S.pv = pannellum.viewer(el, {
+    type: 'equirectangular',
+    panorama: url,
+    autoLoad: true,
+    showControls: false,
+    mouseZoom: true,
+    draggable: true,
+    friction: 0.15,
+    hfov:  restore ? S.pHfov  : 110,
+    pitch: restore ? S.pPitch : -20,
+    yaw:   restore ? S.pYaw   : 0,
+    minHfov: 50, maxHfov: 130,
+    compass: false,
+    keyboardZoom: false
+  });
+  S.pv.on('load', function() {
+    var cf = document.getElementById('pano-crossfade');
+    if (cf) {
+      cf.style.transition = 'opacity 0.3s ease';
+      cf.classList.remove('show');
+    }
+  });
+}
+
+function switchPano(url, restore) {
+  var cf = document.getElementById('pano-crossfade');
+  if (cf) { cf.style.transition = 'none'; cf.classList.add('show'); }
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { loadPano(url, restore); });
+  });
+}
+
+// ================================================
+//  VIEW TOGGLE
+// ================================================
+function goToSpin() {
+  S.view = 'spin';
+  var sw = document.getElementById('spin-wrap');
+  var pw = document.getElementById('pano-wrap');
+  var it = document.getElementById('int-thumb');
+  if (sw) sw.classList.remove('hidden');
+  if (pw) pw.classList.remove('active');
+  if (it) it.classList.remove('active');
+  drawFrame(S.extIdx, S.frame);
+}
+
+function goToPano() {
+  // Cover immediately before pannellum loads
+  var cf = document.getElementById('pano-crossfade');
+  if (cf) { cf.style.transition = 'none'; cf.classList.add('show'); }
+  S.view = 'pano';
+  var sw = document.getElementById('spin-wrap');
+  var pw = document.getElementById('pano-wrap');
+  var it = document.getElementById('int-thumb');
+  if (sw) sw.classList.add('hidden');
+  if (pw) pw.classList.add('active');
+  if (it) it.classList.add('active');
+  var ext = EXT[S.extIdx];
+  var av  = availInt(ext.slug);
+  var int = av[Math.min(S.intIdx, av.length - 1)] || av[0];
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      if (int) loadPano(panoUrl(ext.fn, int.fn), false);
+    });
+  });
+}
+
+function onIntThumbClick() {
+  if (S.view === 'spin') goToPano(); else goToSpin();
+}
+
+// ================================================
+//  SET COLOURS
+// ================================================
+function setExt(idx) {
+  if (idx === S.extIdx && S.view === 'spin') return;
+  S.extIdx = idx;
+  document.querySelectorAll('.sw-ext').forEach(function(s, i) { s.classList.toggle('active', i === idx); });
+  var nameEl = document.getElementById('ext-name');
+  if (nameEl) nameEl.textContent = EXT[idx].name;
+  // Always go to spin when picking exterior
+  goToSpin();
+  // Preserve angle
+  S.frame = Math.round(S.framePct * (FRAMES - 1));
+  if (isFrameReady(idx, S.frame)) {
+    drawFrame(idx, S.frame);
+  } else {
+    var poll = setInterval(function() {
+      if (isFrameReady(idx, S.frame)) { clearInterval(poll); drawFrame(idx, S.frame); }
+    }, 40);
+  }
+  buildIntSwatches(EXT[idx].slug);
+  updateThumb();
+}
+
+function setInt(idx) {
+  S.intIdx = idx;
+  document.querySelectorAll('.sw-int').forEach(function(s, i) { s.classList.toggle('active', i === idx); });
+  var nameEl = document.getElementById('int-name');
+  if (nameEl) nameEl.textContent = INT[idx].name;
+  updateThumb();
+  // Always go to pano when picking interior
+  if (S.view === 'pano') {
+    savePano();
+    switchPano(panoUrl(EXT[S.extIdx].fn, INT[idx].fn), true);
+  } else {
+    goToPano();
+  }
+}
+
+// ================================================
+//  SWATCHES
+// ================================================
+function buildExtSwatches() {
+  var row = document.getElementById('swatches-ext');
+  if (!row) return;
+  row.innerHTML = '';
+  EXT.forEach(function(c, i) {
+    var d = document.createElement('div');
+    d.className = 'sw-ext' + (i === S.extIdx ? ' active' : '');
+    d.title = c.name;
+    var img = document.createElement('img');
+    img.src = extSwatchUrl(c.slug);
+    img.alt = '';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    img.onerror = function() { d.style.background = c.bg || '#888'; d.style.border = '1px solid rgba(0,0,0,0.1)'; img.style.display='none'; };
+    d.appendChild(img);
+    d.onclick = (function(idx) { return function() { setExt(idx); }; })(i);
+    row.appendChild(d);
+  });
+}
+
+function buildIntSwatches(extSlug) {
+  var row = document.getElementById('swatches-int');
+  if (!row) return;
+  row.innerHTML = '';
+  INT.forEach(function(c, i) {
+    var ok = c.availFor === 'all' || c.availFor.indexOf(extSlug) !== -1;
+    var d = document.createElement('div');
+    d.className = 'sw-int' + (i === S.intIdx && ok ? ' active' : '') + (!ok ? ' na' : '');
+    d.title = c.name;
+    var img = document.createElement('img');
+    img.src = intSwatchUrl(c.slug);
+    img.alt = '';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    img.onerror = function() { d.style.background = '#555'; };
+    d.appendChild(img);
+    if (ok) d.onclick = (function(idx) { return function() { setInt(idx); }; })(i);
+    row.appendChild(d);
+  });
+}
+
+function updateThumb() {
+  var ext = EXT[S.extIdx];
+  var av  = availInt(ext.slug);
+  var int = av[Math.min(S.intIdx, av.length - 1)] || av[0];
+  if (int) {
+    var el = document.getElementById('int-thumb-img');
+    if (el) el.src = panoUrl(ext.fn, int.fn);
+  }
+}
+
+// ================================================
+//  OVERLAY
+// ================================================
+function openViz() {
+  var overlay = document.getElementById('viz-overlay');
+  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  if (!S.inited) {
+    S.inited = true;
+    // Init canvas here — guaranteed DOM is ready
+    S.canvas = document.getElementById('spin-canvas');
+    S.ctx    = S.canvas ? S.canvas.getContext('2d') : null;
+    // Attach drag events to spin-wrap
+    var sw = document.getElementById('spin-wrap');
+    if (sw) {
+      sw.addEventListener('mousedown',  function(e) { startDrag(e.clientX); });
+      sw.addEventListener('touchstart', function(e) { startDrag(e.touches[0].clientX); }, {passive:true});
+    }
+    buildExtSwatches();
+    buildIntSwatches(EXT[S.extIdx].slug);
+    updateThumb();
+    // Draw first frame when ready
+    var poll = setInterval(function() {
+      if (isFrameReady(S.extIdx, 0)) {
+        clearInterval(poll);
+        var img = imageCache[S.extIdx][0];
+        if (S.canvas) { S.canvas.width = img.naturalWidth || 1920; S.canvas.height = img.naturalHeight || 1080; }
+        drawFrame(S.extIdx, S.frame);
+      }
+    }, 40);
+  }
+}
+
+function closeViz() {
+  var overlay = document.getElementById('viz-overlay');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ================================================
+//  GLOBAL EVENT LISTENERS
+// ================================================
+window.addEventListener('mousemove',  function(e) { if (S.view === 'spin') moveDrag(e.clientX); });
+window.addEventListener('touchmove',  function(e) { if (S.view === 'spin' && S.dragging) moveDrag(e.touches[0].clientX); }, {passive:true});
+window.addEventListener('mouseup',    function() { S.dragging = false; });
+window.addEventListener('touchend',   function() { S.dragging = false; });
+document.addEventListener('keydown',  function(e) {
+  if (e.key === 'Escape') { closeViz(); return; }
+  // Block keyboard zoom/pan when overlay is open
+  if (document.getElementById('viz-overlay') && document.getElementById('viz-overlay').classList.contains('open')) {
+    var blocked = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','+','-','=','_','PageUp','PageDown'];
+    if (blocked.indexOf(e.key) !== -1) e.preventDefault();
+  }
+});
+
+// ================================================
+//  BOOT — load config from Supabase then preload
+// ================================================
+loadConfig('tucson-2026', 'limited-fwd', function() {
+  preloadAll();
+});
+
+// Hero video autoplay
+var hv = document.getElementById('hero-video');
+if (hv) hv.play().catch(function() {
+  document.addEventListener('pointerdown', function() { hv.play().catch(function(){}); }, {once:true});
+});
+</script>
+</body>
+</html>
