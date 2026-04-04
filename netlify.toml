@@ -2,6 +2,10 @@
   publish = "."
   command = ""
 
+[[edge_functions]]
+  path = "/*"
+  function = "auth"
+
 [[headers]]
   for = "/assets/*"
   [headers.values]
