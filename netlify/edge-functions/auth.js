@@ -1,123 +1,133 @@
-// Netlify Edge Function: auth.js
-// Validates Digital Giant portal tokens before serving content.
-
-const SESSION_COOKIE = "dg_session";
-const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours
+// Netlify Edge Function: auth.js - DEBUG VERSION
 
 export default async function handler(request, context) {
   const url = new URL(request.url);
+  const dgtoken = url.searchParams.get("dgtoken");
+  const cookies = request.headers.get("cookie") || "";
+  
+  console.log("AUTH edge function invoked:", url.pathname, "dgtoken present:", !!dgtoken);
 
-  // Allow static assets through without auth
+  // Allow static assets
   if (url.pathname.startsWith("/assets/")) {
+    console.log("Allowing asset through");
     return context.next();
   }
 
   const TOKEN_SECRET = Deno.env.get("DG_TOKEN_SECRET");
-  if (!TOKEN_SECRET) {
-    console.error("DG_TOKEN_SECRET not configured");
-    return new Response("Server configuration error.", { status: 500 });
-  }
+  console.log("TOKEN_SECRET present:", !!TOKEN_SECRET);
 
-  // Check for existing valid session cookie first
-  const cookies = request.headers.get("cookie") || "";
-  const sessionMatch = cookies.match(new RegExp(`${SESSION_COOKIE}=([^;]+)`));
+  // Check session cookie
+  const sessionMatch = cookies.match(/dg_session=([^;]+)/);
   if (sessionMatch) {
     try {
       const sessionData = JSON.parse(atob(sessionMatch[1]));
       if (sessionData.expires > Date.now()) {
+        console.log("Valid session cookie found, allowing through");
         return context.next();
       }
+      console.log("Session cookie expired");
     } catch (e) {
-      console.error("Session cookie parse error:", e.message);
+      console.error("Session parse error:", e.message);
     }
   }
 
-  // Check for dgtoken query parameter
-  const dgtoken = url.searchParams.get("dgtoken");
-
   if (!dgtoken) {
+    console.log("No dgtoken, blocking");
     return new Response(
       "Access denied. Please access this content through the Digital Giant portal.",
       { status: 403, headers: { "Content-Type": "text/plain" } }
     );
   }
 
-  // Verify token
+  console.log("dgtoken present, attempting verification. First 30 chars:", dgtoken.substring(0, 30));
+
+  if (!TOKEN_SECRET) {
+    console.error("No TOKEN_SECRET configured!");
+    return new Response("Server configuration error.", { status: 500 });
+  }
+
   const tokenClaims = await verifyToken(dgtoken, TOKEN_SECRET);
+  console.log("Token verification result:", tokenClaims ? "VALID" : "INVALID");
 
   if (!tokenClaims) {
-    console.error("Token verification failed for token:", dgtoken.substring(0, 20) + "...");
     return new Response(
       "Access token is invalid or has expired. Please return to the portal.",
       { status: 403, headers: { "Content-Type": "text/plain" } }
     );
   }
 
-  // Valid token — set session cookie and redirect to clean URL
+  // Valid — set session cookie and redirect to clean URL
   const sessionPayload = btoa(JSON.stringify({
-    expires: Date.now() + SESSION_TTL_MS,
+    expires: Date.now() + (8 * 60 * 60 * 1000),
     tokenId: tokenClaims.tokenId,
-    userId: tokenClaims.userId,
-    moduleId: tokenClaims.moduleId,
   }));
 
   url.searchParams.delete("dgtoken");
   const cleanUrl = url.toString();
+  console.log("Token valid! Redirecting to:", cleanUrl);
 
   return new Response(null, {
     status: 302,
     headers: {
       Location: cleanUrl,
-      "Set-Cookie": `${SESSION_COOKIE}=${sessionPayload}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`,
+      "Set-Cookie": `dg_session=${sessionPayload}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800`,
     },
   });
 }
 
 async function verifyToken(tokenString, secret) {
   try {
-    // base64url -> base64 standard
     const base64 = tokenString.replace(/-/g, "+").replace(/_/g, "/");
     const padded = base64 + "=".repeat((4 - base64.length % 4) % 4);
-    const json = atob(padded);
-    const decoded = JSON.parse(json);
-
-    const { tokenId, userId, moduleId, expiresAt, signature } = decoded;
-
-    if (!tokenId || !userId || !moduleId || !expiresAt || !signature) {
-      console.error("Token missing required fields");
+    
+    let json;
+    try {
+      json = atob(padded);
+    } catch(e) {
+      console.error("atob failed:", e.message, "padded length:", padded.length);
+      return null;
+    }
+    
+    let decoded;
+    try {
+      decoded = JSON.parse(json);
+    } catch(e) {
+      console.error("JSON.parse failed:", e.message);
       return null;
     }
 
-    if (Date.now() > expiresAt) {
-      console.error("Token expired at:", new Date(expiresAt).toISOString());
+    const { tokenId, userId, moduleId, expiresAt, signature } = decoded;
+    console.log("Decoded token fields present:", { tokenId: !!tokenId, userId: !!userId, moduleId: !!moduleId, expiresAt, signature: !!signature });
+
+    if (!tokenId || !userId || !moduleId || !expiresAt || !signature) {
+      console.error("Missing token fields");
+      return null;
+    }
+
+    const now = Date.now();
+    console.log("Token expiry check: now=", now, "expiresAt=", expiresAt, "expired=", now > expiresAt);
+    if (now > expiresAt) {
+      console.error("Token expired");
       return null;
     }
 
     const payload = `${tokenId}:${userId}:${moduleId}:${expiresAt}`;
-
     const encoder = new TextEncoder();
-    const keyData = encoder.encode(secret);
-    const messageData = encoder.encode(payload);
-
+    
     const cryptoKey = await crypto.subtle.importKey(
-      "raw",
-      keyData,
+      "raw", encoder.encode(secret),
       { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["verify"]
+      false, ["verify"]
     );
 
     const sigBytes = hexToBytes(signature);
-    const isValid = await crypto.subtle.verify("HMAC", cryptoKey, sigBytes, messageData);
+    const isValid = await crypto.subtle.verify("HMAC", cryptoKey, sigBytes, encoder.encode(payload));
+    console.log("HMAC signature valid:", isValid);
 
-    if (!isValid) {
-      console.error("Token signature invalid");
-      return null;
-    }
-
+    if (!isValid) return null;
     return { tokenId, userId, moduleId };
   } catch (e) {
-    console.error("Token decode error:", e.message);
+    console.error("verifyToken exception:", e.message);
     return null;
   }
 }
