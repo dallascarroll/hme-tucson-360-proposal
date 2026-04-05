@@ -1,6 +1,7 @@
 [build]
   publish = "."
   command = ""
+  edge_functions = "netlify/edge-functions"
 
 [[edge_functions]]
   path = "/*"
