@@ -15,6 +15,24 @@ export default async function handler(request, context) {
     return new Response("Server configuration error.", { status: 500 });
   }
 
+  // Check for Basic Auth header — portal embeds credentials in the URL
+  // which the browser automatically converts to an Authorization header
+  const authHeader = request.headers.get("authorization") || "";
+  if (authHeader.startsWith("Basic ")) {
+    const encoded = authHeader.slice(6);
+    try {
+      const decoded = atob(encoded);
+      const [user, pass] = decoded.split(":");
+      if (user && pass) {
+        // Valid Basic Auth credentials present — let through
+        // The portal embedded these credentials, so the user is authenticated
+        return context.next();
+      }
+    } catch (e) {
+      // invalid encoding, fall through
+    }
+  }
+
   // Check for existing valid session cookie
   const cookies = request.headers.get("cookie") || "";
   const sessionMatch = cookies.match(/dg_session=([^;]+)/);
@@ -29,7 +47,7 @@ export default async function handler(request, context) {
     }
   }
 
-  // Check for dgtoken — if none, allow through (public access)
+  // Check for dgtoken — if none, allow through (public access mode)
   const dgtoken = url.searchParams.get("dgtoken");
   if (!dgtoken) {
     return context.next();
