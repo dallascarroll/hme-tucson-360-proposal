@@ -1,5 +1,4 @@
 // Netlify Edge Function: auth.js
-
 const SESSION_COOKIE = "dg_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours
 
@@ -30,19 +29,14 @@ export default async function handler(request, context) {
     }
   }
 
-  // Check for dgtoken
+  // Check for dgtoken — if none, allow through (public access)
   const dgtoken = url.searchParams.get("dgtoken");
-
   if (!dgtoken) {
-    return new Response(
-      "Access denied. Please access this content through the Digital Giant portal.",
-      { status: 403, headers: { "Content-Type": "text/plain" } }
-    );
+    return context.next();
   }
 
   // Verify token
   const tokenClaims = await verifyToken(dgtoken, TOKEN_SECRET);
-
   if (!tokenClaims) {
     return new Response(
       "Access token is invalid or has expired. Please return to the portal.",
@@ -50,22 +44,18 @@ export default async function handler(request, context) {
     );
   }
 
-  // Build session cookie - use SameSite=None so it works cross-site
+  // Build session cookie
   const sessionPayload = btoa(JSON.stringify({
     expires: Date.now() + SESSION_TTL_MS,
     tokenId: tokenClaims.tokenId,
     userId: tokenClaims.userId,
     moduleId: tokenClaims.moduleId,
   }));
-
   const cookieHeader = `${SESSION_COOKIE}=${sessionPayload}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`;
 
-  // Serve the page directly with the cookie set — don't redirect
-  // This avoids the cross-site redirect losing the cookie
   url.searchParams.delete("dgtoken");
   const cleanUrl = url.toString();
 
-  // Fetch the clean page and return it with the cookie
   const cleanRequest = new Request(cleanUrl, {
     headers: request.headers,
     method: request.method,
@@ -73,10 +63,8 @@ export default async function handler(request, context) {
 
   const response = await context.next(cleanRequest);
 
-  // Clone the response and add the session cookie
   const newResponse = new Response(response.body, response);
   newResponse.headers.append("Set-Cookie", cookieHeader);
-
   return newResponse;
 }
 
@@ -85,24 +73,21 @@ async function verifyToken(tokenString, secret) {
     const base64 = tokenString.replace(/-/g, "+").replace(/_/g, "/");
     const padded = base64 + "=".repeat((4 - base64.length % 4) % 4);
     const decoded = JSON.parse(atob(padded));
-
     const { tokenId, userId, moduleId, expiresAt, signature } = decoded;
     if (!tokenId || !userId || !moduleId || !expiresAt || !signature) return null;
     if (Date.now() > expiresAt) return null;
-
     const payload = `${tokenId}:${userId}:${moduleId}:${expiresAt}`;
     const encoder = new TextEncoder();
-
     const cryptoKey = await crypto.subtle.importKey(
-      "raw", encoder.encode(secret),
+      "raw",
+      encoder.encode(secret),
       { name: "HMAC", hash: "SHA-256" },
-      false, ["verify"]
+      false,
+      ["verify"]
     );
-
     const sigBytes = hexToBytes(signature);
     const isValid = await crypto.subtle.verify("HMAC", cryptoKey, sigBytes, encoder.encode(payload));
     if (!isValid) return null;
-
     return { tokenId, userId, moduleId };
   } catch (e) {
     return null;
